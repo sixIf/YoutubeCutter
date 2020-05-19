@@ -23,3 +23,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 Vuetify
 Stylus
+
+### NPM  dependencies
+axios
+ytdl-core@latest

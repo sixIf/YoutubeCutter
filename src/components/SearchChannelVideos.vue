@@ -10,11 +10,19 @@
             </v-toolbar>
             <v-card-text>
               <v-form @submit.prevent="findVideos">
-                <v-text-field label="Channel ID" name="channel" prepend-icon="person" type="text"></v-text-field>
+                <v-text-field
+                  v-model="channelId"
+                  label="Channel ID"
+                  name="channel"
+                  prepend-icon="person"
+                  type="text"
+                ></v-text-field>
               </v-form>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
+              <v-btn color="secondary" @click.prevent="changePage('next')">Next</v-btn>
+              <v-btn color="secondary" @click.prevent="changePage('prev')">Previous</v-btn>
               <v-btn color="primary" type="submit" @click.prevent="findVideos">Search</v-btn>
             </v-card-actions>
           </v-card>
@@ -34,28 +42,47 @@ export default {
   props: {},
   data() {
     return {
-      videoList: undefined
+      videoList: undefined,
+      channelId: undefined
     };
   },
   // GET https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UChKMRHxLETrj_5JjiqExD1w&maxResults=25&key=[YOUR_API_KEY] HTTP/1.1
 
   methods: {
-    findVideos() {
-      console.log("salut");
+    changePage(direction) {
+      var pageToken =
+        direction == "next"
+          ? this.videoList.data.nextPageToken
+          : this.videoList.data.prevPageToken;
       axios
         .get(
-          "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25",
+          "https://www.googleapis.com/youtube/v3/search?part=snippet&order=date&maxResults=25",
           {
             params: {
-              channelId: this.practitionerId,
+              channelId: this.channelId,
+              key: this.$api_key,
+              pageToken: pageToken
+            }
+          }
+        )
+        .then(response => {
+          this.videoList = response;
+        });
+    },
+    findVideos() {
+      axios
+        .get(
+          "https://www.googleapis.com/youtube/v3/search?part=snippet&order=date&maxResults=25",
+          {
+            params: {
+              channelId: this.channelId,
               key: this.$api_key
             }
           }
         )
         .then(response => {
-          this.videoList = response.data;
+          this.videoList = response;
         });
-      console.log("ciao");
     }
   }
 };
