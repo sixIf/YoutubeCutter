@@ -1,18 +1,18 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <SearchChannel />
+    <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
+    <search-channel-videos />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import SearchChannel from "@/components/SearchChannel.vue";
+import SearchChannelVideos from "@/components/SearchChannelVideos.vue";
 
 export default {
   name: "Home",
   components: {
-    SearchChannel
+    SearchChannelVideos
   }
 };
 </script>

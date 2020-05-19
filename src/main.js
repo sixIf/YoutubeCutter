@@ -6,6 +6,9 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 Vue.config.productionTip = false
 
+// global variable
+Vue.prototype.$api_key = "AIzaSyDeSxTCCjIY0GQGLLFsw7aZeZqtdiSvznI"
+
 new Vue({
   router,
   vuetify,
