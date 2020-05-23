@@ -16,7 +16,7 @@
             <v-card-actions>
               <v-spacer></v-spacer>
 
-              <v-btn icon @click="downloadSingleVideo">
+              <v-btn icon @click="downloadSingleVideo(video)">
                 <v-icon>mdi-download</v-icon>
               </v-btn>
             </v-card-actions>
@@ -41,7 +41,7 @@
 import axios from "axios";
 import ytdl from "ytdl-core";
 export default {
-  name: "search-channel-videos",
+  name: "list-channel-videos",
   components: {},
   props: {
     videoList: undefined
@@ -74,12 +74,42 @@ export default {
           this.videoList = response;
         });
     },
-    downloadSingleVideo() {
-      const fs = require("fs");
+    downloadSingleVideo(video) {
+      axios
+        .get("/download-video", {
+          params: {
+            videoId: video.id.videoId,
+            videoTitle: video.snippet.title,
+            channelName: video.snippet.channelTitle
+          }
+          // responseType: "blob"
+        })
+        .then(response => {
+          // console.log(response.headers.get("content-type"));
+          console.log(response);
 
-      ytdl("http://www.youtube.com/watch?v=A02s8omM_hI").pipe(
-        fs.createWriteStream("video.flv")
-      );
+          // console.log(response.headers.get("content-type"));
+          // console.log(response);
+
+          // var blob = new Blob([response.body], {
+          //   type: response.headers.get("content-type")
+          // });
+
+          // var link = document.createElement("a");
+          // link.href = window.URL.createObjectURL(blob);
+          // link.download = item.filename_version;
+          // link.click();
+        })
+        .catch(error => {
+          console.log("bug");
+          console.log(error);
+          if (!error.response) {
+            // network error
+            this.errorStatus = "Error: Network Error";
+          } else {
+            this.errorStatus = error.response.data.message;
+          }
+        });
     },
     findVideos() {
       axios
