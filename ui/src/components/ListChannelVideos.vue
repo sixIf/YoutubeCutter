@@ -1,48 +1,53 @@
 <template>
-  <v-content>
-    <v-container class="fill-height" fluid>
-      <v-row align="center" justify="center">
-        <v-col cols="12" sm="8" md="4">
-          <v-card class="elevation-12">
-            <v-toolbar color="primary" dark flat>
-              <v-toolbar-title>Search Channel</v-toolbar-title>
+  <div>
+    <v-container v-if="videoList" class="list-video-container" fluid>
+      <v-row dense>
+        <v-col v-for="video in videoList" :key="video.id.videoId" cols="4">
+          <v-card>
+            <v-img
+              :src="video.snippet.thumbnails.default.url"
+              class="white--text align-end"
+              gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+              height="200px"
+            >
+              <v-card-title v-text="video.snippet.title"></v-card-title>
+            </v-img>
+
+            <v-card-actions>
               <v-spacer></v-spacer>
-            </v-toolbar>
-            <v-card-text>
-              <v-form @submit.prevent="findVideos">
-                <v-text-field
-                  v-model="channelId"
-                  label="Channel ID"
-                  name="channel"
-                  prepend-icon="person"
-                  type="text"
-                ></v-text-field>
-              </v-form>
-            </v-card-text>
+
+              <v-btn icon @click="downloadSingleVideo">
+                <v-icon>mdi-download</v-icon>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+          <!--<v-card class="elevation-12">
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="secondary" @click.prevent="changePage('next')">Next</v-btn>
               <v-btn color="secondary" @click.prevent="changePage('prev')">Previous</v-btn>
-              <v-btn color="primary" type="submit" @click.prevent="findVideos">Search</v-btn>
+              <v-btn color="primary"  @click.prevent="findVideos">Search</v-btn>
             </v-card-actions>
-          </v-card>
+          </v-card>-->
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </div>
 </template>
 
 
 <script>
 // import Icon from "~/components/ui/Icon";
 import axios from "axios";
+import ytdl from "ytdl-core";
 export default {
   name: "search-channel-videos",
   components: {},
-  props: {},
+  props: {
+    videoList: undefined
+  },
   data() {
     return {
-      videoList: undefined,
       channelId: undefined
     };
   },
@@ -68,6 +73,13 @@ export default {
         .then(response => {
           this.videoList = response;
         });
+    },
+    downloadSingleVideo() {
+      const fs = require("fs");
+
+      ytdl("http://www.youtube.com/watch?v=A02s8omM_hI").pipe(
+        fs.createWriteStream("video.flv")
+      );
     },
     findVideos() {
       axios
