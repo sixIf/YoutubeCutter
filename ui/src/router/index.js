@@ -1,20 +1,21 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import ListChannelVideos from '../views/Home.vue'
+import ChannelDashboard from '../views/ChannelDashboard.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
+    name: 'home',
     component: Home
   },
   {
-    path: '/videos',
-    name: 'Channel videos',
-    component: ListChannelVideos
+    path: '/channel/',
+    name: 'channel',
+    component: ChannelDashboard,
+    props: true
   },
   {
     path: '/about',

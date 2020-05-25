@@ -1,19 +1,17 @@
 <template>
   <v-app>
-    <v-content>
-      <router-view />
-    </v-content>
+    <router-view />
   </v-app>
 </template>
 
 <script>
-import Home from "./views/Home";
+import NavDrawer from "./components/NavDrawer";
 
 export default {
   name: "App",
 
   components: {
-    Home
+    NavDrawer
   },
 
   data: () => ({
@@ -23,6 +21,12 @@ export default {
   methods: {
     displayVideos(videoList) {
       this.videoList = videoList;
+    }
+  },
+
+  computed: {
+    isHome() {
+      return this.$route.path === "/";
     }
   }
 };
