@@ -48,21 +48,43 @@ app.get('/', function (req, res) {
 })
 
 app.get('/download-video', function (req, res) {
-  ytdl(`http://www.youtube.com/watch?v=${req.query.videoId}`)
-    .pipe(fs.createWriteStream(`${req.query.videoTitle}.flv`));
-  res.sendFile(__dirname + `/${req.query.videoTitle}.flv`)
-  // var videoZip = new AdmZip();
-  // videoZip.addLocalFile(`${req.query.videoTitle}.flv`);
-  // var willSendthis = videoZip.toBuffer();
-  // console.log(willSendthis);
-  // res.download(`${req.query.videoTitle}.flv`, function (err) {
+  res.send('plop')
+  // Creates /tmp/a/apple, regardless of whether `/tmp` and /tmp/a exist.
+  // fs.mkdir(`${req.query.channelName}`, { recursive: true }, (err) => {
+  //   if (err) throw err;
+  //   try {
+  //     // throw error when video has only sound : https://www.youtube.com/watch?v=1EYDar6Mo0M
+  //     ytdl(`https://www.youtube.com/watch?v=${req.query.videoId}`, {
+  //       quality: 'highest',
+  //       format: 'mp4',
+  //     },
+  //       function (err) {
+  //         if (err) {
+  //           console.log('api get file err ', err);
+  //         } else {
+  //           // decrement a download credit, etc.
+  //         }
+  //       }).pipe(fs.createWriteStream(`${req.query.channelName}/${req.query.videoTitle}.mp4`));
+  //   } catch (err) {
+  //     console.error(err)
+  //   }
+  // });
+
+  // // DDL
+  // res.download('Dethemiros.txt', function (err) {
   //   if (err) {
   //     console.log('api get file err ', err);
   //   } else {
   //     // decrement a download credit, etc.
   //   }
   // })
+
+  // ZIP
+  // var videoZip = new AdmZip();
+  // videoZip.addLocalFile(`${req.query.videoTitle}.flv`);
+  // var willSendthis = videoZip.toBuffer();
+  // console.log(willSendthis);
+
 })
-// app.get('')
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))

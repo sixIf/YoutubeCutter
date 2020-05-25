@@ -1,5 +1,6 @@
 <template>
   <div>
+    <v-alert dismissible type="success">I'm a success alert.</v-alert>
     <v-container v-if="videoList" class="list-video-container" fluid>
       <v-row dense>
         <v-col v-for="video in videoList" :key="video.id.videoId" cols="4">
