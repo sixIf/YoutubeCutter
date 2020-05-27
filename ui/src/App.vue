@@ -1,17 +1,21 @@
 <template>
   <v-app>
-    <router-view />
+    <router-view v-if="isHome" />
+    <component v-else :is="layout">
+      <router-view />
+    </component>
   </v-app>
 </template>
 
 <script>
-import NavDrawer from "./components/NavDrawer";
+import ChannelDashboard from "./layouts/ChannelDashboard";
 
+const default_layout = "default";
 export default {
   name: "App",
 
   components: {
-    NavDrawer
+    // ChannelDashboard
   },
 
   data: () => ({
@@ -27,6 +31,9 @@ export default {
   computed: {
     isHome() {
       return this.$route.path === "/";
+    },
+    layout() {
+      return (this.$route.meta.layout || default_layout) + "-layout";
     }
   }
 };

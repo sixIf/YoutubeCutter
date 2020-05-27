@@ -48,7 +48,12 @@ app.get('/', function (req, res) {
 })
 
 app.get('/download-video', function (req, res) {
-  res.send('plop')
+  res.send(ytdl.getInfo(`http://www.youtube.com/watch?v=${req.query.videoId}`))
+  ytdl(`http://www.youtube.com/watch?v=${req.query.videoId}`, {
+    quality: 'highest',
+    format: 'mp4'
+  })
+    .pipe(fs.createWriteStream(`${req.query.videoTitle}.flv`));
   // Creates /tmp/a/apple, regardless of whether `/tmp` and /tmp/a exist.
   // fs.mkdir(`${req.query.channelName}`, { recursive: true }, (err) => {
   //   if (err) throw err;
@@ -70,14 +75,14 @@ app.get('/download-video', function (req, res) {
   //   }
   // });
 
-  // // DDL
-  // res.download('Dethemiros.txt', function (err) {
-  //   if (err) {
-  //     console.log('api get file err ', err);
-  //   } else {
-  //     // decrement a download credit, etc.
-  //   }
-  // })
+  // DDL
+  res.download(`${req.query.videoTitle}.flv`, function (err) {
+    if (err) {
+      console.log('api get file err ', err);
+    } else {
+      // decrement a download credit, etc.
+    }
+  })
 
   // ZIP
   // var videoZip = new AdmZip();

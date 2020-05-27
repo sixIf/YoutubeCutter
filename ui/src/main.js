@@ -10,8 +10,18 @@ axios.defaults.baseURL = (process.env.NODE_ENV !== 'production') ? 'http://local
 
 Vue.config.productionTip = false
 
+// global components
+Vue.component('default-layout', require('./layouts/Default.vue').default)
+Vue.component('channel-dashboard-layout', require('./layouts/ChannelDashboard.vue').default)
+
 // global variable
-Vue.prototype.$api_key = "AIzaSyDeSxTCCjIY0GQGLLFsw7aZeZqtdiSvznI"
+Vue.prototype.$api_key = 'AIzaSyDeSxTCCjIY0GQGLLFsw7aZeZqtdiSvznI'
+
+Vue.prototype.$error_type = {
+  403: 'Quota exceeded for your API key. Buy more credit on your google account or retry tomorrow.',
+  400: 'Channel not found. Please verify the channel id.'
+}
+
 
 new Vue({
   router,
