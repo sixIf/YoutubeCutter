@@ -26,14 +26,14 @@ const routes = [
     props: true
   },
   {
-    path: '/about',
-    name: 'channel-about',
+    path: '/help',
+    name: 'help',
     meta: { layout: "channel-dashboard" },
     // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
+    // this generates a separate chunk (help.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: function () {
-      return import(/* webpackChunkName: "about" */ '../views/About.vue')
+      return import(/* webpackChunkName: "help" */ '../views/Help.vue')
     }
   }
 ]

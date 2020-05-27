@@ -54,9 +54,9 @@ export default {
           link: { name: "channel-playlists" }
         },
         {
-          title: "About",
+          title: "Help",
           icon: "mdi-help-box",
-          link: { name: "channel-about" }
+          link: { name: "help" }
         },
         {
           title: "Exit channel",

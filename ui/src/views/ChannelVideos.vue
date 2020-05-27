@@ -17,10 +17,14 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-
-              <v-btn icon @click="downloadSingleVideo(video)">
-                <v-icon>mdi-download</v-icon>
-              </v-btn>
+              <download-modal :videoId="video.key">
+                <!-- <v-btn icon @click="downloadSingleVideo(video)"> -->
+                <template v-slot:activator="{ on }">
+                  <v-btn v-on="on" icon>
+                    <v-icon>mdi-download</v-icon>
+                  </v-btn>
+                </template>
+              </download-modal>
             </v-card-actions>
           </v-card>
           <!--<v-card class="elevation-12">
@@ -40,10 +44,11 @@
 
 <script>
 import FiltersToolbar from "../components/FiltersToolbar";
+import DownloadModal from "../components/DownloadModal";
 import axios from "axios";
 export default {
   name: "channel-videos",
-  components: { FiltersToolbar },
+  components: { FiltersToolbar, DownloadModal },
   props: {
     //videoList: undefined
   },
