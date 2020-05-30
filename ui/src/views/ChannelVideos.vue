@@ -1,6 +1,6 @@
 <template>
   <div>
-    <filters-toolbar searchLabel="Search specific video"></filters-toolbar>
+    <filters-toolbar searchLabel="Search specific video" v-on:search-keyword="findVideoByKeyword" />
     <v-container class="list-video-container" fluid>
       <v-row dense>
         <p v-if="!videoList">No videos found</p>
@@ -50,14 +50,15 @@ export default {
   name: "channel-videos",
   components: { FiltersToolbar, DownloadModal },
   props: {
-    //videoList: undefined
+    channelId: undefined,
+    channelThumbnail: undefined,
+    channelTitle: undefined
+    // channelId: "UChKMRHxLETrj_5JjiqExD1w",
+    // channelThumbnail:
+    //   "https://yt3.ggpht.com/-kuwqOm6qy04/AAAAAAAAAAI/AAAAAAAAAAA/knXSxLuA1mU/s800-c-k-no-mo-rj-c0xffffff/photo.jpg",
+    // channelTitle: "Kemar",
   },
   data: () => ({
-    /* TODO Put as props and undefined */
-    channelId: "UChKMRHxLETrj_5JjiqExD1w",
-    channelThumbnail:
-      "https://yt3.ggpht.com/-kuwqOm6qy04/AAAAAAAAAAI/AAAAAAAAAAA/knXSxLuA1mU/s800-c-k-no-mo-rj-c0xffffff/photo.jpg",
-    channelTitle: "Kemar",
     /* TODO put undefined */
     videoList: [
       {
@@ -500,28 +501,51 @@ export default {
         .then(response => {
           this.videoList = response;
         });
+    },
+    findVideoByKeyword(keyword) {
+      console.log("keyword " + keyword);
+      axios
+        .get(
+          "https://www.googleapis.com/youtube/v3/search?part=snippet&order=date&maxResults=10",
+          {
+            params: {
+              channelId: this.channelId,
+              key: this.$api_key,
+              type: "video",
+              q: keyword
+            }
+          }
+        )
+        .then(response => {
+          this.videoList = response.data.items;
+        })
+        .catch(err => {
+          this.$router.push("/");
+          console.log(err);
+        });
     }
   },
 
   mounted() {
     // TODO uncomment
     //   axios
-    //     .get(
-    //       "https://www.googleapis.com/youtube/v3/search?part=snippet&order=date&maxResults=10",
-    //       {
-    //         params: {
-    //           channelId: this.channelId,
-    //           key: this.$api_key
-    //         }
-    //       }
-    //     )
-    //     .then(response => {
-    //       this.videoList = response.data.items;
-    //     })
-    //     .catch(err => {
-    //       this.$router.push("/");
-    //       console.log(err);
-    //     });
+    // .get(
+    //   "https://www.googleapis.com/youtube/v3/search?part=snippet&order=date&maxResults=10",
+    //   {
+    //     params: {
+    //       channelId: this.channelId,
+    //       key: this.$api_key,
+    //       type: "video",
+    //     }
+    //   }
+    // )
+    // .then(response => {
+    //   this.videoList = response.data.items;
+    // })
+    // .catch(err => {
+    //   this.$router.push("/");
+    //   console.log(err);
+    // });
     // Send channel info to dashbord layout
     this.$parent.$emit(
       "channel-infos",

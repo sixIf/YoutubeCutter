@@ -75,46 +75,42 @@ export default {
     //     });
     // },
     getChannel() {
-      this.$router.push({
-        name: "channel-videos"
-      });
-      //   axios
-      //     .get(
-      //       "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1",
-      //       {
-      //         params: {
-      //           type: "channel",
-      //           channelId: this.channelId,
-      //           key: this.$api_key
-      //         }
-      //       }
-      //     )
-      //     .then(response => {
-      //       let channelInfos = response.data.items[0].snippet;
-      //       this.channelTitle = channelInfos.channelTitle;
-      //       this.channelThumbnail = channelInfos.thumbnails.high.url;
-      //       // this.$emit("channel-fetched", response.data.items);
-      //       this.$router
-      //         .push({
-      //           name: "channel-videos",
-      //           params: {
-      //             channelTitle: this.channelTitle,
-      //             channelThumbnail: this.channelThumbnail,
-      //             channelId: this.channelId
-      //           }
-      //         })
-      //         .catch(err => {
-      //           console.log(err);
-      //         });
-      //     })
-      //     .catch(err => {
-      //       console.log(err);
-      //       this.alert = {
-      //         type: "error",
-      //         message: `${this.$error_type[err.response.status]}`
-      //       };
-      //       this.displayAlert = true;
-      //     });
+      axios
+        .get(
+          "https://www.googleapis.com/youtube/v3/channels?part=snippet&maxResults=1",
+          {
+            params: {
+              id: this.channelId,
+              key: this.$api_key
+            }
+          }
+        )
+        .then(response => {
+          let channelInfos = response.data.items[0].snippet;
+          this.channelTitle = channelInfos.channelTitle;
+          this.channelThumbnail = channelInfos.thumbnails.high.url;
+          // this.$emit("channel-fetched", response.data.items);
+          this.$router
+            .push({
+              name: "channel-videos",
+              params: {
+                channelTitle: this.channelTitle,
+                channelThumbnail: this.channelThumbnail,
+                channelId: this.channelId
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        })
+        .catch(err => {
+          console.log(err);
+          this.alert = {
+            type: "error",
+            message: `${this.$error_type[err.response.status]}`
+          };
+          this.displayAlert = true;
+        });
     }
   }
 };

@@ -1,9 +1,13 @@
 <template>
   <v-card>
     <v-container fluid>
-      <v-row>
-        <v-col cols="2">
-          <v-text-field v-model="keyword" :label="searchLabel"></v-text-field>
+      <v-row align="center" justify="center">
+        <v-col cols="8">
+          <v-text-field
+            v-on:keyup.enter="$emit('search-keyword', keyword)"
+            v-model="keyword"
+            :label="searchLabel"
+          ></v-text-field>
         </v-col>
       </v-row>
     </v-container>
