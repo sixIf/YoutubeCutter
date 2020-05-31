@@ -1,18 +1,14 @@
 <template>
   <div>
-    <filters-toolbar searchLabel="Search specific video" v-on:search-keyword="findVideoByKeyword" />
     <list-items @more-items="fetchMoreVideos" :itemType="itemType" :itemList="videoList" />
   </div>
 </template>
-
-
 <script>
-import FiltersToolbar from "../components/FiltersToolbar";
 import ListItems from "../components/ListItems";
 import axios from "axios";
 export default {
-  name: "channel-videos",
-  components: { FiltersToolbar, ListItems },
+  name: "playlist-videos",
+  components: { ListItems },
   props: {},
   data: () => ({
     nextPageToken: undefined,
@@ -340,16 +336,15 @@ export default {
       }
     ]
   }),
-
   methods: {
     fetchMoreVideos() {
       if (this.nextPageToken) {
         axios
           .get(
-            "https://www.googleapis.com/youtube/v3/search?part=snippet&order=date&maxResults=25",
+            "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&order=date&maxResults=25",
             {
               params: {
-                channelId: this.channelId,
+                playlistId: this.playlistId,
                 key: this.$api_key,
                 pageToken: this.nextPageToken
               }
@@ -363,32 +358,10 @@ export default {
           });
       }
     },
-    findVideoByKeyword(keyword) {
-      console.log("keyword " + keyword);
-      axios
-        .get(
-          "https://www.googleapis.com/youtube/v3/search?part=snippet&order=date&maxResults=10",
-          {
-            params: {
-              channelId: this.channelId,
-              key: this.$api_key,
-              type: "video",
-              q: keyword
-            }
-          }
-        )
-        .then(response => {
-          this.fillVideoList(response.data.items);
-        })
-        .catch(err => {
-          this.$router.push("/");
-          console.log(err);
-        });
-    },
     fillVideoList(apiResponse) {
       apiResponse.forEach(video => {
         this.videoList.push({
-          id: video.id.videoId,
+          id: video.snippet.resourceId.videoId,
           title: video.snippet.title,
           thumbnail: video.snippet.thumbnails.high.url
         });
@@ -399,27 +372,30 @@ export default {
   computed: {
     channelId() {
       return this.$route.params.id;
+    },
+    playlistId() {
+      return this.$route.params.playlistId;
     }
   },
 
   mounted() {
     // TODO tout doux
-    this.fillVideoList(this.videoDemo);
-    // Get channel's videos
-    // axios
-    //   .get(
-    //     "https://www.googleapis.com/youtube/v3/search?part=snippet&order=date&maxResults=25",
-    //     {
-    //       params: {
-    //         channelId: this.channelId,
-    //         key: this.$api_key
-    //       }
-    //     }
-    //   )
-    //   .then(response => {
-    //     this.fillVideoList(response.data.items);
-    //     this.nextPageToken = response.data.nextPageToken;
-    //   });
+    // this.fillVideoList(this.videoDemo);
+    // Get playlist's videos
+    axios
+      .get(
+        "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&order=date&maxResults=25",
+        {
+          params: {
+            playlistId: this.playlistId,
+            key: this.$api_key
+          }
+        }
+      )
+      .then(response => {
+        this.fillVideoList(response.data.items);
+        this.nextPageToken = response.data.nextPageToken;
+      });
   }
 };
 </script>

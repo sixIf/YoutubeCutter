@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import ChannelVideos from '../views/ChannelVideos.vue'
 import ChannelPlaylists from '../views/ChannelPlaylists.vue'
+import PlaylistVideos from '../views/PlaylistVideos.vue'
 import Help from '../views/Help.vue'
 import ChannelDashboard from '../layouts/ChannelDashboard.vue'
 
@@ -31,6 +32,11 @@ const routes = [
         path: 'playlists',
         name: 'channel-playlists',
         component: ChannelPlaylists
+      },
+      {
+        path: 'playlist/:playlistId/videos',
+        name: 'playlist-videos',
+        component: PlaylistVideos
       },
       {
         path: 'help',
