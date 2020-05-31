@@ -86,22 +86,26 @@ export default {
           }
         )
         .then(response => {
-          let channelInfos = response.data.items[0].snippet;
-          this.channelTitle = channelInfos.channelTitle;
-          this.channelThumbnail = channelInfos.thumbnails.high.url;
-          // this.$emit("channel-fetched", response.data.items);
-          this.$router
-            .push({
-              name: "channel-videos",
-              params: {
-                channelTitle: this.channelTitle,
-                channelThumbnail: this.channelThumbnail,
-                channelId: this.channelId
-              }
-            })
-            .catch(err => {
-              console.log(err);
-            });
+          console.log(response);
+          // Display channel not found since YT's api respond with 200
+          if (response.data.pageInfo.totalResults == 0) {
+            this.alert = {
+              type: "error",
+              message: "Channel not found. Please verify channel ID."
+            };
+            this.displayAlert = true;
+          } else {
+            this.$router
+              .push({
+                name: "channel-videos",
+                params: {
+                  id: this.channelId
+                }
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          }
         })
         .catch(err => {
           console.log(err);

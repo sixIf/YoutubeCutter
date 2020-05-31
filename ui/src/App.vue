@@ -1,22 +1,15 @@
 <template>
   <v-app>
-    <router-view v-if="isHome" />
-    <component v-else :is="layout">
-      <router-view />
-    </component>
+    <router-view />
   </v-app>
 </template>
 
 <script>
-import ChannelDashboard from "./layouts/ChannelDashboard";
-
 const default_layout = "default";
 export default {
   name: "App",
 
-  components: {
-    // ChannelDashboard
-  },
+  components: {},
 
   data: () => ({
     videoList: undefined
@@ -31,9 +24,6 @@ export default {
   computed: {
     isHome() {
       return this.$route.path === "/";
-    },
-    layout() {
-      return (this.$route.meta.layout || default_layout) + "-layout";
     }
   }
 };

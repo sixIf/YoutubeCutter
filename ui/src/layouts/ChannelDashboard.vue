@@ -9,7 +9,7 @@
       <v-container class="channel-container" fluid>
         <v-row align="start" justify="start" no-gutters>
           <v-col cols="12">
-            <slot />
+            <router-view />
           </v-col>
         </v-row>
       </v-container>
@@ -19,6 +19,7 @@
 
 <script>
 import NavDrawer from "../components/NavDrawer";
+import axios from "axios";
 
 export default {
   name: "channel-dashboard-layout",
@@ -30,10 +31,8 @@ export default {
 
   data: () => ({
     /* TODO Put as props and undefined */
-    channelId: "UChKMRHxLETrj_5JjiqExD1w",
-    channelThumbnail:
-      "https://yt3.ggpht.com/-kuwqOm6qy04/AAAAAAAAAAI/AAAAAAAAAAA/knXSxLuA1mU/s800-c-k-no-mo-rj-c0xffffff/photo.jpg",
-    channelTitle: "Kemar"
+    channelThumbnail: undefined,
+    channelTitle: undefined
   }),
 
   methods: {},
@@ -41,19 +40,34 @@ export default {
   computed: {
     isHome() {
       return this.$route.path === "/";
+    },
+
+    channelId() {
+      return this.$route.params.id;
     }
   },
 
   mounted() {
-    this.$on("channel-infos", function(
-      channelId,
-      channelTitle,
-      channelThumbnail
-    ) {
-      this.channelId = channelId;
-      this.channelTitle = channelTitle;
-      this.channelThumbnail = channelThumbnail;
-    });
+    axios
+      .get(
+        "https://www.googleapis.com/youtube/v3/channels?part=snippet&maxResults=1",
+        {
+          params: {
+            id: this.channelId,
+            key: this.$api_key
+          }
+        }
+      )
+      .then(response => {
+        console.log(response);
+        let channelInfos = response.data.items[0].snippet;
+        this.channelTitle = channelInfos.title;
+        this.channelThumbnail = channelInfos.thumbnails.high.url;
+      })
+      .catch(err => {
+        this.$router.push("/");
+        console.log(err);
+      });
   }
 };
 </script>
