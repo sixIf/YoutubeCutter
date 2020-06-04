@@ -16,6 +16,7 @@ export default {
   props: {},
   data: () => ({
     nextPageToken: undefined,
+    mainPlaylistId: undefined,
     /* TODO protect your credits*/
     videoList: [],
     itemType: "video",
@@ -346,10 +347,10 @@ export default {
       if (this.nextPageToken) {
         axios
           .get(
-            "https://www.googleapis.com/youtube/v3/search?part=snippet&order=date&maxResults=25",
+            "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&order=date&maxResults=25",
             {
               params: {
-                channelId: this.channelId,
+                playlistId: this.mainPlaylistId,
                 key: this.$api_key,
                 pageToken: this.nextPageToken
               }
@@ -357,14 +358,14 @@ export default {
           )
           .then(response => {
             this.fillVideoList(response.data.items);
-            this.nextPageToken == response.data.nextPageToken
-              ? null
-              : response.data.nextPageToken;
+            this.nextPageToken =
+              this.nextPageToken == response.data.nextPageToken
+                ? null
+                : response.data.nextPageToken;
           });
       }
     },
     findVideoByKeyword(keyword) {
-      console.log("keyword " + keyword);
       axios
         .get(
           "https://www.googleapis.com/youtube/v3/search?part=snippet&order=date&maxResults=10",
@@ -388,7 +389,7 @@ export default {
     fillVideoList(apiResponse) {
       apiResponse.forEach(video => {
         this.videoList.push({
-          id: video.id.videoId,
+          id: video.snippet.resourceId.videoId,
           title: video.snippet.title,
           thumbnail: video.snippet.thumbnails.high.url
         });
@@ -404,22 +405,37 @@ export default {
 
   mounted() {
     // TODO tout doux
-    this.fillVideoList(this.videoDemo);
+    // this.fillVideoList(this.videoDemo);
     // Get channel's videos
-    // axios
-    //   .get(
-    //     "https://www.googleapis.com/youtube/v3/search?part=snippet&order=date&maxResults=25",
-    //     {
-    //       params: {
-    //         channelId: this.channelId,
-    //         key: this.$api_key
-    //       }
-    //     }
-    //   )
-    //   .then(response => {
-    //     this.fillVideoList(response.data.items);
-    //     this.nextPageToken = response.data.nextPageToken;
-    //   });
+    axios
+      .get(
+        "https://www.googleapis.com/youtube/v3/channels?part=snippet&part=contentDetails&maxResults=1",
+        {
+          params: {
+            id: this.channelId,
+            key: this.$api_key
+          }
+        }
+      )
+      .then(response => {
+        // Get videos from channel's playlist "uploaded videos"
+        this.mainPlaylistId =
+          response.data.items[0].contentDetails.relatedPlaylists.uploads;
+        axios
+          .get(
+            "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&order=date&maxResults=25",
+            {
+              params: {
+                playlistId: this.mainPlaylistId,
+                key: this.$api_key
+              }
+            }
+          )
+          .then(response => {
+            this.fillVideoList(response.data.items);
+            this.nextPageToken = response.data.nextPageToken;
+          });
+      });
   }
 };
 </script>

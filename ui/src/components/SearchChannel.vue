@@ -36,6 +36,7 @@
 
 <script>
 import axios from "axios";
+var youtubeApi = require("../api/youtube.js");
 export default {
   name: "search-channel-videos",
   components: {},
@@ -86,7 +87,6 @@ export default {
           }
         )
         .then(response => {
-          console.log(response);
           // Display channel not found since YT's api respond with 200
           if (response.data.pageInfo.totalResults == 0) {
             this.alert = {

@@ -59,7 +59,6 @@ export default {
         }
       )
       .then(response => {
-        console.log(response);
         let channelInfos = response.data.items[0].snippet;
         this.channelTitle = channelInfos.title;
         this.channelThumbnail = channelInfos.thumbnails.high.url;

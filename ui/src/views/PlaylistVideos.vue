@@ -352,9 +352,10 @@ export default {
           )
           .then(response => {
             this.fillVideoList(response.data.items);
-            this.nextPageToken == response.data.nextPageToken
-              ? null
-              : response.data.nextPageToken;
+            this.nextPageToken =
+              this.nextPageToken == response.data.nextPageToken
+                ? null
+                : response.data.nextPageToken;
           });
       }
     },

@@ -58,7 +58,6 @@ export default {
     },
 
     goToVideos(key) {
-      console.log("key: " + key);
       this.$router.push({
         name: "playlist-videos",
         params: {

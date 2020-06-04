@@ -5,26 +5,30 @@
 </template>
 
 <script>
-const default_layout = "default";
 export default {
   name: "App",
-
+  inject: ["youtubeService"],
   components: {},
 
-  data: () => ({
-    videoList: undefined
-  }),
+  data: () => ({}),
 
   methods: {
-    displayVideos(videoList) {
-      this.videoList = videoList;
+    async fetchVideos() {
+      try {
+        const response = await this.youtubeService.findChannelById(
+          this.$api_key,
+          "UChKMRHxLETrj_5JjiqExD1w"
+        );
+      } catch {
+        //
+      }
     }
   },
 
-  computed: {
-    isHome() {
-      return this.$route.path === "/";
-    }
+  computed: {},
+
+  mounted() {
+    fetchVideos();
   }
 };
 </script>

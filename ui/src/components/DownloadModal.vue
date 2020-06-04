@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="500">
+  <v-dialog v-model="dialog" max-width="500">
     <template v-slot:activator="{ on }">
       <v-btn v-on="on" icon>
         <v-icon>mdi-download</v-icon>

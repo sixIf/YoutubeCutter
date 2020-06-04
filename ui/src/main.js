@@ -5,16 +5,14 @@ import vuetify from './plugins/vuetify';
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import './assets/css/main.styl'
 import axios from 'axios'
+import youtubeService from '@/api/youtube.js'
 
-axios.defaults.baseURL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:8081' : '';
+
 
 Vue.config.productionTip = false
 
-// global components
-Vue.component('default-layout', require('./layouts/Default.vue').default)
-Vue.component('channel-dashboard-layout', require('./layouts/ChannelDashboard.vue').default)
-
 // global variable
+axios.defaults.baseURL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:8081' : '';
 Vue.prototype.$api_key = 'AIzaSyDeSxTCCjIY0GQGLLFsw7aZeZqtdiSvznI'
 
 Vue.prototype.$error_type = {
@@ -26,5 +24,8 @@ Vue.prototype.$error_type = {
 new Vue({
   router,
   vuetify,
+  provide: {
+    youtubeService
+  },
   render: function (h) { return h(App) }
 }).$mount('#app')
