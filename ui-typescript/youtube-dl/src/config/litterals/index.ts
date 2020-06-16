@@ -35,7 +35,7 @@ export interface ChannelInfos {
 }
 
 export interface TestApiKey {
-  kind: string
+  kind: string;
 }
 
 export interface ChannelFetched {
