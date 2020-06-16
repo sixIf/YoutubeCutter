@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { Component, Inject, Vue } from "vue-property-decorator";
-import { YOUTUBESERVICE, API_KEY, ItemStruct } from "@/config/litterals";
+import { YOUTUBESERVICE, ItemStruct } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 import FiltersToolbar from "@/components/FiltersToolbar.vue";
 import ListItems from "@/components/ListItems.vue";
@@ -57,11 +57,8 @@ export default class ChannelVideos extends Vue {
   async mounted() {
     try {
       console.log("channelVideos mounted");
-      // const response = await this.service.findMainPlaylist(
-      //   API_KEY,
-      //   this.channelId
-      // );
-      // // Get videos from channel's playlist "uploaded videos"
+      const response = await this.service.findMainPlaylist(this.channelId);
+      // Get videos from channel's playlist "uploaded videos"
       // this.mainPlaylistId =
       //   response.data.items[0].contentDetails.relatedPlaylists.uploads;
     } catch (err) {

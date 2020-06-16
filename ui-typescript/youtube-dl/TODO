@@ -1,0 +1,3 @@
+Séparer la méthode findChannelById en 2
+-> une avec contentDetails pour fetch la main playlist id
+-> une avec snippet pour la recherche de channel + affichage de Dashboard

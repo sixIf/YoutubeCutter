@@ -20,7 +20,7 @@
 <script lang="ts">
 import NavDrawer from "@/components/NavDrawer.vue";
 import { Component, Inject, Vue } from "vue-property-decorator";
-import { YOUTUBESERVICE, API_KEY } from "@/config/litterals";
+import { YOUTUBESERVICE, ERROR_TYPES } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 
 @Component({
@@ -39,14 +39,9 @@ export default class ChannelDashboard extends Vue {
 
   async mounted() {
     try {
-      console.log("channelDashboard mounted");
-      // const response = await this.service.findChannelById(
-      //   API_KEY,
-      //   this.channelId
-      // );
-      // const channelInfos = response.data.items[0].snippet;
-      // this.channelTitle = channelInfos.title;
-      // this.channelThumbnail = channelInfos.thumbnails.high.url;
+      const response = await this.service.findChannelById(this.channelId);
+      this.channelTitle = response.title;
+      this.channelThumbnail = response.thumbnail;
     } catch (err) {
       this.$router.push("/");
       console.log(err);

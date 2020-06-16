@@ -61,24 +61,27 @@ export default class SearchChannel extends Vue {
   async getChannel(): Promise<void> {
     try {
       console.log("SearchChannel getChannel");
+      console.log(this.channelId);
       const response = await this.youtubeService.findChannelById(
         this.channelId
       );
       // Display channel not found since YT's api respond with 200
-      // if (response.data.pageInfo.totalResults == 0) {
-      //   this.alert = {
-      //     type: "error",
-      //     message: "Channel not found. Please verify channel ID."
-      //   };
-      // } else {
-      //   this.$router.push({
-      //     name: "channel-videos",
-      //     params: {
-      //       id: this.channelId
-      //     }
-      //   });
-      // }
+      if (response.totalResults == 0) {
+        this.alert = {
+          type: "error",
+          message: "Channel not found. Please verify channel ID."
+        };
+      } else {
+        this.$router.push({
+          name: "channel-videos",
+          params: {
+            id: this.channelId
+          }
+        });
+      }
+      console.log(response);
     } catch (err) {
+      console.log("err: " + err);
       this.alert = {
         type: "error",
         message: `${ERROR_TYPES[err.response.status]}`
