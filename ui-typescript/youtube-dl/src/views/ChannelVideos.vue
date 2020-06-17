@@ -1,7 +1,7 @@
 <template>
   <div>
     <filters-toolbar searchLabel="Search specific video" v-on:search-keyword="findVideoByKeyword" />
-    <list-items @more-items="fetchMoreVideos" :itemType="itemType" :itemList="videoList" />
+    <list-items @more-items="fetchVideos" :itemType="itemType" :itemList="videoList" />
   </div>
 </template>
 
@@ -25,7 +25,7 @@ export default class ChannelVideos extends Vue {
 
   mainPlaylistId = "";
   nextPageToken = "";
-  videoList: ItemStruct[] | null = null;
+  videoList: ItemStruct[] = [];
   itemType = "video";
 
   get channelId(): string {
@@ -42,28 +42,35 @@ export default class ChannelVideos extends Vue {
 
   async fetchVideos() {
     try {
-      console.log("channelVideos fetchVideos");
-      // const response = await this.service.fetchVideoInPlaylist(
-      //   API_KEY,
-      //   this.mainPlaylistId,
-      //   this.nextPageToken
-      // );
+      const videoFetched = await this.service.getVideoList(
+        this.mainPlaylistId,
+        this.nextPageToken
+      );
+      if (videoFetched.nextPageToken != this.nextPageToken) {
+        this.nextPageToken = videoFetched.nextPageToken;
+        videoFetched.videoList.forEach(video => {
+          this.videoList.push(video);
+        });
+      } else {
+        // Display no more videos ?
+      }
     } catch (err) {
-      this.$router.push("/");
-      console.log(err);
+      // TODO send error back to home ?
+      console.log("Channel video error:" + err);
+      // this.$router.push("/");
     }
   }
 
   async mounted() {
+    // Get main playlist id
     try {
-      console.log("channelVideos mounted");
-      const response = await this.service.findMainPlaylist(this.channelId);
-      // Get videos from channel's playlist "uploaded videos"
-      // this.mainPlaylistId =
-      //   response.data.items[0].contentDetails.relatedPlaylists.uploads;
+      const responsePlaylistId = await this.service.findChannelMainPlaylist(
+        this.channelId
+      );
+      this.mainPlaylistId = responsePlaylistId.mainPlaylistId;
     } catch (err) {
       // TODO send error back to home ?
-      this.$router.push("/");
+      console.log("Channel video error findChannelMainPlaylist:" + err);
     }
     this.fetchVideos();
   }

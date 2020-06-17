@@ -1,34 +1,31 @@
 <template>
-  <div>
-    <v-container class="list-item-container" fluid>
-      <v-row dense>
-        <p v-if="!itemList">No {{ itemType }} found</p>
-        <v-col v-for="item in itemList" :key="item.id" cols="2">
-          <v-card @click="clickAction(item.id)">
-            <v-img
-              :src="item.thumbnail"
-              class="white--text align-end"
-              gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-              height="200px"
-            >
-              <v-card-title v-text="item.title"></v-card-title>
-            </v-img>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <download-modal :itemId="item.id">
-                <template v-slot:activator="{ on }">
-                  <v-btn v-on="on" icon>
-                    <v-icon>mdi-download</v-icon>
-                  </v-btn>
-                </template>
-              </download-modal>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>
+  <v-dialog v-model="dialog" max-width="500">
+    <template v-slot:activator="{ on }">
+      <v-btn v-on="on" icon>
+        <v-icon>mdi-download</v-icon>
+      </v-btn>
+    </template>
+    <v-card>
+      <v-card-title class="headline">Download options</v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-row>
+            <v-col cols="12" sm="6" md="4">
+              <v-select v-model="quality" :items="qualityTypes" label="Quality"></v-select>
+            </v-col>
+            <v-col cols="12">
+              <v-switch v-model="audioOnly" label="Audio only"></v-switch>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="primary darken-1" text @click="dialog = false">Cancel</v-btn>
+        <v-btn color="green darken-1" text @click="dialog = false">Download</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script lang="ts">

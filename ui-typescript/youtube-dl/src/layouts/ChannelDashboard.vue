@@ -43,7 +43,8 @@ export default class ChannelDashboard extends Vue {
       this.channelTitle = response.title;
       this.channelThumbnail = response.thumbnail;
     } catch (err) {
-      this.$router.push("/");
+      // this.$router.push("/");
+      console.log("Channel dashboard:" + err.message);
       console.log(err);
     }
   }

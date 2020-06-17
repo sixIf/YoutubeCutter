@@ -20,6 +20,11 @@ export const LOCAL_STORAGE_KEY = "YoutubeApiKey"
  * Interfaces
  */
 
+export interface VideoFetched {
+  readonly nextPageToken: string;
+  readonly videoList: Array<ItemStruct>;
+}
+
 export interface ItemStruct {
   readonly id: string;
   readonly title: string;
@@ -30,7 +35,6 @@ export interface ChannelInfos {
   id: string;
   title: string;
   thumbnail: string;
-  mainPlaylistId: string;
   totalResults: number;
 }
 
@@ -38,7 +42,37 @@ export interface TestApiKey {
   kind: string;
 }
 
-export interface ChannelFetched {
+export interface ApiVideoInPlaylist {
+  readonly data: {
+    readonly nextPageToken: string;
+    readonly items: [
+      {
+        kind: string;
+        snippet: {
+          channelId: string;
+          title: string;
+          description: string;
+          thumbnails: {
+            high: {
+              url: string;
+              width: number;
+              height: number;
+            };
+          };
+          channelTitle: string;
+          playlistId: string;
+          position: number;
+          resourceId: {
+            kind: string;
+            videoId: string;
+          };
+        };
+      }
+    ];
+  };
+}
+
+export interface ApiChannelFetched {
   readonly data: {
     readonly pageInfo: {
       totalResults: number;
@@ -63,16 +97,34 @@ export interface ChannelFetched {
             videoId: string;
           };
         };
+      }
+    ];
+  };
+}
+
+export interface ApiChannelMainPlaylist {
+  readonly data: {
+    readonly pageInfo: {
+      totalResults: number;
+      resultsPerPage: number;
+    };
+
+    readonly items: [
+      {
+        readonly id: string;
         contentDetails: {
           relatedPlaylists: {
             likes: string;
             favorites: string;
             uploads: string;
-            watchHistory: string;
-            watchLater: string;
           };
         };
       }
     ];
   };
+}
+
+export interface ChannelMainPlaylist {
+  readonly totalResults: number;
+  readonly mainPlaylistId: string;
 }

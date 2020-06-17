@@ -1,13 +1,14 @@
 import axios from 'axios'
 import { IApiKeyService } from '@/services/apiKeyService'
 import { injectable, inject } from "tsyringe";
-import { ChannelFetched, TestApiKey } from '@/config/litterals/index'
+import { ApiChannelFetched, TestApiKey, ApiChannelMainPlaylist, ApiVideoInPlaylist } from '@/config/litterals/index'
 
 export interface IYoutubeClient {
 
-  fetchVideoInPlaylist(playlistId: string, pageToken: string): Promise<any>;
-  findChannelById(channelId: string): Promise<ChannelFetched>;
+  fetchVideoInPlaylist(playlistId: string, pageToken: string): Promise<ApiVideoInPlaylist>;
+  findChannelById(channelId: string): Promise<ApiChannelFetched>;
   testApiKey(apiKeyToTest: string | null): Promise<TestApiKey>;
+  findChannelMainPlaylist(channelId: string): Promise<ApiChannelMainPlaylist>;
 }
 
 @injectable()
@@ -31,7 +32,7 @@ export class YoutubeClient implements IYoutubeClient {
   }
 
   // Don't return promise but return video formatted
-  fetchVideoInPlaylist(playlistId: string, pageToken: string) {
+  fetchVideoInPlaylist(playlistId: string, pageToken: string): Promise<ApiVideoInPlaylist> {
     console.log('fetchVideoInPlaylist')
     return axios
       .get(
@@ -46,10 +47,23 @@ export class YoutubeClient implements IYoutubeClient {
       )
   }
 
-  findChannelById(channelId: string): Promise<ChannelFetched> {
+  findChannelById(channelId: string): Promise<ApiChannelFetched> {
     return axios
       .get(
-        "https://www.googleapis.com/youtube/v3/channels?part=snippet&part=contentDetails&maxResults=1",
+        "https://www.googleapis.com/youtube/v3/channels?part=snippet&maxResults=1",
+        {
+          params: {
+            id: channelId,
+            key: this.apiKey
+          }
+        }
+      )
+  }
+
+  findChannelMainPlaylist(channelId: string): Promise<ApiChannelMainPlaylist> {
+    return axios
+      .get(
+        "https://www.googleapis.com/youtube/v3/channels?part=contentDetails&maxResults=1",
         {
           params: {
             id: channelId,

@@ -1,3 +1,7 @@
-Séparer la méthode findChannelById en 2
--> une avec contentDetails pour fetch la main playlist id
--> une avec snippet pour la recherche de channel + affichage de Dashboard
+Rendre sticky la toolbar sur la recherche de vidéo, et la rendre aussi commune avec les playlists
+le téléchargement de vidéo se fera via un bouton sur cette barre , en selectionnant les vidéo et la modale s'ouvrira en cliquant sur le bouton télécharger
+Attention ! il faut hide la fonctionnalité de recherche par nom pour les playlists ?
+
+Lors du clic sur une card, change la couleur + ajoue une petite checkbox checked en haut à gauche de la card ?
+
+Permettre le téléchargement d'une vidéo par direct URL ( la baaase )
