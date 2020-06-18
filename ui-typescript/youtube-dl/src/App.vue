@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <div>
-      <v-app-bar color="primary" app dense dark>
+      <v-app-bar color="primary" style="z-index: 50" app dense dark>
         <router-link to="/">
           <v-btn icon>
             <v-icon>mdi-home</v-icon>

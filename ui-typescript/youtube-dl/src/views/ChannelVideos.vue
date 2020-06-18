@@ -1,7 +1,12 @@
 <template>
   <div>
-    <filters-toolbar searchLabel="Search specific video" v-on:search-keyword="findVideoByKeyword" />
-    <list-items @more-items="fetchVideos" :itemType="itemType" :itemList="videoList" />
+    <!-- <filters-toolbar searchLabel="Search specific video" v-on:search-keyword="findVideoByKeyword" /> -->
+    <list-items
+      style="position: relative; z-index: 3"
+      @more-items="fetchVideos"
+      :itemType="itemType"
+      :itemList="videoList"
+    />
   </div>
 </template>
 

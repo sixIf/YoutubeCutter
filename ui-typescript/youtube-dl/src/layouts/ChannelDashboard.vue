@@ -9,6 +9,11 @@
       <v-container class="channel-container" fluid>
         <v-row align="start" justify="start" no-gutters>
           <v-col cols="12">
+            <filters-toolbar
+              style="position: sticky; top:50px; z-index: 5"
+              searchLabel="Search specific video"
+              v-on:search-keyword="findVideoByKeyword"
+            />
             <router-view />
           </v-col>
         </v-row>
@@ -19,12 +24,13 @@
 
 <script lang="ts">
 import NavDrawer from "@/components/NavDrawer.vue";
+import FiltersToolbar from "@/components/FiltersToolbar.vue";
 import { Component, Inject, Vue } from "vue-property-decorator";
 import { YOUTUBESERVICE, ERROR_TYPES } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 
 @Component({
-  components: { NavDrawer }
+  components: { NavDrawer, FiltersToolbar }
 })
 export default class ChannelDashboard extends Vue {
   @Inject(YOUTUBESERVICE)
