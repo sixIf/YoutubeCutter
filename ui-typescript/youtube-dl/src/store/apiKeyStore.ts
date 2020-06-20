@@ -7,11 +7,9 @@ export interface IApiKeyStore {
 
 export class ApiKeyStore implements IApiKeyStore {
   getApiKey() {
-    console.log('get Api key');
     return window.localStorage.getItem(LOCAL_STORAGE_KEY);
   }
   setApiKey(key: string) {
-    console.log('set Api key');
     try {
       window.localStorage.setItem(LOCAL_STORAGE_KEY, key);
       return true;

@@ -16,10 +16,10 @@
       <v-col>
         <list-items
           style="position: relative; z-index: 3"
-          @more-items="fetchVideos"
+          @more-items="fetchPlaylists"
           @update-list="updateSelectedList"
           :itemType="itemType"
-          :itemList="videoList"
+          :itemList="playlistList"
         />
       </v-col>
     </v-row>
@@ -42,21 +42,17 @@ import ListItems from "@/components/ListItems.vue";
     DownloadModal
   }
 })
-export default class ChannelVideos extends Vue {
+export default class ChannelPlaylist extends Vue {
   @Inject(YOUTUBESERVICE)
   service!: IYoutubeService;
 
   nextPageToken = "";
-  videoList: string[] = [];
+  playlistList: string[] = [];
   listVideoSelected: string[] = [];
-  itemType = "video";
+  itemType = "playlist";
 
   get channelId(): string {
     return this.$route.params.id;
-  }
-
-  get playlistId(): string {
-    return this.$route.params.playlistId ? this.$route.params.playlistId : this.$route.params.mainplaylistId;
   }
 
   updateSelectedList(videoSelected: string[]): void {
@@ -71,31 +67,29 @@ export default class ChannelVideos extends Vue {
     console.log("To implement findVideoByKeyword");
   }
 
-  async fetchVideos() {
+  async fetchPlaylists() {
     try {
-      const videoFetched = await this.service.getVideoList(
-        this.playlistId,
+      const playlistsFetched = await this.service.getChannelPlaylists(
+        this.channelId,
         this.nextPageToken
       );
-      console.log('video Fetched')
-      console.log(videoFetched)
-      if (videoFetched.nextPageToken != this.nextPageToken) {
-        this.nextPageToken = videoFetched.nextPageToken;
-        videoFetched.itemList.forEach(video => {
-          this.videoList.push(video);
+      if (playlistsFetched.nextPageToken != this.nextPageToken) {
+        this.nextPageToken = playlistsFetched.nextPageToken;
+        playlistsFetched.itemList.forEach(playlist => {
+          this.playlistList.push(playlist);
         });
       } else {
         // Display no more videos ?
       }
     } catch (err) {
       // TODO send error back to home ?
-      console.log("Channel video error:" + err);
+      console.log("Playlist video error:" + err);
       // this.$router.push("/");
     }
   }
 
   async created() {
-    this.fetchVideos();
+    this.fetchPlaylists();
   }
 }
 </script>

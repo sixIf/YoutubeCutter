@@ -20,9 +20,9 @@ export const LOCAL_STORAGE_KEY = "YoutubeApiKey"
  * Interfaces
  */
 
-export interface VideoFetched {
+export interface ItemFetched {
   readonly nextPageToken: string;
-  readonly videoList: Array<ItemStruct>;
+  readonly itemList: Array<ItemStruct>;
 }
 
 export interface ItemStruct {
@@ -35,11 +35,17 @@ export interface ChannelInfos {
   id: string;
   title: string;
   thumbnail: string;
+  mainPlaylistId: string;
   totalResults: number;
 }
 
 export interface TestApiKey {
   kind: string;
+}
+
+export interface VideoSelected {
+  readonly id: string;
+  readonly title: string;
 }
 
 export interface ApiVideoInPlaylist {
@@ -72,7 +78,31 @@ export interface ApiVideoInPlaylist {
   };
 }
 
-export interface ApiChannelFetched {
+export interface ApiChannelPlaylists {
+  readonly data: {
+    readonly nextPageToken: string;
+    readonly items: [
+      {
+        kind: string;
+        id: string;
+        snippet: {
+          channelId: string;
+          title: string;
+          thumbnails: {
+            high: {
+              url: string;
+              width: number;
+              height: number;
+            };
+          };
+        };
+      }
+    ];
+  };
+}
+
+
+export interface ApiChannelInfos {
   readonly data: {
     readonly pageInfo: {
       totalResults: number;
@@ -82,6 +112,13 @@ export interface ApiChannelFetched {
     readonly items: [
       {
         readonly id: string;
+        readonly contentDetails: {
+          relatedPlaylists: {
+            likes: string;
+            favorites: string;
+            uploads: string;
+          };
+        };
         readonly snippet: {
           title: string;
           description: string;

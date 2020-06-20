@@ -3,13 +3,13 @@
     <v-container class="list-item-container" fluid>
       <v-row dense>
         <p v-if="!itemList">No {{ itemType }} found</p>
-        <v-col v-for="item in itemList" :key="item.id" cols="2">
-          <v-item v-slot:default="{ active, toggle }" :value="item.id">
+        <v-col v-for="item in itemList" :key="item.id" cols="12" sm="6" lg="2">
+          <v-item v-slot:default="{ active, toggle }" :value="formatJson(item.id, item.title)">
             <v-card
               :color="active ? 'primary' : ''"
               id="item.id"
               hover
-              @click="toggle; clickAction(item.id)"
+              @click="toggle(); $emit('update-list', itemSelected)"
             >
               <v-img
                 :src="item.thumbnail"
@@ -20,10 +20,18 @@
                 <v-btn icon dark>
                   <v-icon>{{ active ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
                 </v-btn>
-                <v-card-title v-text="item.title"></v-card-title>
+                <v-card-title class="item-name" v-text="item.title"></v-card-title>
               </v-img>
               <v-card-actions>
-                <v-spacer></v-spacer>
+                <v-spacer>
+                  <v-btn
+                    :to="{name: 'playlist-videos', params: { playlistId: item.id }}"
+                    v-if="itemType=='playlist'"
+                    color="primary"
+                  >
+                    <v-icon>location-enter</v-icon>Explore channel
+                  </v-btn>
+                </v-spacer>
               </v-card-actions>
             </v-card>
           </v-item>
@@ -34,25 +42,24 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { ItemStruct } from "@/config/litterals";
+import { Component, Prop, Watch, Vue } from "vue-property-decorator";
+import { ItemStruct, VideoSelected } from "@/config/litterals";
 import DownloadModal from "@/components/DownloadModal.vue";
 
 @Component
 export default class ListItems extends Vue {
-  @Prop(String) itemType: string | null = null;
+  @Prop({ default: "video" }) itemType!: string;
   @Prop(Array) itemList: ItemStruct[] | undefined;
 
   itemSelected: Array<string> | null = [];
 
-  clickAction(itemId: string): void {
-    switch (this.itemType) {
-      case "playlist":
-        this.$emit("item-clicked", itemId);
-        break;
-      case "video":
-        break;
-    }
+  formatJson(id: string, title: string): string {
+    return `{ "id":"${id}", "title":"${title}"}`;
+  }
+
+  @Watch("itemSelected", { immediate: true, deep: true })
+  onItemListChanged() {
+    this.$emit("update-selected", this.itemSelected);
   }
 
   scrollFetchVideos(): void {

@@ -19,7 +19,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class FiltersToolbar extends Vue {
-  @Prop(String) searchLabel: string | null = null;
+  @Prop({ default: "" }) searchLabel!: string;
   keyword: string | null = null;
 }
 </script>

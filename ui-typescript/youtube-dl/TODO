@@ -8,4 +8,9 @@ Permettre le téléchargement d'une vidéo par direct URL ( la baaase )
 
 Intégrer OAuth 2.0 pour gérer ses propres vidéos
 
-Utiliser sticky / Fix sur toolbar a droite de la liste des vidos
+Accéder aux vidéos à l'interieur d'une playlists
+Peut etre une gestion du tri
+
+Gérer le routage des composants pour que les vidéos de la playlist soit bien
+
+Voir comment géré le téléchargement de toutes les vidéos de la chaine ( y'a pas encore tous les ids, quand faire le loop)

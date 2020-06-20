@@ -60,9 +60,7 @@ export default class SearchChannel extends Vue {
   }
   async getChannel(): Promise<void> {
     try {
-      console.log("SearchChannel getChannel");
-      console.log(this.channelId);
-      const response = await this.youtubeService.findChannelById(
+      const response = await this.youtubeService.findChannelMainPlaylist(
         this.channelId
       );
       // Display channel not found since YT's api respond with 200
@@ -73,13 +71,13 @@ export default class SearchChannel extends Vue {
         };
       } else {
         this.$router.push({
-          name: "channel-videos",
+          name: "channel-uploaded-videos",
           params: {
-            id: this.channelId
+            id: this.channelId,
+            mainplaylistId: response.mainPlaylistId
           }
         });
       }
-      console.log(response);
     } catch (err) {
       console.log("err: " + err);
       this.alert = {

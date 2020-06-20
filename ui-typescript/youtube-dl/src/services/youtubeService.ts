@@ -1,16 +1,18 @@
 import { IYoutubeClient } from "@/api/youtubeClient";
 import { injectable, inject } from "tsyringe";
-import { ChannelInfos, ApiChannelFetched, TestApiKey, ApiChannelMainPlaylist, ChannelMainPlaylist, ApiVideoInPlaylist, ItemStruct, VideoFetched } from '@/config/litterals/index'
+import { ChannelInfos, ApiChannelInfos, TestApiKey, ApiChannelMainPlaylist, ApiChannelPlaylists, ChannelMainPlaylist, ApiVideoInPlaylist, ItemStruct, ItemFetched } from '@/config/litterals/index'
 
 export interface IYoutubeService {
-  getVideoList(playlistId: string, pageToken: string): Promise<VideoFetched>;
+  getVideoList(playlistId: string, pageToken: string): Promise<ItemFetched>;
   findChannelById(channelId: string): Promise<ChannelInfos>;
+
+  getChannelPlaylists(channelId: string, pageToken: string): Promise<ItemFetched>;
 
   testApiKey(apiKeyToTest: string | null): Promise<TestApiKey>;
   findChannelMainPlaylist(channelId: string): Promise<ChannelMainPlaylist>;
 
-  formatVideoList(apiResponse: ApiVideoInPlaylist): VideoFetched;
-  formatChannelInfos(apiResponse: ApiChannelFetched): ChannelInfos;
+  formatVideoList(apiResponse: ApiVideoInPlaylist): ItemFetched;
+  formatChannelInfos(apiResponse: ApiChannelInfos): ChannelInfos;
 }
 
 @injectable()
@@ -24,8 +26,23 @@ export class YoutubeService implements IYoutubeService {
     return response;
   }
 
-  formatVideoList(apiResponse: ApiVideoInPlaylist): VideoFetched {
-    console.log('formatVideoList')
+  formatPlaylistList(apiResponse: ApiChannelPlaylists): ItemFetched {
+    const channelPlaylists: Array<ItemStruct> = [];
+    apiResponse.data.items.forEach(playlist => {
+      channelPlaylists.push({
+        id: playlist.id,
+        title: playlist.snippet.title,
+        thumbnail: playlist.snippet.thumbnails.high.url
+      });
+    });
+    const ItemFetched: ItemFetched = {
+      nextPageToken: apiResponse.data.nextPageToken,
+      itemList: channelPlaylists
+    }
+    return ItemFetched;
+  }
+
+  formatVideoList(apiResponse: ApiVideoInPlaylist): ItemFetched {
     const channelVideos: Array<ItemStruct> = [];
     apiResponse.data.items.forEach(video => {
       channelVideos.push({
@@ -34,20 +51,24 @@ export class YoutubeService implements IYoutubeService {
         thumbnail: video.snippet.thumbnails.high.url
       });
     });
-    const VideoFetched: VideoFetched = {
+    const ItemFetched: ItemFetched = {
       nextPageToken: apiResponse.data.nextPageToken,
-      videoList: channelVideos
+      itemList: channelVideos
     }
-    return VideoFetched;
+    return ItemFetched;
   }
 
-  formatChannelInfos(apiResponse: ApiChannelFetched): ChannelInfos {
-    console.log('formatChannelInfos')
-    console.log(apiResponse)
+  async getChannelPlaylists(channelId: string, pageToken: string): Promise<ItemFetched> {
+    const response = await this.youtubeClient.findChannelPlaylists(channelId, pageToken)
+    return this.formatPlaylistList(response)
+  }
+
+  formatChannelInfos(apiResponse: ApiChannelInfos): ChannelInfos {
     const channelInfos: ChannelInfos = {
       id: apiResponse.data.items != undefined ? apiResponse.data.items[0].id : "not found",
       thumbnail: apiResponse.data.items != undefined ? apiResponse.data.items[0].snippet.thumbnails.high.url : "not found",
       title: apiResponse.data.items != undefined ? apiResponse.data.items[0].snippet.title : "not found",
+      mainPlaylistId: apiResponse.data.items != undefined ? apiResponse.data.items[0].contentDetails.relatedPlaylists.uploads : "not found",
       totalResults: apiResponse.data.pageInfo.totalResults
     };
     return channelInfos;
@@ -64,7 +85,7 @@ export class YoutubeService implements IYoutubeService {
 
 
 
-  async getVideoList(playlistId: string, pageToken: string): Promise<VideoFetched> {
+  async getVideoList(playlistId: string, pageToken: string): Promise<ItemFetched> {
     const response = await this.youtubeClient.fetchVideoInPlaylist(playlistId, pageToken)
     return this.formatVideoList(response)
   }

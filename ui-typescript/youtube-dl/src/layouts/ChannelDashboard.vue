@@ -1,19 +1,16 @@
 <template>
   <div>
     <nav-drawer
+      v-if="displayDrawer"
       :channelId="channelId"
       :channelTitle="channelTitle"
       :channelThumbnail="channelThumbnail"
+      :mainPlaylistId="mainPlaylistId"
     ></nav-drawer>
     <v-content>
       <v-container class="channel-container" fluid>
         <v-row align="start" justify="start" no-gutters>
           <v-col cols="12">
-            <filters-toolbar
-              style="position: sticky; top:50px; z-index: 5"
-              searchLabel="Search specific video"
-              v-on:search-keyword="findVideoByKeyword"
-            />
             <router-view />
           </v-col>
         </v-row>
@@ -30,7 +27,7 @@ import { YOUTUBESERVICE, ERROR_TYPES } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 
 @Component({
-  components: { NavDrawer, FiltersToolbar }
+  components: { NavDrawer }
 })
 export default class ChannelDashboard extends Vue {
   @Inject(YOUTUBESERVICE)
@@ -38,20 +35,25 @@ export default class ChannelDashboard extends Vue {
 
   channelThumbnail: string | null = null;
   channelTitle: string | null = null;
+  mainPlaylistId: string | null = null;
+  displayDrawer = false;
 
   get channelId(): string {
     return this.$route.params.id;
   }
 
-  async mounted() {
+  async created() {
     try {
       const response = await this.service.findChannelById(this.channelId);
       this.channelTitle = response.title;
       this.channelThumbnail = response.thumbnail;
+      this.mainPlaylistId = response.mainPlaylistId;
+      this.displayDrawer = true;
+      console.log("Created Channel Dashboard");
     } catch (err) {
-      // this.$router.push("/");
       console.log("Channel dashboard:" + err.message);
       console.log(err);
+      this.$router.push("/");
     }
   }
 }

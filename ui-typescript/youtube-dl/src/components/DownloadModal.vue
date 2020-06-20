@@ -1,10 +1,9 @@
 <template>
   <v-dialog v-model="dialog" max-width="500">
     <template v-slot:activator="{ on }">
-      <v-btn v-on="on" icon>
-        <v-icon>mdi-download</v-icon>
-      </v-btn>
+      <v-btn v-on="on" :disabled="disabled" color="primary">Download</v-btn>
     </template>
+    <slot></slot>
     <v-card>
       <v-card-title class="headline">Download options</v-card-title>
       <v-card-text>
@@ -33,10 +32,10 @@ import { Component, Inject, Provide, Prop, Vue } from "vue-property-decorator";
 import { YOUTUBESERVICE, ERROR_TYPES } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 
+
 @Component
 export default class DownloadModal extends Vue {
-  @Prop(String) videoId: string | null = null;
-
+@Prop({ default: true }) disabled: boolean;
   dialog = false;
   audioOnly = false;
   quality: string | null = null;

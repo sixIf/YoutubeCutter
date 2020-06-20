@@ -3,6 +3,8 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '@/views/Home.vue'
 import ChannelDashboard from '@/layouts/ChannelDashboard.vue'
 import ChannelVideos from '@/views/ChannelVideos.vue'
+import ChannelPlaylists from '@/views/ChannelPlaylists.vue'
+import About from '@/views/About.vue'
 import ApiKeyManager from '@/views/ApiKeyManager.vue'
 import { ApiKeyService } from "@/services/apiKeyService"
 import { ApplicationContainer } from "@/di/index"
@@ -12,11 +14,11 @@ Vue.use(VueRouter)
 const routes: Array<RouteConfig> = [
   {
     path: '/',
-    name: 'Home',
+    name: 'home',
     component: Home
   },
   {
-    path: '/apiKey',
+    path: '/api-key',
     name: 'api-manager',
     component: ApiKeyManager
   },
@@ -26,28 +28,28 @@ const routes: Array<RouteConfig> = [
     children: [
       {
         path: '',
-        redirect: { name: 'channel-videos' }
+        redirect: { name: 'channel-uploaded-videos' }
       },
       {
-        path: 'videos',
-        name: 'channel-videos',
+        path: 'playlist/:mainplaylistId/videos',
+        name: 'channel-uploaded-videos',
         component: ChannelVideos
+      },
+      {
+        path: 'playlists',
+        name: 'channel-playlists',
+        component: ChannelPlaylists
+      },
+      {
+        path: 'playlist/:playlistId/videos',
+        name: 'playlist-videos',
+        component: ChannelVideos
+      },
+      {
+        path: 'help',
+        name: 'help',
+        component: About
       }
-      // {
-      //   path: 'playlists',
-      //   name: 'channel-playlists',
-      //   component: ChannelPlaylists
-      // },
-      // {
-      //   path: 'playlist/:playlistId/videos',
-      //   name: 'playlist-videos',
-      //   component: PlaylistVideos
-      // },
-      // {
-      //   path: 'help',
-      //   name: 'help',
-      //   component: Help
-      // }
     ]
 
   },

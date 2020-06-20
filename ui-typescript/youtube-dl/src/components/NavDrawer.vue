@@ -14,7 +14,7 @@
 
       <v-divider></v-divider>
 
-      <v-list-item v-for="item in items" :key="item.title" :to="item.link" exact link>
+      <v-list-item v-for="item in items" :key="item.title" :to="item.link"   link>
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
@@ -35,7 +35,7 @@ import { Vue, Prop, Component } from "vue-property-decorator";
 interface MenusItems {
   title: string;
   icon: string;
-  link: { name: string };
+  link: { name: string; params?: { playlistId: string | undefined } };
 }
 
 @Component
@@ -43,12 +43,16 @@ export default class NavDrawer extends Vue {
   @Prop({ default: "" }) readonly channelId!: string;
   @Prop(String) readonly channelTitle: string | undefined;
   @Prop(String) readonly channelThumbnail: string | undefined;
+  @Prop({ default: "" }) readonly mainPlaylistId!: string;
 
   items: MenusItems[] = [
     {
       title: "Videos",
       icon: "mdi-video-box",
-      link: { name: "channel-videos" }
+      link: {
+        name: "channel-uploaded-videos",
+        params: { playlistId: this.mainPlaylistId }
+      }
     },
     {
       title: "Playlists",
