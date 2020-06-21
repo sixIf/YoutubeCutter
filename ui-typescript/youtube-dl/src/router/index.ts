@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '@/views/Home.vue'
 import ChannelDashboard from '@/layouts/ChannelDashboard.vue'
 import ChannelVideos from '@/views/ChannelVideos.vue'
+import PlaylistVideos from '@/views/PlaylistVideos.vue'
 import ChannelPlaylists from '@/views/ChannelPlaylists.vue'
 import About from '@/views/About.vue'
 import ApiKeyManager from '@/views/ApiKeyManager.vue'
@@ -12,6 +13,11 @@ import { ApplicationContainer } from "@/di/index"
 Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
+  {
+    path: '/exit',
+    name: 'exit',
+    redirect: { name: 'home' }
+  },
   {
     path: '/',
     name: 'home',
@@ -28,10 +34,10 @@ const routes: Array<RouteConfig> = [
     children: [
       {
         path: '',
-        redirect: { name: 'channel-uploaded-videos' }
+        redirect: { name: 'channel-playlists' }
       },
       {
-        path: 'playlist/:mainplaylistId/videos',
+        path: 'videos/:playlistId',
         name: 'channel-uploaded-videos',
         component: ChannelVideos
       },
@@ -41,9 +47,9 @@ const routes: Array<RouteConfig> = [
         component: ChannelPlaylists
       },
       {
-        path: 'playlist/:playlistId/videos',
+        path: 'playlist/:playlistId/:playlistName/videos',
         name: 'playlist-videos',
-        component: ChannelVideos
+        component: PlaylistVideos
       },
       {
         path: 'help',

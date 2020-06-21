@@ -25,11 +25,11 @@
               <v-card-actions>
                 <v-spacer>
                   <v-btn
-                    :to="{name: 'playlist-videos', params: { playlistId: item.id }}"
+                    :to="{name: 'playlist-videos', params: { playlistId: item.id, playlistName: item.title }}"
                     v-if="itemType=='playlist'"
                     color="primary"
                   >
-                    <v-icon>location-enter</v-icon>Explore channel
+                    <v-icon>location-enter</v-icon>Explore playlist
                   </v-btn>
                 </v-spacer>
               </v-card-actions>

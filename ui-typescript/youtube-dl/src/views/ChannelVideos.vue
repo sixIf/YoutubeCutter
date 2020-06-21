@@ -2,6 +2,10 @@
   <v-container fluide dense>
     <v-row>
       <v-col>
+        <v-row>
+          <h1 v-if="!playlistName">Uploaded videos</h1>
+          <h1 v-else>Playlists : {{ playlistName }}</h1>
+        </v-row>
         <v-row justify="end">
           <download-modal :disabled="listVideoSelected.length == 0">
             <!-- <template v-slot:activator="{ on }">
@@ -28,7 +32,7 @@
 
 
 <script lang="ts">
-import { Component, Inject, Vue } from "vue-property-decorator";
+import { Component, Inject, Prop, Vue } from "vue-property-decorator";
 import DownloadModal from "@/components/DownloadModal.vue";
 import { YOUTUBESERVICE, ItemStruct } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
@@ -46,6 +50,7 @@ export default class ChannelVideos extends Vue {
   @Inject(YOUTUBESERVICE)
   service!: IYoutubeService;
 
+  @Prop({ default: "" }) playlistName!: string;
   nextPageToken = "";
   videoList: string[] = [];
   listVideoSelected: string[] = [];
@@ -56,7 +61,7 @@ export default class ChannelVideos extends Vue {
   }
 
   get playlistId(): string {
-    return this.$route.params.playlistId ? this.$route.params.playlistId : this.$route.params.mainplaylistId;
+    return this.$route.params.playlistId;
   }
 
   updateSelectedList(videoSelected: string[]): void {
@@ -77,8 +82,8 @@ export default class ChannelVideos extends Vue {
         this.playlistId,
         this.nextPageToken
       );
-      console.log('video Fetched')
-      console.log(videoFetched)
+      console.log("video Fetched");
+      console.log(videoFetched);
       if (videoFetched.nextPageToken != this.nextPageToken) {
         this.nextPageToken = videoFetched.nextPageToken;
         videoFetched.itemList.forEach(video => {
@@ -95,7 +100,13 @@ export default class ChannelVideos extends Vue {
   }
 
   async created() {
+    // Reset video list
+    console.log("Created channel videos");
     this.fetchVideos();
+  }
+
+  mounted() {
+    console.log("Mounted channel videos");
   }
 }
 </script>

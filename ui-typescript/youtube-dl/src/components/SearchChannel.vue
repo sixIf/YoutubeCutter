@@ -74,7 +74,7 @@ export default class SearchChannel extends Vue {
           name: "channel-uploaded-videos",
           params: {
             id: this.channelId,
-            mainplaylistId: response.mainPlaylistId
+            playlistId: response.mainPlaylistId
           }
         });
       }

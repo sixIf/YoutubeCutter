@@ -14,7 +14,7 @@
 
       <v-divider></v-divider>
 
-      <v-list-item v-for="item in items" :key="item.title" :to="item.link"   link>
+      <v-list-item v-for="item in items" :key="item.title" :to="item.link" link>
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
@@ -67,8 +67,13 @@ export default class NavDrawer extends Vue {
     {
       title: "Exit channel",
       icon: "mdi-exit-run",
-      link: { name: "home" }
+      link: { name: "exit" }
     }
   ];
+
+  mounted() {
+    console.log("mounted nav drawer");
+    console.log(this.mainPlaylistId);
+  }
 }
 </script>
