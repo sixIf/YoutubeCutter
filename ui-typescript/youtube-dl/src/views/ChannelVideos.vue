@@ -1,18 +1,16 @@
 <template>
   <v-container fluide dense>
-    <v-row>
+    <v-row class="sticky-toolbar">
       <v-col>
         <v-row>
           <h1 v-if="!playlistName">Uploaded videos</h1>
           <h1 v-else>Playlists : {{ playlistName }}</h1>
         </v-row>
         <v-row justify="end">
-          <download-modal :disabled="listVideoSelected.length == 0">
-            <!-- <template v-slot:activator="{ on }">
-              <v-btn v-on="on" color="primary">Download</v-btn>
-            </template>-->
-          </download-modal>
-          <!-- <v-btn color="secondary">Download</v-btn> -->
+          <download-modal
+            :itemsSelected="listVideoSelected"
+            :disabled="listVideoSelected.length == 0"
+          ></download-modal>
         </v-row>
       </v-col>
     </v-row>
@@ -52,7 +50,7 @@ export default class ChannelVideos extends Vue {
 
   @Prop({ default: "" }) playlistName!: string;
   nextPageToken = "";
-  videoList: string[] = [];
+  videoList: ItemStruct[] = [];
   listVideoSelected: string[] = [];
   itemType = "video";
 

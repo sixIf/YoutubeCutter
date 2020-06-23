@@ -1,6 +1,4 @@
-Rendre sticky la toolbar sur la recherche de vidéo, et la rendre aussi commune avec les playlists
-le téléchargement de vidéo se fera via un bouton sur cette barre , en selectionnant les vidéo et la modale s'ouvrira en cliquant sur le bouton télécharger
-Attention ! il faut hide la fonctionnalité de recherche par nom pour les playlists ?
+Ajouter un filtrage des vidéos déjà affichées
 
 Lors du clic sur une card, change la couleur + ajoue une petite checkbox checked en haut à gauche de la card ?
 
@@ -14,3 +12,5 @@ Peut etre une gestion du tri
 Gérer le routage des composants pour que les vidéos de la playlist soit bien
 
 Voir comment géré le téléchargement de toutes les vidéos de la chaine ( y'a pas encore tous les ids, quand faire le loop)
+
+Implement downloadService --> communication avec mon backend node 

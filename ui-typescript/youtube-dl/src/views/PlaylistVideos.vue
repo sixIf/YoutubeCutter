@@ -11,7 +11,7 @@ import ChannelVideos from "@/views/ChannelVideos.vue";
     ChannelVideos
   }
 })
-export default class PlylistVideos extends Vue {
+export default class PlaylistVideos extends Vue {
   get playlistName(): string {
     return this.$route.params.playlistName;
   }

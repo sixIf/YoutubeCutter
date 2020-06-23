@@ -1,9 +1,12 @@
 <template>
   <v-container fluide dense>
-    <v-row>
+    <v-row class="sticky-toolbar">
       <v-col>
         <v-row justify="end">
-          <download-modal :disabled="listVideoSelected.length == 0">
+          <download-modal
+            :itemsSelected="listPlaylistSelected"
+            :disabled="listPlaylistSelected.length == 0"
+          >
             <!-- <template v-slot:activator="{ on }">
               <v-btn v-on="on" color="primary">Download</v-btn>
             </template>-->
@@ -47,16 +50,16 @@ export default class ChannelPlaylist extends Vue {
   service!: IYoutubeService;
 
   nextPageToken = "";
-  playlistList: string[] = [];
-  listVideoSelected: string[] = [];
+  playlistList: ItemStruct[] = [];
+  listPlaylistSelected: string[] = [];
   itemType = "playlist";
 
   get channelId(): string {
     return this.$route.params.id;
   }
 
-  updateSelectedList(videoSelected: string[]): void {
-    this.listVideoSelected = videoSelected;
+  updateSelectedList(playlistSelected: string[]): void {
+    this.listPlaylistSelected = playlistSelected;
   }
 
   findVideoByKeyword(): void {

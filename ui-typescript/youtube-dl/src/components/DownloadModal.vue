@@ -32,10 +32,10 @@ import { Component, Inject, Provide, Prop, Vue } from "vue-property-decorator";
 import { YOUTUBESERVICE, ERROR_TYPES } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 
-
 @Component
 export default class DownloadModal extends Vue {
-@Prop({ default: true }) disabled: boolean;
+  @Prop({ default: true }) disabled!: boolean;
+  @Prop(Array) itemsSelected: string[] = [];
   dialog = false;
   audioOnly = false;
   quality: string | null = null;
