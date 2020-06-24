@@ -9,12 +9,12 @@
         </router-link>
         <v-toolbar-title>Youtube Downloader</v-toolbar-title>
         <v-spacer></v-spacer>
+        <router-link to="/help">
+          <v-btn icon>
+            <v-icon>mdi-help-circle</v-icon>
+          </v-btn>
+        </router-link>
         <router-link to="/api-key">
-          <router-link to="/">
-            <v-btn icon>
-              <v-icon>mdi-help-circle</v-icon>
-            </v-btn>
-          </router-link>
           <v-btn icon>
             <v-icon>mdi-cog</v-icon>
           </v-btn>

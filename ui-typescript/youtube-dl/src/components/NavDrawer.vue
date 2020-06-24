@@ -59,11 +59,11 @@ export default class NavDrawer extends Vue {
       icon: "mdi-playlist-play",
       link: { name: "channel-playlists" }
     },
-    {
-      title: "Help",
-      icon: "mdi-help-box",
-      link: { name: "help" }
-    },
+    // {
+    //   title: "Help",
+    //   icon: "mdi-help-box",
+    //   link: { name: "help" }
+    // },
     {
       title: "Exit channel",
       icon: "mdi-exit-run",

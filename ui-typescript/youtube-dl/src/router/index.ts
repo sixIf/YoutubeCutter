@@ -5,7 +5,7 @@ import ChannelDashboard from '@/layouts/ChannelDashboard.vue'
 import ChannelVideos from '@/views/ChannelVideos.vue'
 import PlaylistVideos from '@/views/PlaylistVideos.vue'
 import ChannelPlaylists from '@/views/ChannelPlaylists.vue'
-import About from '@/views/About.vue'
+import Help from '@/views/Help.vue'
 import ApiKeyManager from '@/views/ApiKeyManager.vue'
 import { ApiKeyService } from "@/services/apiKeyService"
 import { ApplicationContainer } from "@/di/index"
@@ -22,6 +22,11 @@ const routes: Array<RouteConfig> = [
     path: '/',
     name: 'home',
     component: Home
+  },
+  {
+    path: '/help',
+    name: 'help',
+    component: Help
   },
   {
     path: '/api-key',
@@ -51,11 +56,11 @@ const routes: Array<RouteConfig> = [
         name: 'playlist-videos',
         component: PlaylistVideos
       },
-      {
-        path: 'help',
-        name: 'help',
-        component: About
-      }
+      // {
+      //   path: 'help',
+      //   name: 'help',
+      //   component: Help
+      // }
     ]
 
   },

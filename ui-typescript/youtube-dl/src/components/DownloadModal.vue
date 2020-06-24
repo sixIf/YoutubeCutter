@@ -21,14 +21,14 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="primary darken-1" text @click="dialog = false">Cancel</v-btn>
-        <v-btn color="green darken-1" text @click="dialog = false">Download</v-btn>
+        <v-btn color="green darken-1" text @click="downloadItems">Download</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import { Component, Inject, Provide, Prop, Vue } from "vue-property-decorator";
+import { Component, Provide, Prop, Vue } from "vue-property-decorator";
 import { YOUTUBESERVICE, ERROR_TYPES } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 
@@ -36,9 +36,22 @@ import { IYoutubeService } from "@/services/youtubeService";
 export default class DownloadModal extends Vue {
   @Prop({ default: true }) disabled!: boolean;
   @Prop(Array) itemsSelected: string[] = [];
+  @Prop({ default: "video" }) itemType!: string;
   dialog = false;
   audioOnly = false;
   quality: string | null = null;
   qualityTypes = ["high", "medium", "low"];
+
+  downloadItems(): void {
+    switch (this.itemType) {
+      case "video":
+        // Send videos array of json
+        break;
+
+      case "playlist":
+        // Send playlist array of Json
+        break;
+    }
+  }
 }
 </script>

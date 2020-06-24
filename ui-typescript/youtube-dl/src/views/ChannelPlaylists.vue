@@ -4,6 +4,7 @@
       <v-col>
         <v-row justify="end">
           <download-modal
+            :itemType="itemType"
             :itemsSelected="listPlaylistSelected"
             :disabled="listPlaylistSelected.length == 0"
           >
@@ -18,7 +19,7 @@
     <v-row>
       <v-col>
         <list-items
-          style="position: relative; z-index: 3"
+          style="z-index: 3"
           @more-items="fetchPlaylists"
           @update-list="updateSelectedList"
           :itemType="itemType"

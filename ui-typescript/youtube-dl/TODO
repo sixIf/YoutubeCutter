@@ -14,3 +14,6 @@ Gérer le routage des composants pour que les vidéos de la playlist soit bien
 Voir comment géré le téléchargement de toutes les vidéos de la chaine ( y'a pas encore tous les ids, quand faire le loop)
 
 Implement downloadService --> communication avec mon backend node 
+
+Voir la pertinence d'ajouter le nombre de vidéos de la chaine dans les requetes ( statistics -> 2 resource cost ) ou peut être uniquement sur les vues vidéos ?
+----> surement juste faire une requête en plus lors du mounted des vidéos pour afficher le nb de vidéos
