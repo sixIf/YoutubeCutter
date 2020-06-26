@@ -1,15 +1,11 @@
 Ajouter un filtrage des vidéos déjà affichées
 
-Lors du clic sur une card, change la couleur + ajoue une petite checkbox checked en haut à gauche de la card ?
-
 Permettre le téléchargement d'une vidéo par direct URL ( la baaase )
+----> recherche de vidéos par URLs, possibilité d'en mettre plusieurs
 
-Intégrer OAuth 2.0 pour gérer ses propres vidéos
 
 Accéder aux vidéos à l'interieur d'une playlists
 Peut etre une gestion du tri
-
-Gérer le routage des composants pour que les vidéos de la playlist soit bien
 
 Voir comment géré le téléchargement de toutes les vidéos de la chaine ( y'a pas encore tous les ids, quand faire le loop)
 
@@ -17,3 +13,7 @@ Implement downloadService --> communication avec mon backend node
 
 Voir la pertinence d'ajouter le nombre de vidéos de la chaine dans les requetes ( statistics -> 2 resource cost ) ou peut être uniquement sur les vues vidéos ?
 ----> surement juste faire une requête en plus lors du mounted des vidéos pour afficher le nb de vidéos
+
+
+************** DEPRECATED **********************
+Intégrer OAuth 2.0 pour gérer ses propres vidéos ----> Rendre playlist public le temps du téléchargement ?

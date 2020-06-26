@@ -1,39 +1,45 @@
 <template>
-  <div>
-    <v-card class="elevation-12">
-      <v-toolbar color="primary" dark flat>
-        <v-toolbar-title>Search Youtube Channel</v-toolbar-title>
-        <v-spacer></v-spacer>
-      </v-toolbar>
-      <v-card-text>
-        <v-alert
-          v-if="alert"
-          dismissible
-          v-model="displayAlert"
-          :type="alert.type"
-        >{{ alert.message }}</v-alert>
-        <v-form @submit.prevent="getChannel">
-          <v-text-field
-            v-model="channelId"
-            label="Channel ID"
-            name="channel"
-            prepend-icon="person"
-            type="text"
-            required
-          ></v-text-field>
-        </v-form>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          :disabled="!channelId"
-          type="submit"
-          @click.prevent="getChannel"
-        >Search</v-btn>
-      </v-card-actions>
-    </v-card>
-  </div>
+  <v-content>
+    <v-container class="home-container fill-height" fluid>
+      <v-row align="center" justify="center" no-gutters>
+        <v-col cols="12" sm="8" md="4">
+          <v-card class="elevation-12">
+            <v-toolbar color="primary" dark flat>
+              <v-toolbar-title>Search Youtube Channel</v-toolbar-title>
+              <v-spacer></v-spacer>
+            </v-toolbar>
+            <v-card-text>
+              <v-alert
+                v-if="alert"
+                dismissible
+                v-model="displayAlert"
+                :type="alert.type"
+              >{{ alert.message }}</v-alert>
+              <v-form @submit.prevent="getChannel">
+                <v-text-field
+                  v-model="channelId"
+                  label="Channel ID"
+                  name="channel"
+                  prepend-icon="person"
+                  type="text"
+                  required
+                ></v-text-field>
+              </v-form>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="primary"
+                :disabled="!channelId"
+                type="submit"
+                @click.prevent="getChannel"
+              >Search</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-content>
 </template>
 
 
