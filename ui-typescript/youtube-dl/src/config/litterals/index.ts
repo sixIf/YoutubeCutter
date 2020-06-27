@@ -24,6 +24,16 @@ export interface ItemFetched {
   readonly itemList: Array<ItemStruct>;
 }
 
+export interface VideoFetched {
+  readonly totalResults: number;
+  readonly videoInfos: ItemStruct;
+}
+
+export interface IAlert {
+  type: string;
+  message: string;
+}
+
 export interface ItemStruct {
   readonly id: string;
   readonly title: string;
@@ -71,6 +81,34 @@ export interface ApiVideoInPlaylist {
             kind: string;
             videoId: string;
           };
+        };
+      }
+    ];
+  };
+}
+
+export interface ApiVideoById {
+  readonly data: {
+    readonly pageInfo: {
+      totalResults: number;
+      resultsPerPage: number;
+    };
+    readonly items: [
+      {
+        kind: string;
+        id: string;
+        snippet: {
+          channelId: string;
+          title: string;
+          description: string;
+          thumbnails: {
+            high: {
+              url: string;
+              width: number;
+              height: number;
+            };
+          };
+          channelTitle: string;
         };
       }
     ];

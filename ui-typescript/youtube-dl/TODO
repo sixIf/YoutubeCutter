@@ -15,5 +15,8 @@ Voir la pertinence d'ajouter le nombre de vidéos de la chaine dans les requetes
 ----> surement juste faire une requête en plus lors du mounted des vidéos pour afficher le nb de vidéos
 
 
+https://developers.google.com/youtube/v3/docs/commentThreads/list?apix_params=%7B%22part%22%3A%5B%22snippet%2Creplies%22%5D%2C%22videoId%22%3A%22_VB39Jo8mAQ%22%7D
+Ajout du téléchargement des meilleurs commentaires
+
 ************** DEPRECATED **********************
-Intégrer OAuth 2.0 pour gérer ses propres vidéos ----> Rendre playlist public le temps du téléchargement ?
+Intégrer OAuth 2.0 pour gérer ses propres vidéos ----> Rendre playlist public le temps du téléchargement ?----------> 

@@ -1,16 +1,18 @@
 import { IYoutubeClient } from "@/api/youtubeClient";
 import { injectable, inject } from "tsyringe";
-import { ChannelInfos, ApiChannelInfos, TestApiKey, ApiChannelMainPlaylist, ApiChannelPlaylists, ChannelMainPlaylist, ApiVideoInPlaylist, ItemStruct, ItemFetched } from '@/config/litterals/index'
+import { ChannelInfos, ApiVideoById, ApiChannelInfos, TestApiKey, ApiChannelMainPlaylist, ApiChannelPlaylists, ChannelMainPlaylist, ApiVideoInPlaylist, ItemStruct, ItemFetched, VideoFetched } from '@/config/litterals/index'
 
 export interface IYoutubeService {
   getVideoList(playlistId: string, pageToken: string): Promise<ItemFetched>;
   findChannelById(channelId: string): Promise<ChannelInfos>;
 
+  findVideoById(videoId: string): Promise<VideoFetched>;
   getChannelPlaylists(channelId: string, pageToken: string): Promise<ItemFetched>;
 
   testApiKey(apiKeyToTest: string | null): Promise<TestApiKey>;
   findChannelMainPlaylist(channelId: string): Promise<ChannelMainPlaylist>;
 
+  formatVideo(apiResponse: ApiVideoById): VideoFetched;
   formatVideoList(apiResponse: ApiVideoInPlaylist): ItemFetched;
   formatChannelInfos(apiResponse: ApiChannelInfos): ChannelInfos;
 }
@@ -58,6 +60,18 @@ export class YoutubeService implements IYoutubeService {
     return ItemFetched;
   }
 
+  formatVideo(apiResponse: ApiVideoById): VideoFetched {
+    const ItemFetched: VideoFetched = {
+      totalResults: apiResponse.data.pageInfo.totalResults,
+      videoInfos: {
+        id: apiResponse.data.items[0] ? apiResponse.data.items[0].id : "not found",
+        thumbnail: apiResponse.data.items[0] ? apiResponse.data.items[0].snippet.thumbnails.high.url : "not found",
+        title: apiResponse.data.items[0] ? apiResponse.data.items[0].snippet.title : "not found"
+      }
+    }
+    return ItemFetched;
+  }
+
   async getChannelPlaylists(channelId: string, pageToken: string): Promise<ItemFetched> {
     const response = await this.youtubeClient.findChannelPlaylists(channelId, pageToken)
     return this.formatPlaylistList(response)
@@ -83,6 +97,10 @@ export class YoutubeService implements IYoutubeService {
   }
 
 
+  async findVideoById(videoId: string): Promise<VideoFetched> {
+    const response = await this.youtubeClient.findVideoById(videoId)
+    return this.formatVideo(response)
+  }
 
 
   async getVideoList(playlistId: string, pageToken: string): Promise<ItemFetched> {

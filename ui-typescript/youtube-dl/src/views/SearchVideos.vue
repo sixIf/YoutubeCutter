@@ -1,22 +1,22 @@
 <template>
-  <v-container class="home-container fill-height" fluid>
-    <v-row>
-      <v-col cols="3">
-        <!-- Send id's list input by user in the toolbar by event when clicking on search -->
-        <search-videos-toolbar></search-videos-toolbar>
-      </v-col>
-      <v-col cols="9">
-        <!-- Here display channel  -->
-        <list-items
-          style="position: relative; z-index: 3"
-          @more-items="console.log('You crazy dude')"
-          @update-list="console.log('You crazy dude')"
-          :itemType="itemType"
-          :itemList="videoList"
-        />
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-content>
+    <v-container fluid>
+      <v-row>
+        <v-col cols="3">
+          <!-- <v-row justify="start" align="stretch" style="height: 500px;"> -->
+          <search-videos-toolbar @update-video-list="updateVideoList"></search-videos-toolbar>
+          <!-- </v-row> -->
+        </v-col>
+        <v-col cols="9">
+          <list-items
+            style="position: relative; z-index: 3"
+            :itemType="itemType"
+            :itemList="videoList"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-content>
 </template>
 
 <script lang="ts">
@@ -32,5 +32,12 @@ export default class SearchVideos extends Vue {
   listVideoSelected: string[] = [];
   itemType = "video";
   videoList: ItemStruct[] = [];
+
+  updateVideoList(newVideoList: ItemStruct[]): void {
+    // TODO: Lodash ?
+    console.log("on a pudate");
+    console.log(newVideoList);
+    this.videoList = newVideoList;
+  }
 }
 </script>

@@ -2,7 +2,7 @@
   <v-item-group multiple v-model="itemSelected">
     <v-container class="list-item-container" fluid>
       <v-row dense>
-        <p v-if="!itemList">No {{ itemType }} found</p>
+        <p v-if="itemList.length==0">No {{ itemType }} found</p>
         <v-col v-for="item in itemList" :key="item.id" cols="12" sm="6" lg="2">
           <v-item v-slot:default="{ active, toggle }" :value="formatJson(item.id, item.title)">
             <v-card
@@ -17,7 +17,7 @@
                 gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
                 height="200px"
               >
-                <v-btn icon dark>
+                <v-btn class="fav-icon" icon dark>
                   <v-icon>{{ active ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
                 </v-btn>
                 <v-card-title class="item-name" v-text="item.title"></v-card-title>
@@ -85,3 +85,9 @@ export default class ListItems extends Vue {
   }
 }
 </script>
+
+<style lang="stylus">
+.fav-icon
+  position absolute
+  top 5px
+</style>

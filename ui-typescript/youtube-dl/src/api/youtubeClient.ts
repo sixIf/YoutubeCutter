@@ -1,11 +1,12 @@
 import axios from 'axios'
 import { IApiKeyService } from '@/services/apiKeyService'
 import { injectable, inject } from "tsyringe";
-import { ApiChannelInfos, TestApiKey, ApiChannelMainPlaylist, ApiVideoInPlaylist, ApiChannelPlaylists } from '@/config/litterals/index'
+import { ApiChannelInfos, ApiVideoById, TestApiKey, ApiChannelMainPlaylist, ApiVideoInPlaylist, ApiChannelPlaylists } from '@/config/litterals/index'
 
 export interface IYoutubeClient {
 
   findChannelById(channelId: string): Promise<ApiChannelInfos>;
+  findVideoById(videoId: string): Promise<ApiVideoById>;
   findChannelPlaylists(channelId: string, pageToken: string): Promise<ApiChannelPlaylists>;
   findChannelMainPlaylist(channelId: string): Promise<ApiChannelMainPlaylist>;
   fetchVideoInPlaylist(playlistId: string, pageToken: string): Promise<ApiVideoInPlaylist>;
@@ -16,6 +17,20 @@ export interface IYoutubeClient {
 export class YoutubeClient implements IYoutubeClient {
 
   constructor(@inject("IApiKeyService") private apiKeyAccessor: IApiKeyService) { }
+
+
+  findVideoById(videoId: string): Promise<ApiVideoById> {
+    return axios
+      .get(
+        "https://www.googleapis.com/youtube/v3/videos?part=snippet&order=date&maxResults=50",
+        {
+          params: {
+            id: videoId,
+            key: this.apiKey,
+          }
+        }
+      )
+  }
   findChannelPlaylists(channelId: string, pageToken: string): Promise<ApiChannelPlaylists> {
     return axios
       .get(

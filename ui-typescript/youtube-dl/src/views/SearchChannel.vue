@@ -9,12 +9,7 @@
               <v-spacer></v-spacer>
             </v-toolbar>
             <v-card-text>
-              <v-alert
-                v-if="alert"
-                dismissible
-                v-model="displayAlert"
-                :type="alert.type"
-              >{{ alert.message }}</v-alert>
+              <alert v-if="alert" :alert="alert"></alert>
               <v-form @submit.prevent="getChannel">
                 <v-text-field
                   v-model="channelId"
@@ -45,10 +40,15 @@
 
 <script lang="ts">
 import { Component, Inject, Vue } from "vue-property-decorator";
-import { YOUTUBESERVICE, ERROR_TYPES } from "@/config/litterals";
+import { YOUTUBESERVICE, ERROR_TYPES, IAlert } from "@/config/litterals";
+import Alert from "@/components/Alert.vue";
 import { IYoutubeService } from "@/services/youtubeService";
 
-@Component
+@Component({
+  components: {
+    Alert
+  }
+})
 export default class SearchChannel extends Vue {
   @Inject(YOUTUBESERVICE)
   youtubeService!: IYoutubeService;
@@ -56,7 +56,7 @@ export default class SearchChannel extends Vue {
   videoList: string | null = null;
   channelId = "";
   // A interfacer si j'utilise plus
-  alert: { type: string; message: string } | null = null;
+  alert: IAlert | null = null;
 
   // displayAlert = false;
 
@@ -65,6 +65,7 @@ export default class SearchChannel extends Vue {
     else return false;
   }
   async getChannel(): Promise<void> {
+    this.alert = null;
     try {
       const response = await this.youtubeService.findChannelMainPlaylist(
         this.channelId

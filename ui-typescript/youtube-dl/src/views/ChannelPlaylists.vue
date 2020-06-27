@@ -7,12 +7,7 @@
             :itemType="itemType"
             :itemsSelected="listPlaylistSelected"
             :disabled="listPlaylistSelected.length == 0"
-          >
-            <!-- <template v-slot:activator="{ on }">
-              <v-btn v-on="on" color="primary">Download</v-btn>
-            </template>-->
-          </download-modal>
-          <!-- <v-btn color="secondary">Download</v-btn> -->
+          ></download-modal>
         </v-row>
       </v-col>
     </v-row>
