@@ -1,12 +1,5 @@
 Ajouter un filtrage des vidéos déjà affichées
 
-Permettre le téléchargement d'une vidéo par direct URL ( la baaase )
-----> recherche de vidéos par URLs, possibilité d'en mettre plusieurs
-
-
-Accéder aux vidéos à l'interieur d'une playlists
-Peut etre une gestion du tri
-
 Voir comment géré le téléchargement de toutes les vidéos de la chaine ( y'a pas encore tous les ids, quand faire le loop)
 
 Implement downloadService --> communication avec mon backend node 
