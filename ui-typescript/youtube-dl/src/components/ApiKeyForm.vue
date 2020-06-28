@@ -12,7 +12,7 @@
           v-model="displayAlert"
           :type="alert.type"
         >{{ alert.message }}</v-alert>
-        <v-form @submit.prevent="getChannel">
+        <v-form @submit.prevent="setApiKey">
           <v-text-field
             v-model="apiKey"
             label="Api Key"
