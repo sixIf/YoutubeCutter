@@ -49,7 +49,6 @@ export default class ChannelDashboard extends Vue {
       this.channelThumbnail = response.thumbnail;
       this.mainPlaylistId = response.mainPlaylistId;
       this.displayDrawer = true;
-      console.log("Created Channel Dashboard");
     } catch (err) {
       console.log("Channel dashboard:" + err.message);
       console.log(err);

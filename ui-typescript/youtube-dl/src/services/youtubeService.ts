@@ -6,11 +6,15 @@ export interface IYoutubeService {
   getVideoList(playlistId: string, pageToken: string): Promise<ItemFetched>;
   findChannelById(channelId: string): Promise<ChannelInfos>;
 
+  extractVideoIdFromUrl(videoUrl: string): string;
+
   findVideoById(videoId: string): Promise<VideoFetched>;
   getChannelPlaylists(channelId: string, pageToken: string): Promise<ItemFetched>;
 
   testApiKey(apiKeyToTest: string | null): Promise<TestApiKey>;
   findChannelMainPlaylist(channelId: string): Promise<ChannelMainPlaylist>;
+
+  findChannelByVideo(videoId: string): Promise<ChannelMainPlaylist>;
 
   formatVideo(apiResponse: ApiVideoById): VideoFetched;
   formatVideoList(apiResponse: ApiVideoInPlaylist): ItemFetched;
@@ -20,7 +24,6 @@ export interface IYoutubeService {
 @injectable()
 export class YoutubeService implements IYoutubeService {
 
-  // youtubeClient: IYoutubeClient;
 
   constructor(@inject("IYoutubeClient") private youtubeClient: IYoutubeClient) { }
   async testApiKey(apiKeyToTest: string | null): Promise<TestApiKey> {
@@ -90,6 +93,7 @@ export class YoutubeService implements IYoutubeService {
 
   formatChannelMainPlaylist(apiResponse: ApiChannelMainPlaylist): ChannelMainPlaylist {
     const channelMainPlaylist: ChannelMainPlaylist = {
+      id: apiResponse.data.items != undefined ? apiResponse.data.items[0].id : "not found",
       mainPlaylistId: apiResponse.data.items != undefined ? apiResponse.data.items[0].contentDetails.relatedPlaylists.uploads : "not found",
       totalResults: apiResponse.data.pageInfo.totalResults
     };
@@ -108,6 +112,12 @@ export class YoutubeService implements IYoutubeService {
     return this.formatVideoList(response)
   }
 
+  async findChannelByVideo(videoId: string): Promise<ChannelMainPlaylist> {
+    const responseVideo = await this.youtubeClient.findVideoById(videoId);
+    const channelId = responseVideo.data.items[0].snippet.channelId;
+    const response = await this.youtubeClient.findChannelMainPlaylist(channelId)
+    return this.formatChannelMainPlaylist(response)
+  }
   async findChannelById(channelId: string): Promise<ChannelInfos> {
     const response = await this.youtubeClient.findChannelById(channelId)
     return this.formatChannelInfos(response)
@@ -118,4 +128,15 @@ export class YoutubeService implements IYoutubeService {
     return this.formatChannelMainPlaylist(response)
   }
 
+  /**
+  * Extract video ID from URL
+  * https://www.youtube.com/watch?v=MItG5VNI0Uk
+  * https://www.youtube.com/watch?v=MItG5VNI0Uk&playlit=fafafaa
+  */
+  extractVideoIdFromUrl(videoUrl: string): string {
+    const indexOfId = videoUrl.indexOf("?v=") + 3;
+    const indexOfAmp = videoUrl.indexOf("&");
+    if (indexOfAmp != -1) return videoUrl.slice(indexOfId, indexOfAmp);
+    else return videoUrl.slice(indexOfId);
+  }
 }

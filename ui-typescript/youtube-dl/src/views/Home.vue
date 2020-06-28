@@ -4,7 +4,7 @@
       <v-row align="center" justify="center" no-gutters>
         <v-col cols="4" lg="4">
           <v-card class="mx-auto my-12" max-width="374">
-            <v-img height="250" src="https://cdn.vuetifyjs.com/images/cards/cooking.png"></v-img>
+            <!-- <v-img height="250" src="https://cdn.vuetifyjs.com/images/cards/cooking.png"></v-img> -->
 
             <v-card-title>Explore a specific Youtube channel</v-card-title>
 
@@ -23,7 +23,7 @@
         </v-col>
         <v-col cols="4" lg="4" offset="1" offset-md="0">
           <v-card class="mx-auto my-12" max-width="374">
-            <v-img height="250" src="https://cdn.vuetifyjs.com/images/cards/cooking.png"></v-img>
+            <!-- <v-img height="250" src="https://cdn.vuetifyjs.com/images/cards/cooking.png"></v-img> -->
 
             <v-card-title>Choose video by URLs</v-card-title>
 

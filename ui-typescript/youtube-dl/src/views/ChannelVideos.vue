@@ -67,22 +67,12 @@ export default class ChannelVideos extends Vue {
     this.listVideoSelected = videoSelected;
   }
 
-  findVideoByKeyword(): void {
-    console.log("To implement findVideoByKeyword");
-  }
-
-  fetchMoreVideos(): void {
-    console.log("To implement findVideoByKeyword");
-  }
-
   async fetchVideos() {
     try {
       const videoFetched = await this.service.getVideoList(
         this.playlistId,
         this.nextPageToken
       );
-      console.log("video Fetched");
-      console.log(videoFetched);
       if (videoFetched.nextPageToken != this.nextPageToken) {
         this.nextPageToken = videoFetched.nextPageToken;
         videoFetched.itemList.forEach(video => {
@@ -100,12 +90,7 @@ export default class ChannelVideos extends Vue {
 
   async created() {
     // Reset video list
-    console.log("Created channel videos");
     this.fetchVideos();
-  }
-
-  mounted() {
-    console.log("Mounted channel videos");
   }
 }
 </script>

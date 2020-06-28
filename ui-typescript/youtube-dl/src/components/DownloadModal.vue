@@ -29,13 +29,13 @@
 
 <script lang="ts">
 import { Component, Provide, Prop, Vue } from "vue-property-decorator";
-import { YOUTUBESERVICE, ERROR_TYPES } from "@/config/litterals";
+import { YOUTUBESERVICE, ItemStruct, ERROR_TYPES } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 
 @Component
 export default class DownloadModal extends Vue {
   @Prop({ default: true }) disabled!: boolean;
-  @Prop(Array) itemsSelected: string[] = [];
+  @Prop({ default: [] }) itemsSelected!: ItemStruct[];
   @Prop({ default: "video" }) itemType!: string;
   dialog = false;
   audioOnly = false;

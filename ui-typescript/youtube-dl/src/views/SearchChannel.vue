@@ -12,8 +12,9 @@
               <alert v-if="alert" :alert="alert"></alert>
               <v-form @submit.prevent="getChannel">
                 <v-text-field
-                  v-model="channelId"
-                  label="Channel ID"
+                  v-model="videoUrl"
+                  label="Video URL from requested channel"
+                  hint="Copy here whatever video from the youtube channel you want to explore."
                   name="channel"
                   prepend-icon="person"
                   type="text"
@@ -25,7 +26,7 @@
               <v-spacer></v-spacer>
               <v-btn
                 color="primary"
-                :disabled="!channelId"
+                :disabled="!videoUrl"
                 type="submit"
                 @click.prevent="getChannel"
               >Search</v-btn>
@@ -54,11 +55,12 @@ export default class SearchChannel extends Vue {
   youtubeService!: IYoutubeService;
 
   videoList: string | null = null;
-  channelId = "";
-  // A interfacer si j'utilise plus
+  videoUrl = "";
   alert: IAlert | null = null;
 
-  // displayAlert = false;
+  videoId(): string {
+    return this.youtubeService.extractVideoIdFromUrl(this.videoUrl);
+  }
 
   get displayAlert() {
     if (this.alert) return true;
@@ -67,20 +69,20 @@ export default class SearchChannel extends Vue {
   async getChannel(): Promise<void> {
     this.alert = null;
     try {
-      const response = await this.youtubeService.findChannelMainPlaylist(
-        this.channelId
+      const response = await this.youtubeService.findChannelByVideo(
+        this.videoId()
       );
       // Display channel not found since YT's api respond with 200
       if (response.totalResults == 0) {
         this.alert = {
           type: "error",
-          message: "Channel not found. Please verify channel ID."
+          message: "Channel not found. Please verify your link."
         };
       } else {
         this.$router.push({
           name: "channel-uploaded-videos",
           params: {
-            id: this.channelId,
+            id: response.id,
             playlistId: response.mainPlaylistId
           }
         });

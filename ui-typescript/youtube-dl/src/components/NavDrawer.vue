@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app color="primary" permanent dark>
+  <v-navigation-drawer style="z-index: 20;" app color="primary" permanent dark>
     <v-list dense nav class="py-0">
       <v-list-item align="center" two-line :class="'px-0'">
         <v-list-item-avatar>
@@ -59,21 +59,11 @@ export default class NavDrawer extends Vue {
       icon: "mdi-playlist-play",
       link: { name: "channel-playlists" }
     },
-    // {
-    //   title: "Help",
-    //   icon: "mdi-help-box",
-    //   link: { name: "help" }
-    // },
     {
       title: "Exit channel",
       icon: "mdi-exit-run",
       link: { name: "exit" }
     }
   ];
-
-  mounted() {
-    console.log("mounted nav drawer");
-    console.log(this.mainPlaylistId);
-  }
 }
 </script>

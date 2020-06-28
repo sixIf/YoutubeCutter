@@ -199,6 +199,7 @@ export interface ApiChannelMainPlaylist {
 }
 
 export interface ChannelMainPlaylist {
+  readonly id: string;
   readonly totalResults: number;
   readonly mainPlaylistId: string;
 }

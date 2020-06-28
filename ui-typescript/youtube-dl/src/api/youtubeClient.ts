@@ -75,6 +75,7 @@ export class YoutubeClient implements IYoutubeClient {
       )
   }
 
+
   findChannelById(channelId: string): Promise<ApiChannelInfos> {
     return axios
       .get(

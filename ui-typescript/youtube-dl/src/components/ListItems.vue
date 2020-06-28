@@ -2,14 +2,14 @@
   <v-item-group multiple v-model="itemSelected">
     <v-container class="list-item-container" fluid>
       <v-row dense>
-        <p v-if="itemList.length==0">No {{ itemType }} found</p>
+        <!-- <p v-if="itemList.length==0">No {{ itemType }} found</p> -->
         <v-col v-for="item in itemList" :key="item.id" cols="12" sm="6" lg="2">
-          <v-item v-slot:default="{ active, toggle }" :value="formatJson(item.id, item.title)">
+          <v-item v-slot:default="{ active, toggle }" :value="item">
             <v-card
               :color="active ? 'primary' : ''"
               id="item.id"
               hover
-              @click="toggle(); $emit('update-list', itemSelected)"
+              @click="if(clickEnabled) {toggle(); $emit('update-list', itemSelected)}"
             >
               <v-img
                 :src="item.thumbnail"
@@ -17,8 +17,8 @@
                 gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
                 height="200px"
               >
-                <v-btn class="fav-icon" icon dark>
-                  <v-icon>{{ active ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+                <v-btn v-if="clickEnabled" class="fav-icon" icon dark>
+                  <v-icon>{{ active ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline' }}</v-icon>
                 </v-btn>
                 <v-card-title class="item-name" v-text="item.title"></v-card-title>
               </v-img>
@@ -50,12 +50,9 @@ import DownloadModal from "@/components/DownloadModal.vue";
 export default class ListItems extends Vue {
   @Prop({ default: "video" }) itemType!: string;
   @Prop(Array) itemList: ItemStruct[] | undefined;
+  @Prop({ default: true }) clickEnabled!: boolean;
 
-  itemSelected: Array<string> | null = [];
-
-  formatJson(id: string, title: string): string {
-    return `{ "id":"${id}", "title":"${title}"}`;
-  }
+  itemSelected: Array<ItemStruct> | null = [];
 
   @Watch("itemSelected", { immediate: true, deep: true })
   onItemListChanged() {
