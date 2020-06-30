@@ -12,12 +12,17 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
+  "build": {
+    "productName": "MY.YOUTUBE",
+    "appId": "com.grocervo.myyoutube"
+  },
   "main": "background.js",
   "dependencies": {
     "@types/node": "12.12.6",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "material-design-icons-iconfont": "^5.0.1",
+    "nedb": "^1.8.0",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.3.0",
     "vue": "^2.6.11",
