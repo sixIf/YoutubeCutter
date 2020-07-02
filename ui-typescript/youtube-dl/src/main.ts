@@ -11,11 +11,8 @@ import { YoutubeService } from '@/services/youtubeService'
 import { ApiKeyService } from '@/services/apiKeyService'
 import { YOUTUBESERVICE, APIKEYSERVICE } from '@/config/litterals'
 import { ApplicationContainer } from '@/di/index'
-import db from '@/datastore/datastore'
 
 Vue.config.productionTip = false
-
-Vue.prototype.$db = db
 
 
 

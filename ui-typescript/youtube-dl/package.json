@@ -6,23 +6,12 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build",
-    "electron:serve": "vue-cli-service electron:serve",
-    "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "lint": "vue-cli-service lint"
   },
-  "build": {
-    "productName": "MY.YOUTUBE",
-    "appId": "com.grocervo.myyoutube"
-  },
-  "main": "background.js",
   "dependencies": {
-    "@types/node": "12.12.6",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "material-design-icons-iconfont": "^5.0.1",
-    "nedb": "^1.8.0",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.3.0",
     "vue": "^2.6.11",
@@ -43,16 +32,13 @@
     "@vue/cli-service": "~4.4.0",
     "@vue/eslint-config-typescript": "^5.0.2",
     "@vue/test-utils": "^1.0.3",
-    "electron": "^9.0.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "sass": "^1.19.0",
     "sass-loader": "^8.0.0",
-    "spectron": "^11.0.0",
     "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
     "typescript": "~3.9.3",
-    "vue-cli-plugin-electron-builder": "~2.0.0-rc.3",
     "vue-cli-plugin-vuetify": "~2.0.5",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.3.0"
