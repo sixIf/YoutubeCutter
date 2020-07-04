@@ -26,3 +26,6 @@ api/access.log
 # Videos downloaded
 *.flv
 api/access.log
+
+#Electron-builder output
+/dist_electron

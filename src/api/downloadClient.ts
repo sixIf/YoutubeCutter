@@ -1,11 +1,11 @@
-import axios from 'axios'
-import { injectable, inject } from "tsyringe";
+// import axios from 'axios'
+// import { injectable, inject } from "tsyringe";
 
-export interface IDownloadClient {
+// export interface IDownloadClient {
 
-}
+// }
 
-@injectable()
-export class DownloadClient implements IDownloadClient {
+// @injectable()
+// export class DownloadClient implements IDownloadClient {
 
-}
+// }
