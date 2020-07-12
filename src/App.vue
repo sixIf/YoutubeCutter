@@ -29,8 +29,14 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+const { myIpcRenderer } = window;
 
 // Define the component in class-style
 @Component({})
-export default class App extends Vue {}
+export default class App extends Vue {
+  mounted() {
+    console.log("Mounted");
+    window.myIpcRenderer.doThing();
+  }
+}
 </script>

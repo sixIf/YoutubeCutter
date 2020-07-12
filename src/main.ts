@@ -14,8 +14,6 @@ import { ApplicationContainer } from '@/di/index'
 
 Vue.config.productionTip = false
 
-
-
 axios.defaults.baseURL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:8081' : '';
 
 

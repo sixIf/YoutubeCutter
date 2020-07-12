@@ -1,8 +1,10 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, ipcMain, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import path from 'path'
+import fs from 'fs'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -23,7 +25,9 @@ function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
-          .ELECTRON_NODE_INTEGRATION as unknown) as boolean
+        .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true
     }
   })
 
@@ -73,6 +77,17 @@ app.on('ready', async () => {
   }
   createWindow()
 })
+
+// Custom events with preload.js
+ipcMain.on("do-a-thing", (event, args) => {
+  fs.readFile("path/to/file", (error, data) => {
+    // Do something with file contents
+
+    // Send result back to renderer process
+    if (win)
+      win.webContents.send("fromMain", "responseObj");
+  });
+});
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
