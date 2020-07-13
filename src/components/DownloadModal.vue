@@ -31,6 +31,7 @@
 import { Component, Provide, Prop, Vue } from "vue-property-decorator";
 import { YOUTUBESERVICE, ItemStruct, ERROR_TYPES } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
+const { myIpcRenderer } = window;
 
 @Component
 export default class DownloadModal extends Vue {
@@ -53,6 +54,10 @@ export default class DownloadModal extends Vue {
     switch (this.itemType) {
       case "video":
         // Send videos array of json
+        window.myIpcRenderer.send("download-videos", {
+          channelTitle: this.channelTitle,
+          itemSelected: this.itemsSelected
+        });
         break;
 
       case "playlist":

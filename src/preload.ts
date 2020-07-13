@@ -8,7 +8,7 @@ contextBridge.exposeInMainWorld(
   {
     send: (channel: string, data: any) => {
       // whitelist channels
-      let validChannels = ["toMain", "do-a-thing"];
+      let validChannels = ["toMain", "do-a-thing", "download-videos"];
       if (validChannels.includes(channel)) {
         ipcRenderer.send(channel, data);
       }

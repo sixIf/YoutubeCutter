@@ -93,6 +93,25 @@ ipcMain.on("do-a-thing", (event, args) => {
   //   .pipe(fs.createWriteStream('video.flv'));
 });
 
+ipcMain.on("download-videos", (event, args: any) => {
+  // Loop over args to download each videos selected
+  args.itemSelected.forEach(video => {
+    if (!fs.existsSync(path.join(app.getPath("documents"), args.channelTitle))) {
+      fs.mkdirSync(path.join(app.getPath("documents"), args.channelTitle), { recursive: true });
+    }
+    const output = path.join(app.getPath("documents"), args.channelTitle);
+    ytdl(`http://www.youtube.com/watch?v=${video.id}`)
+      .pipe(fs.createWriteStream(path.resolve(output, `${video.title}.flv`)));
+  });
+  console.log("i did it")
+  console.log(args.channelTitle)
+  console.log(args)
+  if (win)
+    win.webContents.send('it-is-good', 'YAHOOO')
+  // ytdl('http://www.youtube.com/watch?v=A02s8omM_hI')
+  //   .pipe(fs.createWriteStream('video.flv'));
+});
+
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
