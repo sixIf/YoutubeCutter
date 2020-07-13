@@ -43,7 +43,7 @@ export default class DownloadModal extends Vue {
   qualityTypes = ["high", "medium", "low"];
 
   get channelTitle(): string {
-    return "channelTitle" in this.$route.params
+    return this.$route.params.hasOwnProperty("channelTitle")
       ? this.$route.params.channelTitle
       : "Vrac";
   }
