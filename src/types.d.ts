@@ -5,8 +5,9 @@ declare global {
 }
 
 export interface MyIpcRenderer {
-  doThing(): Promise<any>;
-  // send(channel: string, ...args: any[]): void;
+  downloadVideo(): Promise<any>;
+  send(channel: string, data: any): Promise<any>;
+  receive(channel: string, func: any): Promise<any>;
 
   /** @return A function that removes this listener. */
   // on(channel: string, listener: (...args: any[]) => void): () => void;

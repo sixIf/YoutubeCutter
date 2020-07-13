@@ -4,7 +4,10 @@ import { app, protocol, ipcMain, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
+import { createDownloadPath } from '@/helpers/pathHelper'
 import fs from 'fs'
+import ytdl from 'ytdl-core'
+import { cpuUsage } from 'process'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -80,13 +83,14 @@ app.on('ready', async () => {
 
 // Custom events with preload.js
 ipcMain.on("do-a-thing", (event, args) => {
-  fs.readFile("path/to/file", (error, data) => {
-    // Do something with file contents
-
-    // Send result back to renderer process
-    if (win)
-      win.webContents.send("fromMain", "responseObj");
-  });
+  console.log("i did it")
+  console.log(event)
+  console.log(args)
+  console.log(createDownloadPath())
+  if (win)
+    win.webContents.send('it-is-good', 'YAHOOO')
+  // ytdl('http://www.youtube.com/watch?v=A02s8omM_hI')
+  //   .pipe(fs.createWriteStream('video.flv'));
 });
 
 // Exit cleanly on request from parent process in development mode.
