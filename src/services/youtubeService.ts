@@ -95,6 +95,7 @@ export class YoutubeService implements IYoutubeService {
     const channelMainPlaylist: ChannelMainPlaylist = {
       id: apiResponse.data.items != undefined ? apiResponse.data.items[0].id : "not found",
       mainPlaylistId: apiResponse.data.items != undefined ? apiResponse.data.items[0].contentDetails.relatedPlaylists.uploads : "not found",
+      channelTitle: apiResponse.data.items != undefined ? apiResponse.data.items[0].snippet.title : "not found",
       totalResults: apiResponse.data.pageInfo.totalResults
     };
     return channelMainPlaylist;

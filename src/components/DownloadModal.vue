@@ -42,7 +42,12 @@ export default class DownloadModal extends Vue {
   quality: string | null = null;
   qualityTypes = ["high", "medium", "low"];
 
+  get channelTitle(): string {
+    return this.$route.params.channelTitle;
+  }
+
   downloadItems(): void {
+    console.log(`channel title ${this.channelTitle}`);
     switch (this.itemType) {
       case "video":
         // Send videos array of json

@@ -92,7 +92,7 @@ export class YoutubeClient implements IYoutubeClient {
   findChannelMainPlaylist(channelId: string): Promise<ApiChannelMainPlaylist> {
     return axios
       .get(
-        "https://www.googleapis.com/youtube/v3/channels?part=contentDetails&maxResults=1",
+        "https://www.googleapis.com/youtube/v3/channels?part=contentDetails&part=snippet&maxResults=1",
         {
           params: {
             id: channelId,

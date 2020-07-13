@@ -46,7 +46,7 @@ const routes: Array<RouteConfig> = [
     component: ApiKeyManager
   },
   {
-    path: '/channel/:id',
+    path: '/channel/:channelTitle/:id',
     component: ChannelDashboard,
     children: [
       {

@@ -186,6 +186,9 @@ export interface ApiChannelMainPlaylist {
     readonly items: [
       {
         readonly id: string;
+        readonly snippet: {
+          title: string;
+        };
         contentDetails: {
           relatedPlaylists: {
             likes: string;
@@ -202,4 +205,5 @@ export interface ChannelMainPlaylist {
   readonly id: string;
   readonly totalResults: number;
   readonly mainPlaylistId: string;
+  readonly channelTitle: string;
 }
