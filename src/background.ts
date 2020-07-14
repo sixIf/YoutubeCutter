@@ -4,7 +4,9 @@ import { app, protocol, ipcMain, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
-import { createDownloadPath } from '@/helpers/pathHelper'
+import { appMainPath } from '@/helpers/pathHelper'
+import downloadVideo from '@/helpers/ytDownloaderHelper'
+import { DownloadRequest, ItemStruct } from '@/config/litterals/index'
 import fs from 'fs'
 import ytdl from 'ytdl-core'
 import { cpuUsage } from 'process'
@@ -78,6 +80,8 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
+
+  // Create NEDB and init with Application path
   createWindow()
 })
 
@@ -86,30 +90,25 @@ ipcMain.on("do-a-thing", (event, args) => {
   console.log("i did it")
   console.log(event)
   console.log(args)
-  console.log(createDownloadPath())
   if (win)
     win.webContents.send('it-is-good', 'YAHOOO')
   // ytdl('http://www.youtube.com/watch?v=A02s8omM_hI')
   //   .pipe(fs.createWriteStream('video.flv'));
 });
 
-ipcMain.on("download-videos", (event, args: any) => {
+ipcMain.on("download-videos", (event, args: DownloadRequest) => {
   // Loop over args to download each videos selected
-  args.itemSelected.forEach(video => {
-    if (!fs.existsSync(path.join(app.getPath("documents"), args.channelTitle))) {
-      fs.mkdirSync(path.join(app.getPath("documents"), args.channelTitle), { recursive: true });
+  args.itemSelected.forEach((video: ItemStruct) => {
+    if (!fs.existsSync(path.join(appMainPath, args.channelTitle))) {
+      fs.mkdirSync(path.join(appMainPath, args.channelTitle), { recursive: true });
     }
-    const output = path.join(app.getPath("documents"), args.channelTitle);
-    ytdl(`http://www.youtube.com/watch?v=${video.id}`)
-      .pipe(fs.createWriteStream(path.resolve(output, `${video.title}.flv`)));
+    const output = path.join(appMainPath, args.channelTitle);
+    downloadVideo(video.id, output);
+    // ytdl(`http://www.youtube.com/watch?v=${video.id}`)
+    //   .pipe(fs.createWriteStream(path.resolve(output, `${video.title}.mp4`)));
   });
-  console.log("i did it")
-  console.log(args.channelTitle)
-  console.log(args)
   if (win)
     win.webContents.send('it-is-good', 'YAHOOO')
-  // ytdl('http://www.youtube.com/watch?v=A02s8omM_hI')
-  //   .pipe(fs.createWriteStream('video.flv'));
 });
 
 // Exit cleanly on request from parent process in development mode.

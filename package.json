@@ -10,7 +10,10 @@
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "package-mac": "rm -rf ./node_modules && npm build && electron-builder build --mac",
+    "package-linux": "rm -rf ./node_modules && npm build && electron-builder build --linux",
+    "package-win": "rm -rf ./node_modules && npm build && electron-builder build --win --x64"
   },
   "main": "background.js",
   "dependencies": {
@@ -18,7 +21,10 @@
     "@types/node": "12.12.6",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
+    "ffmpeg-static": "^4.2.5",
+    "fluent-ffmpeg": "^2.1.2",
     "material-design-icons-iconfont": "^5.0.1",
+    "nedb": "^1.8.0",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.3.0",
     "vue": "^2.6.11",
@@ -29,6 +35,8 @@
     "ytdl-core": "^3.1.2"
   },
   "devDependencies": {
+    "@types/ffmpeg-static": "^3.0.0",
+    "@types/fluent-ffmpeg": "^2.1.14",
     "@types/jest": "^24.0.19",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
