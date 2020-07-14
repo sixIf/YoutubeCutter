@@ -19,6 +19,11 @@ export const LOCAL_STORAGE_KEY = "YoutubeApiKey"
  * Interfaces
  */
 
+export interface DownloadRequest {
+  audioOnly: boolean;
+  channelTitle: string;
+  itemSelected: Array<ItemStruct>;
+}
 
 export interface ItemFetched {
   readonly nextPageToken: string;

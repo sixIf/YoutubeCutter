@@ -6,7 +6,6 @@ import vuetify from './plugins/vuetify'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import '@/assets/css/main.styl'
 import axios from 'axios'
-import { container } from 'tsyringe'
 import { YoutubeService } from '@/services/youtubeService'
 import { ApiKeyService } from '@/services/apiKeyService'
 import { YOUTUBESERVICE, APIKEYSERVICE } from '@/config/litterals'
@@ -14,8 +13,7 @@ import { ApplicationContainer } from '@/di/index'
 
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:8081' : '';
-
+axios.defaults.baseURL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:8081' : ''
 
 
 new Vue({

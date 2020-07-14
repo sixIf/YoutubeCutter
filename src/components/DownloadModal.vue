@@ -55,6 +55,7 @@ export default class DownloadModal extends Vue {
       case "video":
         // Send videos array of json
         window.myIpcRenderer.send("download-videos", {
+          audioOnly: this.audioOnly,
           channelTitle: this.channelTitle,
           itemSelected: this.itemsSelected
         });
