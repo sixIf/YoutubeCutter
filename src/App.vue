@@ -17,6 +17,7 @@
         <v-btn icon @click="sendMessage">
           <v-icon>mdi-help</v-icon>
         </v-btn>
+        <h1 style="color: white;">{{messageReceived}}</h1>
         <router-link to="/api-key">
           <v-btn icon>
             <v-icon>mdi-cog</v-icon>
@@ -37,12 +38,14 @@ const { myIpcRenderer } = window;
 // Define the component in class-style
 @Component({})
 export default class App extends Vue {
+  messageReceived = "";
   sendMessage() {
     window.myIpcRenderer.send("do-a-thing", { a: "ok" });
   }
   mounted() {
     console.log("Mounted");
     window.myIpcRenderer.receive("it-is-good", (data: any) => {
+      this.messageReceived = data;
       console.log(`Received ${data} from main process`);
     });
   }

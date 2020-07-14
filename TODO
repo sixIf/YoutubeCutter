@@ -11,5 +11,9 @@ Voir la pertinence d'ajouter le nombre de vidéos de la chaine dans les requetes
 https://developers.google.com/youtube/v3/docs/commentThreads/list?apix_params=%7B%22part%22%3A%5B%22snippet%2Creplies%22%5D%2C%22videoId%22%3A%22_VB39Jo8mAQ%22%7D
 Ajout du téléchargement des meilleurs commentaires
 
+!!!!!!!!!!!! ATTENTION !!!!!!!!
+Copier manuellement ffmpeg.exe dans le répertoire dist pcq pour le dev (npm run electron:serve), ce débile cherche le path dans dist_electron. C'est effectivement normal car le source
+du JS est dans ce folder -->   var ffmpegPath = path.join(__dirname,platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg' ) dans la lib ffmpeg-static
+
 ************** DEPRECATED **********************
 Intégrer OAuth 2.0 pour gérer ses propres vidéos ----> Rendre playlist public le temps du téléchargement ?----------> 

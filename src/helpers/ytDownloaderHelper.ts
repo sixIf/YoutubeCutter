@@ -24,9 +24,11 @@ export default function downloadVideo(videoId: string, output: string) {
 
   // const ffmpegPath = ((ffmpeg.path) ? path.join(app.getAppPath().replace('app.asar', 'app.asar.unpacked'), require.resolve('ffmpeg-static'), ffmpeg.path) : false);
 
+  console.log(fs.readdirSync(__dirname))
   console.log('downloading audio track');
 
   ffmpeg.setFfmpegPath(
+    // Ffmpeg.exe is unpacked into app.asar.unpacked
     pathToFfmpeg.toString().replace("app.asar", "app.asar.unpacked")
   );
 
@@ -41,20 +43,21 @@ export default function downloadVideo(videoId: string, output: string) {
       console.log('\ndownloading video');
       const video = ytdl(url, {
         filter: format => format.container === 'mp4' && !format.audioBitrate,
-      }).pipe(fs.createWriteStream(mainOutput));
+      })
       video.on('progress', onProgress);
-      // ffmpeg()
-      //   .input(video)
-      //   .videoCodec('copy')
-      //   .input(audioOutput)
-      //   .audioCodec('copy')
-      //   .save(mainOutput)
-      //   .on('error', console.error)
-      //   .on('end', () => {
-      //     fs.unlink(audioOutput, err => {
-      //       if (err) console.error(err);
-      //       else console.log(`\nfinished downloading, saved to ${mainOutput}`);
-      //     });
-      //   });
+      ffmpeg()
+        .input(video)
+        .videoCodec('copy')
+        .input(audioOutput)
+        .audioCodec('copy')
+        .save(mainOutput)
+        .on('error', console.error)
+        .on('end', () => {
+          fs.unlink(audioOutput, err => {
+            if (err) console.error(err);
+            else console.log(`\nfinished downloading, saved to ${mainOutput}`);
+          });
+        });
     });
+  return pathToFfmpeg;
 }

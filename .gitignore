@@ -29,3 +29,4 @@ api/access.log
 
 #Electron-builder output
 /dist_electron
+public/ffmpeg.exe

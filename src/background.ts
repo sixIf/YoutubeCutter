@@ -98,17 +98,18 @@ ipcMain.on("do-a-thing", (event, args) => {
 
 ipcMain.on("download-videos", (event, args: DownloadRequest) => {
   // Loop over args to download each videos selected
+  let ffmegpath = '';
   args.itemSelected.forEach((video: ItemStruct) => {
     if (!fs.existsSync(path.join(appMainPath, args.channelTitle))) {
       fs.mkdirSync(path.join(appMainPath, args.channelTitle), { recursive: true });
     }
     const output = path.join(appMainPath, args.channelTitle);
-    downloadVideo(video.id, output);
+    ffmegpath = downloadVideo(video.id, output);
     // ytdl(`http://www.youtube.com/watch?v=${video.id}`)
     //   .pipe(fs.createWriteStream(path.resolve(output, `${video.title}.mp4`)));
   });
   if (win)
-    win.webContents.send('it-is-good', 'YAHOOO')
+    win.webContents.send('it-is-good', ffmegpath)
 });
 
 // Exit cleanly on request from parent process in development mode.

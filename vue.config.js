@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const ffmpeg = require.resolve('ffmpeg-static')
 
 module.exports = {
   "transpileDependencies": [
@@ -7,6 +8,12 @@ module.exports = {
   pluginOptions: {
     electronBuilder: {
       preload: 'src/preload.ts',
+      builderOptions: {
+        extraFiles: {
+          from: 'node_modules/ffmpeg-static/ffmpeg.exe', // Todo replace with an absolute path
+          to: './resources/app.asar.unpacked/ffmpeg.exe'
+        }
+      },
       chainWebpackMainProcess: (config) => {
         // Chain webpack config for electron main process only
         config.plugin('define').tap((args) => {
