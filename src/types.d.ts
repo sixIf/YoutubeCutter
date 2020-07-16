@@ -5,7 +5,6 @@ declare global {
 }
 
 export interface MyIpcRenderer {
-  downloadVideo(): Promise<any>;
   send(channel: string, data: any): Promise<any>;
   receive(channel: string, func: any): Promise<any>;
 

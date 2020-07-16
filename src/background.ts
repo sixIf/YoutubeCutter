@@ -5,7 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
 import { appMainPath } from '@/helpers/pathHelper'
-import downloadVideo from '@/helpers/ytDownloaderHelper'
+import downloadItems from '@/helpers/ytDownloaderHelper'
 import { DownloadRequest, ItemStruct } from '@/config/litterals/index'
 import fs from 'fs'
 import ytdl from 'ytdl-core'
@@ -98,18 +98,13 @@ ipcMain.on("do-a-thing", (event, args) => {
 
 ipcMain.on("download-videos", (event, args: DownloadRequest) => {
   // Loop over args to download each videos selected
-  let ffmegpath = '';
-  args.itemSelected.forEach((video: ItemStruct) => {
-    if (!fs.existsSync(path.join(appMainPath, args.channelTitle))) {
-      fs.mkdirSync(path.join(appMainPath, args.channelTitle), { recursive: true });
-    }
-    const output = path.join(appMainPath, args.channelTitle);
-    ffmegpath = downloadVideo(video.id, output);
-    // ytdl(`http://www.youtube.com/watch?v=${video.id}`)
-    //   .pipe(fs.createWriteStream(path.resolve(output, `${video.title}.mp4`)));
-  });
-  if (win)
-    win.webContents.send('it-is-good', ffmegpath)
+  if (!fs.existsSync(path.join(appMainPath, args.channelTitle))) {
+    fs.mkdirSync(path.join(appMainPath, args.channelTitle), { recursive: true });
+  }
+  const output = path.join(appMainPath, args.channelTitle);
+  downloadItems(args.itemSelected, args.audioOnly, output);
+  // if (win)
+  // win.webContents.send('it-is-good', ffmegpath)
 });
 
 // Exit cleanly on request from parent process in development mode.
