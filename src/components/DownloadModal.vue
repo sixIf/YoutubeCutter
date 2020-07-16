@@ -65,6 +65,7 @@ export default class DownloadModal extends Vue {
         // Send playlist array of Json
         break;
     }
+    this.dialog = false;
   }
 }
 </script>

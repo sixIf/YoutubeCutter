@@ -102,9 +102,8 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
     fs.mkdirSync(path.join(appMainPath, args.channelTitle), { recursive: true });
   }
   const output = path.join(appMainPath, args.channelTitle);
-  downloadItems(args.itemSelected, args.audioOnly, output);
-  // if (win)
-  // win.webContents.send('it-is-good', ffmegpath)
+  downloadItems(args.itemSelected, args.audioOnly, output, win);
+  console.log('Finished')
 });
 
 // Exit cleanly on request from parent process in development mode.

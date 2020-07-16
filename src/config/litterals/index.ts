@@ -40,6 +40,11 @@ export interface IAlert {
   message: string;
 }
 
+export interface ItemDownloading {
+  progress: string;
+  readonly video: ItemStruct;
+}
+
 export interface ItemStruct {
   readonly id: string;
   readonly title: string;
