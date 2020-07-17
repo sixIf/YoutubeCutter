@@ -76,22 +76,31 @@ export default class SearchVideosToolbar extends Vue {
   }
   async findVideo() {
     this.alert = null;
-    try {
-      const response = await this.youtubeService.findVideoById(this.videoId());
-      if (response.totalResults == 0) {
+    if (this.videosFetched.findIndex(x => x.id == this.videoId()) == -1) {
+      try {
+        const response = await this.youtubeService.findVideoById(
+          this.videoId()
+        );
+        if (response.totalResults == 0) {
+          this.alert = {
+            type: "error",
+            message: "Video not found. Please check your video's URL."
+          };
+        } else {
+          this.videosFetched.push(response.videoInfos);
+          this.videoUrl = "";
+        }
+      } catch (error) {
+        console.log("Catch error " + error.message);
         this.alert = {
           type: "error",
-          message: "Video not found. Please check your video's URL."
+          message: `${ERROR_TYPES[error.response.status]}`
         };
-      } else {
-        this.videosFetched.push(response.videoInfos);
-        this.videoUrl = "";
       }
-    } catch (error) {
-      console.log("Catch error " + error.message);
+    } else {
       this.alert = {
         type: "error",
-        message: `${ERROR_TYPES[error.response.status]}`
+        message: "Video already in the list."
       };
     }
   }

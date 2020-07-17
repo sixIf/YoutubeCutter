@@ -70,6 +70,8 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
               fs.unlink(audioOutputMp4, err => {
                 if (err) console.error(err);
                 else console.log(`\nfinished downloading, saved to ${mainOutput}`);
+                if (win)
+                  win.webContents.send('item-downloaded', videoToFetch.id)
               });
             });
         }
@@ -84,6 +86,8 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
               fs.unlink(audioOutputMp4, err => {
                 if (err) console.error(err);
                 else console.log(`\nfinished converting audio to mp3, saved to ${audioOutputMp3}`);
+                if (win)
+                  win.webContents.send('item-downloaded', videoToFetch.id)
               });
             });
         }

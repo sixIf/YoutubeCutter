@@ -30,9 +30,9 @@
           </v-btn>
         </router-link>
       </v-app-bar>
+      <download-queue-drawer />
     </div>
     <router-view />
-    <download-queue-modal v-if="isDownloading" />
   </v-app>
 </template>
 
@@ -40,13 +40,13 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import DownloadQueueModal from "@/components/DownloadQueueModal.vue";
+import DownloadQueueDrawer from "@/components/DownloadQueueDrawer.vue";
 const { myIpcRenderer } = window;
 
 // Define the component in class-style
 @Component({
   components: {
-    DownloadQueueModal
+    DownloadQueueDrawer
   }
 })
 export default class App extends Vue {
@@ -59,18 +59,17 @@ export default class App extends Vue {
     window.myIpcRenderer.send("do-a-thing", { a: "ok" });
   }
   mounted() {
-    console.log("Mounted");
     window.myIpcRenderer.receive("it-is-good", (data: any) => {
       this.messageReceived = data;
       console.log(`Received ${data} from main process`);
     });
 
-    window.myIpcRenderer.receive("download-started", (data: any) => {
-      this.isDownloading = true;
-      this.snackbarMessage = "Download started !";
-      this.snackbar = true;
-      console.log("Behold, download started");
-    });
+    // window.myIpcRenderer.receive("download-started", (data: any) => {
+    //   this.isDownloading = true;
+    //   this.snackbarMessage = "Download started !";
+    //   this.snackbar = true;
+    //   console.log("Behold, download started");
+    // });
   }
 }
 </script>

@@ -1,8 +1,9 @@
-Ajouter un filtrage des vidéos déjà affichées
+Ajouter un filtrage des vidéos déjà téléchargée. Avec nedb, lorsqu'on affiche des vidéos, faire une reqûete nedb cherchant si on a déjà la vidéo ids
 
 Voir comment géré le téléchargement de toutes les vidéos de la chaine ( y'a pas encore tous les ids, quand faire le loop)
 
-Implement downloadService --> communication avec mon backend node 
+Ajut phrase pertinente lors du download de video -> download audio puis download video
+
 
 Voir la pertinence d'ajouter le nombre de vidéos de la chaine dans les requetes ( statistics -> 2 resource cost ) ou peut être uniquement sur les vues vidéos ?
 ----> surement juste faire une requête en plus lors du mounted des vidéos pour afficher le nb de vidéos
