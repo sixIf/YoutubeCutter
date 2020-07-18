@@ -30,6 +30,7 @@
 <script lang="ts">
 import { Component, Provide, Prop, Vue } from "vue-property-decorator";
 import { YOUTUBESERVICE, ItemStruct, ERROR_TYPES } from "@/config/litterals";
+import * as _ from "lodash";
 import { IYoutubeService } from "@/services/youtubeService";
 const { myIpcRenderer } = window;
 

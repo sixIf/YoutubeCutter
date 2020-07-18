@@ -41,7 +41,10 @@ export interface IAlert {
 }
 
 export interface ItemDownloading {
-  progress: string;
+  progressAudio: string;
+  progressVideo: string;
+  readonly type: string;
+  readonly audioOnly: boolean;
   readonly video: ItemStruct;
 }
 

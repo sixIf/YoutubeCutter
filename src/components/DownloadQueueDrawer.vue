@@ -20,31 +20,42 @@
       <!-- TODO merge 2 tabs in a component -->
       <v-tabs-items v-model="tab">
         <v-tab-item>
-          <v-list v-for="(infos, index) in videoDownloading" :key="infos.video.id">
+          <v-list v-for="(infos) in videoDownloading" :key="infos.video.id">
             <v-list-item>
               <template v-slot:default>
                 <v-list-item-content>
                   <v-list-item-title>{{infos.video.title}}</v-list-item-title>
-                  <v-list-item-subtitle>{{infos.progress}}</v-list-item-subtitle>
+                  <v-list-item-subtitle
+                    style="padding-left: 10px"
+                  >1. Downloading audio {{infos.progressAudio}}%</v-list-item-subtitle>
+                  <div v-if="!infos.audioOnly">
+                    <v-list-item-subtitle
+                      style="padding-left: 10px"
+                    >2. Downloading video {{infos.progressVideo}}%</v-list-item-subtitle>
+                  </div>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-icon @click="removeVideo(index)">mdi-delete</v-icon>
+                  <v-progress-circular indeterminate color="primary" />
+                  <!-- <v-icon @click="removeVideo(index)">mdi-delete</v-icon> -->
                 </v-list-item-action>
               </template>
             </v-list-item>
           </v-list>
         </v-tab-item>
         <v-tab-item>
-          <v-list v-for="(infos, index) in videoDownloaded" :key="infos.video.id">
+          <v-btn
+            style="position: fixed; bottom: 5px; right: 20px"
+            @click="clearDownloadedList"
+          >Clear list</v-btn>
+          <v-list v-for="(infos) in videoDownloaded" :key="infos.video.id">
             <v-list-item>
               <template v-slot:default>
                 <v-list-item-content>
                   <v-list-item-title>{{infos.video.title}}</v-list-item-title>
-                  <v-list-item-subtitle>{{infos.progress}}</v-list-item-subtitle>
                 </v-list-item-content>
-                <v-list-item-action>
+                <!-- <v-list-item-action>
                   <v-icon @click="removeVideo(index)">mdi-delete</v-icon>
-                </v-list-item-action>
+                </v-list-item-action>-->
               </template>
             </v-list-item>
           </v-list>
@@ -56,6 +67,7 @@
 
 <script lang="ts">
 import { Component, Provide, Prop, Vue } from "vue-property-decorator";
+import * as _ from "lodash";
 import {
   YOUTUBESERVICE,
   ItemStruct,
@@ -68,15 +80,69 @@ const { myIpcRenderer } = window;
 @Component
 export default class DownloadQueueDrawer extends Vue {
   dialog = false;
-  nbItemToDownload = 0;
-  isDownloading = false;
+  isDownloading = true;
   drawer = null;
   tab = null;
   tabs = ["Downloading", "Finished"];
-  videoDownloading: Array<ItemDownloading> = [];
-  videoDownloaded: Array<ItemDownloading> = [];
+  videoDownloading: Array<ItemDownloading> = [
+    {
+      progressAudio: "100.00",
+      progressVideo: "0",
+      type: "video",
+      audioOnly: false,
+      video: {
+        id: "w3_paCEqWxo",
+        thumbnail: "https://i.ytimg.com/vi/w3_paCEqWxo/hqdefault.jpg",
+        title:
+          "Composition en rouge, bleu et blanc II | Piet Mondrian | Centre Pompidou"
+      }
+    },
+    {
+      progressAudio: "100.00",
+      progressVideo: "0",
+      type: "audio",
+      audioOnly: true,
+      video: {
+        id: "q2awCruG7UI",
+        thumbnail: "https://i.ytimg.com/vi/q2awCruG7UI/hqdefault.jpg",
+        title:
+          "1- Les débuts de la photographie - La naissance d’une invention (1/4)"
+      }
+    }
+  ];
+  videoDownloaded: Array<ItemDownloading> = [
+    {
+      progressAudio: "100.00",
+      progressVideo: "0",
+      type: "audio",
+      audioOnly: true,
+      video: {
+        id: "w3_paCEqWxo",
+        thumbnail: "https://i.ytimg.com/vi/w3_paCEqWxo/hqdefault.jpg",
+        title:
+          "Composition en rouge, bleu et blanc II | Piet Mondrian | Centre Pompidou"
+      }
+    },
+    {
+      progressAudio: "100.00",
+      progressVideo: "0",
+      type: "audio",
+      audioOnly: true,
+      video: {
+        id: "q2awCruG7UI",
+        thumbnail: "https://i.ytimg.com/vi/q2awCruG7UI/hqdefault.jpg",
+        title:
+          "1- Les débuts de la photographie - La naissance d’une invention (1/4)"
+      }
+    }
+  ];
   removeVideo() {
     console.log("To implement");
+  }
+  clearDownloadedList() {
+    _.remove(this.videoDownloaded, function(x) {
+      return true;
+    });
   }
   mounted() {
     window.myIpcRenderer.receive(
@@ -87,28 +153,45 @@ export default class DownloadQueueDrawer extends Vue {
           x => x.video.id === data.video.id
         );
         if (index == -1) this.videoDownloading.push(data);
-        else this.videoDownloading[index].progress = data.progress;
+        else {
+          if (data.type == "audio")
+            this.videoDownloading[index].progressAudio = data.progressAudio;
+          else this.videoDownloading[index].progressVideo = data.progressVideo;
+        }
         console.log("Update progress");
       }
     );
 
     window.myIpcRenderer.receive("download-started", (data: number) => {
-      this.nbItemToDownload += data;
+      // this.nbItemToDownload += data;
       console.log("Behold, download started");
     });
 
     window.myIpcRenderer.receive("item-downloaded", (data: string) => {
-      const index = this.videoDownloading.findIndex(x => x.video.id === data);
+      const indexToDelete = _.findIndex(this.videoDownloading, function(x) {
+        return x.video.id === data;
+      });
+      console.log(`Index found ${indexToDelete}`);
+      console.log();
       // LODASH ShOULD HANDLE THE COPY BETWEEN ARRAYS
-      /*this.videoDownloaded.push(this.videoDownloaded[index]);
-      this.videoDownloading.splice(index, 1);*/
-      console.log("Behold, download started");
+      if (indexToDelete != -1) {
+        this.videoDownloaded.push(
+          _.cloneDeep(this.videoDownloading[indexToDelete])
+        );
+        _.remove(this.videoDownloading, function(
+          value: ItemDownloading,
+          index: number
+        ) {
+          return index == indexToDelete;
+        });
+        console.log(`Behold, video with id ${data} downloaded`);
+      }
     });
 
     /**
      * TODO : Add a status on item list to track if item is downloading or finished
      * Fire event on download finished wich will increment the nbItemDownloadedValue
-     *  Whane nbItemDownloadValue is equal to nbItemToDownload, Display snackbar download finished
+     *  When nbItemDownloadValue is equal to nbItemToDownload, Display snackbar download finished
      * and hide button
      *
      * Lets see if we put the download list in a dismissible panel to the left / bottom ?

@@ -4,10 +4,12 @@ import fs from 'fs';
 import ytdl from 'ytdl-core';
 import ffmpeg from 'fluent-ffmpeg';
 import pathToFfmpeg from 'ffmpeg-static';
-import { ItemStruct } from '@/config/litterals/index'
+import { ItemStruct, ItemDownloading } from '@/config/litterals/index'
 import sanitize from 'sanitize-filename'
 import { BrowserWindow } from 'electron';
 
+// Send for video text 1/2 download audio - download video - merge audio / video
+// For audio 1/2 download audio to mp4 - convert to mp3
 
 export default function downloadItems(items: Array<ItemStruct>, audioOnly: boolean, output: string, win: BrowserWindow | null) {
   // Notify renderer to display the donwload icon
@@ -16,19 +18,25 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
   items.forEach((videoToFetch) => {
     console.log(pathToFfmpeg);
     const url = `https://www.youtube.com/watch?v=${videoToFetch.id}`;
-    const audioOutputMp4 = path.resolve(output, sanitize(`${videoToFetch.title}.mp4`));
+    const audioOutputMp4 = path.resolve(output, sanitize(`TEMP_AUDIO_${videoToFetch.title}.mp4`));
     const audioOutputMp3 = path.resolve(output, sanitize(`${videoToFetch.title}.mp3`));
     const mainOutput = path.resolve(output, sanitize(`${videoToFetch.title}.mp4`));
 
-    const onProgress = (chunkLength: number, downloaded: number, total: number, videoDownloading: ItemStruct) => {
+    const onProgress = (chunkLength: number, downloaded: number, total: number, type: string, videoDownloading: ItemStruct) => {
       const percent = downloaded / total;
-      readline.cursorTo(process.stdout, 0);
+      // readline.cursorTo(process.stdout, 0);
       // console.log(`${(percent * 100).toFixed(2)}% downloaded `)
       // console.log(`(${(downloaded / 1024 / 1024).toFixed(2)}MB of ${(total / 1024 / 1024).toFixed(2)}MB)`)
       // process.stdout.write(`${(percent * 100).toFixed(2)}% downloaded`);
       // process.stdout.write(`(${(downloaded / 1024 / 1024).toFixed(2)}MB of ${(total / 1024 / 1024).toFixed(2)}MB)`);
+      let objectToSend: ItemDownloading = {
+        progressAudio: type == 'audio' ? `${(percent * 100).toFixed(2)}` : '100',
+        progressVideo: type == 'video' ? `${(percent * 100).toFixed(2)}` : '0',
+        type: type, audioOnly: audioOnly,
+        video: videoDownloading
+      }
       if (win)
-        win.webContents.send('download-progress', { progress: `${(percent * 100).toFixed(2)}% downloaded`, video: videoDownloading })
+        win.webContents.send('download-progress', objectToSend)
     };
 
     console.log(fs.readdirSync(__dirname))
@@ -43,7 +51,7 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
       filter: format => format.container === 'mp4' && !format.qualityLabel,
     }).on('error', console.error)
       .on('progress', (chunkLength: number, downloaded: number, total: number) => {
-        onProgress(chunkLength, downloaded, total, videoToFetch)
+        onProgress(chunkLength, downloaded, total, 'audio', videoToFetch)
       })
 
       // Write audio to file since ffmpeg supports only one input stream.
@@ -57,7 +65,7 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
             filter: format => format.container === 'mp4' && !format.audioBitrate,
           })
           video.on('progress', (chunkLength: number, downloaded: number, total: number) => {
-            onProgress(chunkLength, downloaded, total, videoToFetch)
+            onProgress(chunkLength, downloaded, total, 'video', videoToFetch)
           });
           ffmpeg()
             .input(video)
