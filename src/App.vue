@@ -55,15 +55,7 @@ export default class App extends Vue {
   snackbar = false;
   snackbarMessage = "";
 
-  sendMessage() {
-    window.myIpcRenderer.send("do-a-thing", { a: "ok" });
-  }
   mounted() {
-    window.myIpcRenderer.receive("it-is-good", (data: any) => {
-      this.messageReceived = data;
-      console.log(`Received ${data} from main process`);
-    });
-
     // window.myIpcRenderer.receive("download-started", (data: any) => {
     //   this.isDownloading = true;
     //   this.snackbarMessage = "Download started !";

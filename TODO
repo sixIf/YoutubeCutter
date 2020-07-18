@@ -1,6 +1,7 @@
 Ajouter un filtrage des vidéos déjà téléchargée. Avec nedb, lorsqu'on affiche des vidéos, faire une reqûete nedb cherchant si on a déjà la vidéo ids
 
-Voir comment géré le téléchargement de toutes les vidéos de la chaine ( y'a pas encore tous les ids, quand faire le loop)
+Mettre une popup d'avertissement si les videos / playlists de la chaine sont trop nombreuses -> ça evitera le fumage de quota
+conseiller à l'user pour cette chaîne de parcourir sur youtube et copier coller les IDs
 
 Ajut phrase pertinente lors du download de video -> download audio puis download video
 

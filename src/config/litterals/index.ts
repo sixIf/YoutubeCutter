@@ -28,6 +28,7 @@ export interface DownloadRequest {
 }
 
 export interface ItemFetched {
+  readonly itemCount: number;
   readonly nextPageToken: string;
   readonly itemList: Array<ItemStruct>;
 }
@@ -38,8 +39,8 @@ export interface VideoFetched {
 }
 
 export interface IAlert {
-  type: string;
-  message: string;
+  readonly type: string;
+  readonly message: string;
 }
 
 export interface ItemDownloading {
@@ -57,11 +58,11 @@ export interface ItemStruct {
 }
 
 export interface ChannelInfos {
-  id: string;
-  title: string;
-  thumbnail: string;
-  mainPlaylistId: string;
-  totalResults: number;
+  readonly id: string;
+  readonly title: string;
+  readonly thumbnail: string;
+  readonly mainPlaylistId: string;
+  readonly totalResults: number;
 }
 
 export interface TestApiKey {
@@ -74,22 +75,22 @@ export interface VideoSelected {
 }
 
 export interface ApiYoutubeThumbnail {
-  default: {
+  readonly default: {
     url: string;
     width: number;
     height: number;
   };
-  medium?: {
+  readonly medium?: {
     url: string;
     width: number;
     height: number;
   };
-  high?: {
+  readonly high?: {
     url: string;
     width: number;
     height: number;
   };
-  standard?: {
+  readonly standard?: {
     url: string;
     width: number;
     height: number;
@@ -117,6 +118,9 @@ export interface ApiVideoInPlaylist {
         };
       }
     ];
+    readonly pageInfo: {
+      totalResults: number;
+    };
   };
 }
 
@@ -144,6 +148,10 @@ export interface ApiVideoById {
 
 export interface ApiChannelPlaylists {
   readonly data: {
+    readonly pageInfo: {
+      totalResults: number;
+      resultsPerPage: number;
+    };
     readonly nextPageToken: string;
     readonly items: [
       {

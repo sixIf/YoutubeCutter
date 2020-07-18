@@ -19,7 +19,6 @@
       <v-col>
         <list-items
           style="position: relative; z-index: 3"
-          @more-items="fetchVideos"
           @update-list="updateSelectedList"
           :itemType="itemType"
           :itemList="videoList"
@@ -74,11 +73,16 @@ export default class ChannelVideos extends Vue {
         this.playlistId,
         this.nextPageToken
       );
-      if (videoFetched.nextPageToken != this.nextPageToken) {
+      // Please hold tight, protect me from the deadly infinite loop aka quota slayer
+      if (videoFetched.itemCount > this.videoList.length) {
         this.nextPageToken = videoFetched.nextPageToken;
         videoFetched.itemList.forEach(video => {
           this.videoList.push(video);
         });
+        this.fetchVideos();
+        console.log(
+          `item count: ${videoFetched.itemCount} - videoList length ${this.videoList.length}`
+        );
       } else {
         // Display no more videos ?
       }

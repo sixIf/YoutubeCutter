@@ -54,6 +54,7 @@ export class YoutubeService implements IYoutubeService {
       });
     });
     const ItemFetched: ItemFetched = {
+      itemCount: apiResponse.data.pageInfo.totalResults,
       nextPageToken: apiResponse.data.nextPageToken,
       itemList: channelPlaylists
     }
@@ -70,6 +71,7 @@ export class YoutubeService implements IYoutubeService {
       });
     });
     const ItemFetched: ItemFetched = {
+      itemCount: apiResponse.data.pageInfo.totalResults,
       nextPageToken: apiResponse.data.nextPageToken,
       itemList: channelVideos
     }

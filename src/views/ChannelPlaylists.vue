@@ -15,7 +15,6 @@
       <v-col>
         <list-items
           style="z-index: 3"
-          @more-items="fetchPlaylists"
           @update-list="updateSelectedList"
           :itemType="itemType"
           :itemList="playlistList"
@@ -47,23 +46,15 @@ export default class ChannelPlaylist extends Vue {
 
   nextPageToken = "";
   playlistList: ItemStruct[] = [];
-  listPlaylistSelected: string[] = [];
+  listPlaylistSelected: ItemStruct[] = [];
   itemType = "playlist";
 
   get channelId(): string {
     return this.$route.params.id;
   }
 
-  updateSelectedList(playlistSelected: string[]): void {
+  updateSelectedList(playlistSelected: ItemStruct[]): void {
     this.listPlaylistSelected = playlistSelected;
-  }
-
-  findVideoByKeyword(): void {
-    console.log("To implement findVideoByKeyword");
-  }
-
-  fetchMoreVideos(): void {
-    console.log("To implement findVideoByKeyword");
   }
 
   async fetchPlaylists() {
@@ -72,11 +63,15 @@ export default class ChannelPlaylist extends Vue {
         this.channelId,
         this.nextPageToken
       );
-      if (playlistsFetched.nextPageToken != this.nextPageToken) {
+      if (playlistsFetched.itemCount > this.playlistList.length) {
         this.nextPageToken = playlistsFetched.nextPageToken;
         playlistsFetched.itemList.forEach(playlist => {
           this.playlistList.push(playlist);
         });
+        this.fetchPlaylists();
+        console.log(
+          `item count: ${playlistsFetched.itemCount} - playlistList length ${this.playlistList.length}`
+        );
       } else {
         // Display no more videos ?
       }
