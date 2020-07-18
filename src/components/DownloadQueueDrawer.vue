@@ -1,14 +1,10 @@
 <template>
   <div>
-    <v-btn
-      v-if="isDownloading"
-      color="pink"
-      dark
-      id="download-queue"
-      @click.stop="drawer = !drawer"
-    >See download queue</v-btn>
+    <v-btn color="white" dark icon id="download-queue" @click.stop="drawer = !drawer">
+      <v-icon>mdi-chevron-triple-left</v-icon>
+    </v-btn>
     <v-navigation-drawer v-model="drawer" absolute right temporary width="500" style="z-index: 101">
-      <v-list-item>
+      <v-list-item style="position=sticky">
         <v-list-item-content>
           <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
             <v-tab v-for="tab in tabs" :key="tab">{{ tab }}</v-tab>
@@ -80,66 +76,16 @@ const { myIpcRenderer } = window;
 @Component
 export default class DownloadQueueDrawer extends Vue {
   dialog = false;
-  isDownloading = true;
   drawer = null;
   tab = null;
   tabs = ["Downloading", "Finished"];
-  videoDownloading: Array<ItemDownloading> = [
-    {
-      progressAudio: "100.00",
-      progressVideo: "0",
-      type: "video",
-      audioOnly: false,
-      video: {
-        id: "w3_paCEqWxo",
-        thumbnail: "https://i.ytimg.com/vi/w3_paCEqWxo/hqdefault.jpg",
-        title:
-          "Composition en rouge, bleu et blanc II | Piet Mondrian | Centre Pompidou"
-      }
-    },
-    {
-      progressAudio: "100.00",
-      progressVideo: "0",
-      type: "audio",
-      audioOnly: true,
-      video: {
-        id: "q2awCruG7UI",
-        thumbnail: "https://i.ytimg.com/vi/q2awCruG7UI/hqdefault.jpg",
-        title:
-          "1- Les débuts de la photographie - La naissance d’une invention (1/4)"
-      }
-    }
-  ];
-  videoDownloaded: Array<ItemDownloading> = [
-    {
-      progressAudio: "100.00",
-      progressVideo: "0",
-      type: "audio",
-      audioOnly: true,
-      video: {
-        id: "w3_paCEqWxo",
-        thumbnail: "https://i.ytimg.com/vi/w3_paCEqWxo/hqdefault.jpg",
-        title:
-          "Composition en rouge, bleu et blanc II | Piet Mondrian | Centre Pompidou"
-      }
-    },
-    {
-      progressAudio: "100.00",
-      progressVideo: "0",
-      type: "audio",
-      audioOnly: true,
-      video: {
-        id: "q2awCruG7UI",
-        thumbnail: "https://i.ytimg.com/vi/q2awCruG7UI/hqdefault.jpg",
-        title:
-          "1- Les débuts de la photographie - La naissance d’une invention (1/4)"
-      }
-    }
-  ];
+  videoDownloading: Array<ItemDownloading> = [];
+  videoDownloaded: Array<ItemDownloading> = [];
   removeVideo() {
     console.log("To implement");
   }
   clearDownloadedList() {
+    // Not reactive for an obscure reason
     _.remove(this.videoDownloaded, function(x) {
       return true;
     });
@@ -148,7 +94,6 @@ export default class DownloadQueueDrawer extends Vue {
     window.myIpcRenderer.receive(
       "download-progress",
       (data: ItemDownloading) => {
-        this.isDownloading = true; // that way even when page refreshed the download list is populated
         const index = this.videoDownloading.findIndex(
           x => x.video.id === data.video.id
         );
@@ -205,59 +150,6 @@ export default class DownloadQueueDrawer extends Vue {
   position fixed
   z-index 100
   bottom 8px
-  right  50px
-  background: linear-gradient(270deg, #d32f2f, #f1c40f, #eaebed, #b0daf1, #2274a5, #2274a5, #b0daf1, #eaebed, #f1c40f, #d32f2f);
-  background-size: 400% 400%;
-  -webkit-animation: QueueButton 3s ease infinite;
-  -moz-animation: QueueButton 3s ease infinite;
-  -o-animation: QueueButton 3s ease infinite;
-  animation: QueueButton 3s ease infinite;
-
-</style>
-
-<style>
-@-webkit-keyframes QueueButton {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-@-moz-keyframes QueueButton {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-@-o-keyframes QueueButton {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-@keyframes QueueButton {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
+  right  5px
+  background: #d32f2f
 </style>
