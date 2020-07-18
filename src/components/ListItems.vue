@@ -29,7 +29,7 @@
                     v-if="itemType=='playlist'"
                     color="primary"
                   >
-                    <v-icon>location-enter</v-icon>Explore playlist
+                    <v-icon>location-enter</v-icon>Explore
                   </v-btn>
                 </v-spacer>
               </v-card-actions>
@@ -44,7 +44,6 @@
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from "vue-property-decorator";
 import { ItemStruct, VideoSelected } from "@/config/litterals";
-import DownloadModal from "@/components/DownloadModal.vue";
 
 @Component
 export default class ListItems extends Vue {
@@ -59,26 +58,26 @@ export default class ListItems extends Vue {
     this.$emit("update-selected", this.itemSelected);
   }
 
-  scrollFetchVideos(): void {
-    window.onscroll = () => {
-      const bottomOfWindow =
-        Math.max(
-          window.pageYOffset,
-          document.documentElement.scrollTop,
-          document.body.scrollTop
-        ) +
-          window.innerHeight ===
-        document.documentElement.offsetHeight;
+  // scrollFetchVideos(): void {
+  //   window.onscroll = () => {
+  //     const bottomOfWindow =
+  //       Math.max(
+  //         window.pageYOffset,
+  //         document.documentElement.scrollTop,
+  //         document.body.scrollTop
+  //       ) +
+  //         window.innerHeight ===
+  //       document.documentElement.offsetHeight;
 
-      if (bottomOfWindow) {
-        this.$emit("more-items");
-      }
-    };
-  }
+  //     if (bottomOfWindow) {
+  //       this.$emit("more-items");
+  //     }
+  //   };
+  // }
 
   mounted() {
     // Init scroll
-    this.scrollFetchVideos();
+    // this.scrollFetchVideos();
   }
 }
 </script>

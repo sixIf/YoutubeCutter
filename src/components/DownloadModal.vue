@@ -9,9 +9,6 @@
       <v-card-text>
         <v-container>
           <v-row>
-            <v-col cols="12" sm="6" md="4">
-              <v-select v-model="quality" :items="qualityTypes" label="Quality"></v-select>
-            </v-col>
             <v-col cols="12">
               <v-switch v-model="audioOnly" label="Audio only"></v-switch>
             </v-col>
@@ -28,21 +25,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Provide, Prop, Vue } from "vue-property-decorator";
-import { YOUTUBESERVICE, ItemStruct, ERROR_TYPES } from "@/config/litterals";
+import { Component, Inject, Prop, Vue } from "vue-property-decorator";
+import {
+  YOUTUBESERVICE,
+  ItemStruct,
+  ERROR_TYPES,
+  DownloadRequest
+} from "@/config/litterals";
 import * as _ from "lodash";
 import { IYoutubeService } from "@/services/youtubeService";
+import { DownloadItem } from "electron";
 const { myIpcRenderer } = window;
 
 @Component
 export default class DownloadModal extends Vue {
+  @Inject(YOUTUBESERVICE)
+  service!: IYoutubeService;
+
   @Prop({ default: true }) disabled!: boolean;
   @Prop({ default: [] }) itemsSelected!: ItemStruct[];
   @Prop({ default: "video" }) itemType!: string;
+  @Prop({ default: "" }) playlistName!: string;
   dialog = false;
   audioOnly = false;
-  quality: string | null = null;
-  qualityTypes = ["high", "medium", "low"];
 
   get channelTitle(): string {
     return this.$route.params.hasOwnProperty("channelTitle")
@@ -50,20 +55,47 @@ export default class DownloadModal extends Vue {
       : "Vrac";
   }
 
+  // async fetchPlaylistContent(playlistId: string) {
+  //   let nextPageToken = '';
+  //   while(nextPageToken){
+
+  //   }
+  //   try {
+  //     const videoFetched = await this.service.getVideoList(
+  //       playlistId,
+  //       this.nextPageToken
+  //     );
+  //     if (videoFetched.nextPageToken != this.nextPageToken) {
+  //       this.nextPageToken = videoFetched.nextPageToken;
+  //       videoFetched.itemList.forEach(video => {
+  //         this.videoList.push(video);
+  //       });
+  //     } else {
+  //       // Display no more videos ?
+  //     }
+  //   } catch (err) {
+  //     // TODO send error back to home ?
+  //     console.log("Channel video error:" + err);
+  //     // this.$router.push("/");
+  //   }
+  // }
+
   downloadItems(): void {
     console.log(`channel title ${this.channelTitle}`);
+    const downloadRequest: DownloadRequest = {
+      audioOnly: this.audioOnly,
+      playlistTitle: this.channelTitle,
+      channelTitle: this.channelTitle,
+      itemSelected: this.itemsSelected
+    };
     switch (this.itemType) {
       case "video":
         // Send videos array of json
-        window.myIpcRenderer.send("download-videos", {
-          audioOnly: this.audioOnly,
-          channelTitle: this.channelTitle,
-          itemSelected: this.itemsSelected
-        });
+        window.myIpcRenderer.send("download-videos", { downloadRequest });
         break;
 
       case "playlist":
-        // Send playlist array of Json
+        // Get videos in playlists then download
         break;
     }
     this.dialog = false;

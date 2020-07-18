@@ -8,8 +8,6 @@ import { appMainPath } from '@/helpers/pathHelper'
 import downloadItems from '@/helpers/ytDownloaderHelper'
 import { DownloadRequest, ItemStruct } from '@/config/litterals/index'
 import fs from 'fs'
-import ytdl from 'ytdl-core'
-import { cpuUsage } from 'process'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -85,25 +83,14 @@ app.on('ready', async () => {
   createWindow()
 })
 
-// Custom events with preload.js
-ipcMain.on("do-a-thing", (event, args) => {
-  console.log("i did it")
-  console.log(event)
-  console.log(args)
-  if (win)
-    win.webContents.send('it-is-good', 'YAHOOO')
-  // ytdl('http://www.youtube.com/watch?v=A02s8omM_hI')
-  //   .pipe(fs.createWriteStream('video.flv'));
-});
 
 ipcMain.on("download-videos", (event, args: DownloadRequest) => {
   // Loop over args to download each videos selected
-  if (!fs.existsSync(path.join(appMainPath, args.channelTitle))) {
-    fs.mkdirSync(path.join(appMainPath, args.channelTitle), { recursive: true });
+  if (!fs.existsSync(path.join(appMainPath, args.channelTitle, args.playlistTitle))) {
+    fs.mkdirSync(path.join(appMainPath, args.channelTitle, args.playlistTitle), { recursive: true });
   }
   const output = path.join(appMainPath, args.channelTitle);
   downloadItems(args.itemSelected, args.audioOnly, output, win);
-  console.log('Finished')
 });
 
 // Exit cleanly on request from parent process in development mode.
