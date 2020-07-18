@@ -37,6 +37,7 @@ import { YOUTUBESERVICE, ItemStruct } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 import FiltersToolbar from "@/components/FiltersToolbar.vue";
 import ListItems from "@/components/ListItems.vue";
+import _ from "lodash";
 
 @Component({
   components: {
@@ -52,7 +53,7 @@ export default class ChannelVideos extends Vue {
   @Prop({ default: "" }) playlistName!: string;
   nextPageToken = "";
   videoList: ItemStruct[] = [];
-  listVideoSelected: string[] = [];
+  listVideoSelected: ItemStruct[] = [];
   itemType = "video";
 
   get channelId(): string {
@@ -63,8 +64,8 @@ export default class ChannelVideos extends Vue {
     return this.$route.params.playlistId;
   }
 
-  updateSelectedList(videoSelected: string[]): void {
-    this.listVideoSelected = videoSelected;
+  updateSelectedList(videoSelected: ItemStruct[]): void {
+    this.listVideoSelected = _.cloneDeep(videoSelected);
   }
 
   async fetchVideos() {
