@@ -7,6 +7,7 @@ export const APIKEYSERVICE = "apiKeyService";
 
 export const ERROR_TYPES: Record<string, string> = {
   403: 'Quota exceeded for your API key. Buy more credit on your google account or retry tomorrow.',
+  404: 'Item not found, verify the pasted link.',
   400: 'Your API key is invalid. Please rectify it.'
 }
 
@@ -20,9 +21,10 @@ export const LOCAL_STORAGE_KEY = "YoutubeApiKey"
  */
 
 export interface DownloadRequest {
-  audioOnly: boolean;
-  channelTitle: string;
-  itemSelected: Array<ItemStruct>;
+  readonly audioOnly: boolean;
+  readonly channelTitle: string;
+  readonly playlistTitle: string;
+  readonly itemSelected: Array<ItemStruct>;
 }
 
 export interface ItemFetched {
@@ -71,6 +73,29 @@ export interface VideoSelected {
   readonly title: string;
 }
 
+export interface ApiYoutubeThumbnail {
+  default: {
+    url: string;
+    width: number;
+    height: number;
+  };
+  medium?: {
+    url: string;
+    width: number;
+    height: number;
+  };
+  high?: {
+    url: string;
+    width: number;
+    height: number;
+  };
+  standard?: {
+    url: string;
+    width: number;
+    height: number;
+  };
+}
+
 export interface ApiVideoInPlaylist {
   readonly data: {
     readonly nextPageToken: string;
@@ -81,13 +106,7 @@ export interface ApiVideoInPlaylist {
           channelId: string;
           title: string;
           description: string;
-          thumbnails: {
-            high: {
-              url: string;
-              width: number;
-              height: number;
-            };
-          };
+          thumbnails: ApiYoutubeThumbnail;
           channelTitle: string;
           playlistId: string;
           position: number;
@@ -115,13 +134,7 @@ export interface ApiVideoById {
           channelId: string;
           title: string;
           description: string;
-          thumbnails: {
-            high: {
-              url: string;
-              width: number;
-              height: number;
-            };
-          };
+          thumbnails: ApiYoutubeThumbnail;
           channelTitle: string;
         };
       }
@@ -139,13 +152,7 @@ export interface ApiChannelPlaylists {
         snippet: {
           channelId: string;
           title: string;
-          thumbnails: {
-            high: {
-              url: string;
-              width: number;
-              height: number;
-            };
-          };
+          thumbnails: ApiYoutubeThumbnail;
         };
       }
     ];
@@ -173,11 +180,7 @@ export interface ApiChannelInfos {
         readonly snippet: {
           title: string;
           description: string;
-          thumbnails: {
-            high: {
-              url: string;
-            };
-          };
+          thumbnails: ApiYoutubeThumbnail;
           channelTitle: string;
           playlistId: string;
           resourceId: {

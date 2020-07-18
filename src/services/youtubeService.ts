@@ -1,6 +1,6 @@
 import { IYoutubeClient } from "@/api/youtubeClient";
 import { injectable, inject } from "tsyringe";
-import { ChannelInfos, ApiVideoById, ApiChannelInfos, TestApiKey, ApiChannelMainPlaylist, ApiChannelPlaylists, ChannelMainPlaylist, ApiVideoInPlaylist, ItemStruct, ItemFetched, VideoFetched } from '@/config/litterals/index'
+import { ChannelInfos, ApiVideoById, ApiChannelInfos, TestApiKey, ApiChannelMainPlaylist, ApiChannelPlaylists, ChannelMainPlaylist, ApiVideoInPlaylist, ItemStruct, ItemFetched, VideoFetched, ApiYoutubeThumbnail } from '@/config/litterals/index'
 
 export interface IYoutubeService {
   getVideoList(playlistId: string, pageToken: string): Promise<ItemFetched>;
@@ -31,13 +31,26 @@ export class YoutubeService implements IYoutubeService {
     return response;
   }
 
+  computeThumbnail(thumbnail: ApiYoutubeThumbnail): string {
+    if (thumbnail.standard)
+      return thumbnail.standard.url;
+    else if (thumbnail.high)
+      return thumbnail.high.url;
+    else if (thumbnail.medium)
+      return thumbnail.medium.url;
+    else if (thumbnail.default)
+      return thumbnail.default.url;
+    else
+      return "";
+  }
+
   formatPlaylistList(apiResponse: ApiChannelPlaylists): ItemFetched {
     const channelPlaylists: Array<ItemStruct> = [];
     apiResponse.data.items.forEach(playlist => {
       channelPlaylists.push({
         id: playlist.id,
         title: playlist.snippet.title,
-        thumbnail: playlist.snippet.thumbnails.high.url
+        thumbnail: this.computeThumbnail(playlist.snippet.thumbnails)
       });
     });
     const ItemFetched: ItemFetched = {
@@ -53,7 +66,7 @@ export class YoutubeService implements IYoutubeService {
       channelVideos.push({
         id: video.snippet.resourceId.videoId,
         title: video.snippet.title,
-        thumbnail: video.snippet.thumbnails.high.url
+        thumbnail: this.computeThumbnail(video.snippet.thumbnails)
       });
     });
     const ItemFetched: ItemFetched = {
@@ -68,7 +81,7 @@ export class YoutubeService implements IYoutubeService {
       totalResults: apiResponse.data.pageInfo.totalResults,
       videoInfos: {
         id: apiResponse.data.items[0] ? apiResponse.data.items[0].id : "not found",
-        thumbnail: apiResponse.data.items[0] ? apiResponse.data.items[0].snippet.thumbnails.high.url : "not found",
+        thumbnail: apiResponse.data.items[0] ? this.computeThumbnail(apiResponse.data.items[0].snippet.thumbnails) : "not found",
         title: apiResponse.data.items[0] ? apiResponse.data.items[0].snippet.title : "not found"
       }
     }
@@ -83,7 +96,7 @@ export class YoutubeService implements IYoutubeService {
   formatChannelInfos(apiResponse: ApiChannelInfos): ChannelInfos {
     const channelInfos: ChannelInfos = {
       id: apiResponse.data.items != undefined ? apiResponse.data.items[0].id : "not found",
-      thumbnail: apiResponse.data.items != undefined ? apiResponse.data.items[0].snippet.thumbnails.high.url : "not found",
+      thumbnail: apiResponse.data.items != undefined ? this.computeThumbnail(apiResponse.data.items[0].snippet.thumbnails) : "not found",
       title: apiResponse.data.items != undefined ? apiResponse.data.items[0].snippet.title : "not found",
       mainPlaylistId: apiResponse.data.items != undefined ? apiResponse.data.items[0].contentDetails.relatedPlaylists.uploads : "not found",
       totalResults: apiResponse.data.pageInfo.totalResults
