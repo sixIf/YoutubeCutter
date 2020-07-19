@@ -7,6 +7,7 @@
           <h1 v-else>Playlists : {{ playlistName }}</h1>
         </v-row>
         <v-row justify="end">
+          <v-btn button @click="toggleAll = !toggleAll">{{ computeToggleBtnName }}</v-btn>
           <download-modal
             :itemType="itemType"
             :itemsSelected="listVideoSelected"
@@ -20,6 +21,8 @@
         <list-items
           style="position: relative; z-index: 3"
           @update-list="updateSelectedList"
+          @more-items="fetchVideos(false)"
+          :toggleAll="toggleAll"
           :itemType="itemType"
           :itemList="videoList"
         />
@@ -52,8 +55,11 @@ export default class ChannelVideos extends Vue {
   @Prop({ default: "" }) playlistName!: string;
   nextPageToken = "";
   videoList: ItemStruct[] = [];
+  itemCount = 0;
+  toggleAll = false;
   listVideoSelected: ItemStruct[] = [];
   itemType = "video";
+  previousVideoListLength = 0;
 
   get channelId(): string {
     return this.$route.params.id;
@@ -63,11 +69,26 @@ export default class ChannelVideos extends Vue {
     return this.$route.params.playlistId;
   }
 
+  get computeToggleBtnName(): string {
+    return this.toggleAll ? "Uncheck all" : "Check all";
+  }
+
   updateSelectedList(videoSelected: ItemStruct[]): void {
     this.listVideoSelected = _.cloneDeep(videoSelected);
   }
 
-  async fetchVideos() {
+  checkVideoList() {
+    return (
+      this.videoList.length < 1000 &&
+      this.videoList.length != this.previousVideoListLength
+    );
+  }
+
+  /**
+   * Display by default 1000 videos for a quota cost of 60
+   */
+  async fetchVideos(firstCall: boolean) {
+    console.log("halo");
     try {
       const videoFetched = await this.service.getVideoList(
         this.playlistId,
@@ -75,11 +96,12 @@ export default class ChannelVideos extends Vue {
       );
       // Please hold tight, protect me from the deadly infinite loop aka quota slayer
       if (videoFetched.itemCount > this.videoList.length) {
+        this.previousVideoListLength = this.videoList.length;
         this.nextPageToken = videoFetched.nextPageToken;
         videoFetched.itemList.forEach(video => {
           this.videoList.push(video);
         });
-        this.fetchVideos();
+        if (firstCall && this.checkVideoList()) this.fetchVideos(true);
         console.log(
           `item count: ${videoFetched.itemCount} - videoList length ${this.videoList.length}`
         );
@@ -95,7 +117,7 @@ export default class ChannelVideos extends Vue {
 
   async created() {
     // Reset video list
-    this.fetchVideos();
+    this.fetchVideos(true);
   }
 }
 </script>

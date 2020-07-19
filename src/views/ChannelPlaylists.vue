@@ -16,6 +16,7 @@
         <list-items
           style="z-index: 3"
           @update-list="updateSelectedList"
+          @more-items="fetchPlaylists(false)"
           :itemType="itemType"
           :itemList="playlistList"
         />
@@ -48,27 +49,36 @@ export default class ChannelPlaylist extends Vue {
   playlistList: ItemStruct[] = [];
   listPlaylistSelected: ItemStruct[] = [];
   itemType = "playlist";
+  previousPlaylistListLength = 0;
 
   get channelId(): string {
     return this.$route.params.id;
+  }
+
+  checkplaylistList() {
+    return (
+      this.playlistList.length < 1000 &&
+      this.playlistList.length != this.previousPlaylistListLength
+    );
   }
 
   updateSelectedList(playlistSelected: ItemStruct[]): void {
     this.listPlaylistSelected = playlistSelected;
   }
 
-  async fetchPlaylists() {
+  async fetchPlaylists(firstCall: boolean) {
     try {
       const playlistsFetched = await this.service.getChannelPlaylists(
         this.channelId,
         this.nextPageToken
       );
       if (playlistsFetched.itemCount > this.playlistList.length) {
+        this.previousPlaylistListLength = this.playlistList.length;
         this.nextPageToken = playlistsFetched.nextPageToken;
         playlistsFetched.itemList.forEach(playlist => {
           this.playlistList.push(playlist);
         });
-        this.fetchPlaylists();
+        if (firstCall && this.checkplaylistList()) this.fetchPlaylists(true);
         console.log(
           `item count: ${playlistsFetched.itemCount} - playlistList length ${this.playlistList.length}`
         );
@@ -83,7 +93,7 @@ export default class ChannelPlaylist extends Vue {
   }
 
   async created() {
-    this.fetchPlaylists();
+    this.fetchPlaylists(true);
   }
 }
 </script>

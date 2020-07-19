@@ -2,12 +2,8 @@ Ajouter un filtrage des vidéos déjà téléchargée. Avec nedb, lorsqu'on affi
 
 Mettre une popup d'avertissement si les videos / playlists de la chaine sont trop nombreuses -> ça evitera le fumage de quota
 conseiller à l'user pour cette chaîne de parcourir sur youtube et copier coller les IDs
++++++++ ADD virtual scroll
 
-Ajut phrase pertinente lors du download de video -> download audio puis download video
-
-
-Voir la pertinence d'ajouter le nombre de vidéos de la chaine dans les requetes ( statistics -> 2 resource cost ) ou peut être uniquement sur les vues vidéos ?
-----> surement juste faire une requête en plus lors du mounted des vidéos pour afficher le nb de vidéos
 
 
 https://developers.google.com/youtube/v3/docs/commentThreads/list?apix_params=%7B%22part%22%3A%5B%22snippet%2Creplies%22%5D%2C%22videoId%22%3A%22_VB39Jo8mAQ%22%7D

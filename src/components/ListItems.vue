@@ -7,7 +7,7 @@
           <v-item v-slot:default="{ active, toggle }" :value="item">
             <v-card
               :color="active ? 'primary' : ''"
-              id="item.id"
+              :id="item.id"
               hover
               @click="if(clickEnabled) {toggle(); $emit('update-list', itemSelected)}"
             >
@@ -50,6 +50,7 @@ export default class ListItems extends Vue {
   @Prop({ default: "video" }) itemType!: string;
   @Prop(Array) itemList: ItemStruct[] | undefined;
   @Prop({ default: true }) clickEnabled!: boolean;
+  @Prop({ default: false }) toggleAll!: boolean;
 
   itemSelected: Array<ItemStruct> | null = [];
 
@@ -58,26 +59,33 @@ export default class ListItems extends Vue {
     this.$emit("update-selected", this.itemSelected);
   }
 
-  // scrollFetchVideos(): void {
-  //   window.onscroll = () => {
-  //     const bottomOfWindow =
-  //       Math.max(
-  //         window.pageYOffset,
-  //         document.documentElement.scrollTop,
-  //         document.body.scrollTop
-  //       ) +
-  //         window.innerHeight ===
-  //       document.documentElement.offsetHeight;
+  @Watch("toggleAll")
+  toggleAllItems() {
+    console.log(this);
+    if (this.toggleAll) console.log("Selectionne tout");
+    else console.log("Déselectionne tout");
+  }
 
-  //     if (bottomOfWindow) {
-  //       this.$emit("more-items");
-  //     }
-  //   };
-  // }
+  scrollFetchVideos(): void {
+    window.onscroll = () => {
+      const bottomOfWindow =
+        Math.max(
+          window.pageYOffset,
+          document.documentElement.scrollTop,
+          document.body.scrollTop
+        ) +
+          window.innerHeight ===
+        document.documentElement.offsetHeight;
+
+      if (bottomOfWindow) {
+        this.$emit("more-items");
+      }
+    };
+  }
 
   mounted() {
     // Init scroll
-    // this.scrollFetchVideos();
+    this.scrollFetchVideos();
   }
 }
 </script>
