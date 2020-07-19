@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <v-container class="home-container fill-height" fluid>
       <v-row align="center" justify="center" no-gutters>
         <v-col cols="12" sm="8" md="4">
@@ -35,7 +35,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 
 

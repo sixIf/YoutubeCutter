@@ -7,7 +7,7 @@
       :channelThumbnail="channelThumbnail"
       :mainPlaylistId="mainPlaylistId"
     ></nav-drawer>
-    <v-content>
+    <v-main>
       <v-container class="channel-container" fluid>
         <v-row align="start" justify="start" no-gutters>
           <v-col cols="12">
@@ -15,7 +15,7 @@
           </v-col>
         </v-row>
       </v-container>
-    </v-content>
+    </v-main>
   </div>
 </template>
 
