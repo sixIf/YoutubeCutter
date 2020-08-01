@@ -27,3 +27,20 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+## Architecture des des dossiers 
+
+Dans une chaine ou dans vrac :
+
+  - Videos
+    - videoX
+    - videoY
+    - playlistX
+      - videoXinPlaylistX
+  - Audios
+    - audioX
+    - audioY
+    - playlistX
+      - audioXinPlaylistX      
+  

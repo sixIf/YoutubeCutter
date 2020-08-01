@@ -30,7 +30,7 @@ import {
   YOUTUBESERVICE,
   ItemStruct,
   ERROR_TYPES,
-  DownloadRequest
+  DownloadRequest,
 } from "@/config/litterals";
 import * as _ from "lodash";
 import { IYoutubeService } from "@/services/youtubeService";
@@ -45,7 +45,6 @@ export default class DownloadModal extends Vue {
   @Prop({ default: true }) disabled!: boolean;
   @Prop({ default: [] }) itemsSelected!: ItemStruct[];
   @Prop({ default: "video" }) itemType!: string;
-  @Prop({ default: "" }) playlistName!: string;
   dialog = false;
   audioOnly = false;
 
@@ -53,6 +52,12 @@ export default class DownloadModal extends Vue {
     return this.$route.params.hasOwnProperty("channelTitle")
       ? this.$route.params.channelTitle
       : "Vrac";
+  }
+
+  get playlistTitle(): string {
+    return this.$route.params.playlistTitle
+      ? this.$route.params.playlistTitle
+      : "";
   }
 
   // async fetchPlaylistContent(playlistId: string) {
@@ -84,14 +89,14 @@ export default class DownloadModal extends Vue {
     console.log(`channel title ${this.channelTitle}`);
     const downloadRequest: DownloadRequest = {
       audioOnly: this.audioOnly,
-      playlistTitle: this.channelTitle,
+      playlistTitle: this.playlistTitle,
       channelTitle: this.channelTitle,
-      itemSelected: this.itemsSelected
+      itemSelected: this.itemsSelected,
     };
     switch (this.itemType) {
       case "video":
         // Send videos array of json
-        window.myIpcRenderer.send("download-videos", { downloadRequest });
+        window.myIpcRenderer.send("download-videos", downloadRequest);
         break;
 
       case "playlist":

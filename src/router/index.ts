@@ -64,7 +64,7 @@ const routes: Array<RouteConfig> = [
         component: ChannelPlaylists
       },
       {
-        path: 'playlist/:playlistId/:playlistName/videos',
+        path: 'playlist/:playlistId/:playlistTitle/videos',
         name: 'playlist-videos',
         component: PlaylistVideos
       },

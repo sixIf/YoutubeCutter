@@ -3,8 +3,8 @@
     <v-row class="sticky-toolbar">
       <v-col>
         <v-row>
-          <h1 v-if="!playlistName">Uploaded videos</h1>
-          <h1 v-else>Playlists : {{ playlistName }}</h1>
+          <h1 v-if="playlistTitle=='Uploaded Videos'">{{ playlistTitle }}</h1>
+          <h1 v-else>Playlists : {{ playlistTitle }}</h1>
         </v-row>
         <v-row justify="end">
           <v-btn button @click="toggleAll = !toggleAll">{{ computeToggleBtnName }}</v-btn>
@@ -45,14 +45,13 @@ import _ from "lodash";
   components: {
     FiltersToolbar,
     ListItems,
-    DownloadModal
-  }
+    DownloadModal,
+  },
 })
 export default class ChannelVideos extends Vue {
   @Inject(YOUTUBESERVICE)
   service!: IYoutubeService;
 
-  @Prop({ default: "" }) playlistName!: string;
   nextPageToken = "";
   videoList: ItemStruct[] = [];
   itemCount = 0;
@@ -69,26 +68,32 @@ export default class ChannelVideos extends Vue {
     return this.$route.params.playlistId;
   }
 
+  get playlistTitle(): string {
+    return this.$route.params.playlistTitle
+      ? this.$route.params.playlistTitle
+      : "Uploaded Videos";
+  }
   get computeToggleBtnName(): string {
     return this.toggleAll ? "Uncheck all" : "Check all";
   }
 
   updateSelectedList(videoSelected: ItemStruct[]): void {
-    this.listVideoSelected = _.cloneDeep(videoSelected);
+    this.listVideoSelected = [];
+    if (videoSelected.length != 0)
+      this.listVideoSelected = _.cloneDeep(videoSelected);
   }
 
   checkVideoList() {
     return (
-      this.videoList.length < 1000 &&
+      this.videoList.length < 100 &&
       this.videoList.length != this.previousVideoListLength
     );
   }
 
   /**
-   * Display by default 1000 videos for a quota cost of 60
+   * Display by default 100 videos for a quota cost of 60
    */
   async fetchVideos(firstCall: boolean) {
-    console.log("halo");
     try {
       const videoFetched = await this.service.getVideoList(
         this.playlistId,
@@ -98,7 +103,7 @@ export default class ChannelVideos extends Vue {
       if (videoFetched.itemCount > this.videoList.length) {
         this.previousVideoListLength = this.videoList.length;
         this.nextPageToken = videoFetched.nextPageToken;
-        videoFetched.itemList.forEach(video => {
+        videoFetched.itemList.forEach((video) => {
           this.videoList.push(video);
         });
         if (firstCall && this.checkVideoList()) this.fetchVideos(true);

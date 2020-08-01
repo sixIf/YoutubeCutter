@@ -1,5 +1,5 @@
 <template>
-  <channel-videos :playlistName="playlistName"></channel-videos>
+  <channel-videos></channel-videos>
 </template>
 
 <script lang="ts">
@@ -8,12 +8,12 @@ import ChannelVideos from "@/views/ChannelVideos.vue";
 
 @Component({
   components: {
-    ChannelVideos
-  }
+    ChannelVideos,
+  },
 })
 export default class PlaylistVideos extends Vue {
-  get playlistName(): string {
-    return this.$route.params.playlistName;
+  get playlistTitle(): string {
+    return this.$route.params.playlistTitle;
   }
 }
 </script>

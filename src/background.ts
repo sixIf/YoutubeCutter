@@ -86,10 +86,11 @@ app.on('ready', async () => {
 
 ipcMain.on("download-videos", (event, args: DownloadRequest) => {
   // Loop over args to download each videos selected
-  if (!fs.existsSync(path.join(appMainPath, args.channelTitle, args.playlistTitle))) {
-    fs.mkdirSync(path.join(appMainPath, args.channelTitle, args.playlistTitle), { recursive: true });
+  const subDirectory = args.audioOnly ? "Audios" : "Videos";
+  if (!fs.existsSync(path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle))) {
+    fs.mkdirSync(path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle), { recursive: true });
   }
-  const output = path.join(appMainPath, args.channelTitle);
+  const output = path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle);
   downloadItems(args.itemSelected, args.audioOnly, output, win);
 });
 

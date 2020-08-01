@@ -33,13 +33,14 @@ import { YOUTUBESERVICE, ItemStruct } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 import FiltersToolbar from "@/components/FiltersToolbar.vue";
 import ListItems from "@/components/ListItems.vue";
+import _ from "lodash";
 
 @Component({
   components: {
     FiltersToolbar,
     ListItems,
-    DownloadModal
-  }
+    DownloadModal,
+  },
 })
 export default class ChannelPlaylist extends Vue {
   @Inject(YOUTUBESERVICE)
@@ -57,13 +58,15 @@ export default class ChannelPlaylist extends Vue {
 
   checkplaylistList() {
     return (
-      this.playlistList.length < 1000 &&
+      this.playlistList.length < 100 &&
       this.playlistList.length != this.previousPlaylistListLength
     );
   }
 
   updateSelectedList(playlistSelected: ItemStruct[]): void {
-    this.listPlaylistSelected = playlistSelected;
+    this.listPlaylistSelected = [];
+    if (playlistSelected.length != 0)
+      this.listPlaylistSelected = _.cloneDeep(playlistSelected);
   }
 
   async fetchPlaylists(firstCall: boolean) {
@@ -75,7 +78,7 @@ export default class ChannelPlaylist extends Vue {
       if (playlistsFetched.itemCount > this.playlistList.length) {
         this.previousPlaylistListLength = this.playlistList.length;
         this.nextPageToken = playlistsFetched.nextPageToken;
-        playlistsFetched.itemList.forEach(playlist => {
+        playlistsFetched.itemList.forEach((playlist) => {
           this.playlistList.push(playlist);
         });
         if (firstCall && this.checkplaylistList()) this.fetchPlaylists(true);

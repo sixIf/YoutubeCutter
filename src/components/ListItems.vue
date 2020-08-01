@@ -1,15 +1,16 @@
 <template>
-  <v-item-group multiple v-model="itemSelected">
+  <!-- itemSelected to string -->
+  <v-item-group :multiple="itemType!='playlist'" v-model="itemsIdSelected">
     <v-container class="list-item-container" fluid>
       <v-row dense>
         <!-- <p v-if="itemList.length==0">No {{ itemType }} found</p> -->
         <v-col v-for="item in itemList" :key="item.id" cols="12" sm="6" lg="2">
-          <v-item v-slot:default="{ active, toggle }" :value="item">
+          <v-item v-slot:default="{ active, toggle }" :value="item.id">
             <v-card
               :color="active ? 'primary' : ''"
               :id="item.id"
               hover
-              @click="if(clickEnabled) {toggle(); $emit('update-list', itemSelected)}"
+              @click="if(clickEnabled) {toggle()}"
             >
               <v-img
                 :src="item.thumbnail"
@@ -25,7 +26,7 @@
               <v-card-actions>
                 <v-spacer>
                   <v-btn
-                    :to="{name: 'playlist-videos', params: { playlistId: item.id, playlistName: item.title }}"
+                    :to="{name: 'playlist-videos', params: { playlistId: item.id, playlistTitle: item.title }}"
                     v-if="itemType=='playlist'"
                     color="primary"
                   >
@@ -44,26 +45,53 @@
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from "vue-property-decorator";
 import { ItemStruct, VideoSelected } from "@/config/litterals";
+import _ from "lodash";
 
 @Component
 export default class ListItems extends Vue {
   @Prop({ default: "video" }) itemType!: string;
-  @Prop(Array) itemList: ItemStruct[] | undefined;
+  @Prop({ default: [] }) itemList!: ItemStruct[];
   @Prop({ default: true }) clickEnabled!: boolean;
   @Prop({ default: false }) toggleAll!: boolean;
 
-  itemSelected: Array<ItemStruct> | null = [];
+  itemsIdSelected: Array<string> | string = [];
+  itemsSelected: Array<ItemStruct> = [];
 
-  @Watch("itemSelected", { immediate: true, deep: true })
+  /**
+   * C'est pas ouf, a chaque fois qu'on change un item on recalcule le tout...
+   */
+  @Watch("itemsIdSelected", { immediate: true, deep: true })
   onItemListChanged() {
-    this.$emit("update-selected", this.itemSelected);
+    this.itemsSelected = [];
+    if (
+      this.itemsIdSelected.length > 0 &&
+      typeof this.itemsIdSelected != "string"
+    ) {
+      this.itemsIdSelected.forEach((itemId) => {
+        const index = _.findIndex(this.itemList, function (x) {
+          return x.id == itemId;
+        });
+        this.itemsSelected.push(this.itemList[index]);
+      });
+    } else {
+      const itemIdSelected = this.itemsIdSelected;
+      const index = _.findIndex(this.itemList, function (x) {
+        return x.id == itemIdSelected;
+      });
+      this.itemsSelected.push(this.itemList[index]);
+    }
+    this.$emit("update-list", this.itemsSelected);
   }
 
   @Watch("toggleAll")
   toggleAllItems() {
-    console.log(this);
-    if (this.toggleAll) console.log("Selectionne tout");
-    else console.log("Déselectionne tout");
+    this.itemsIdSelected = [];
+    if (this.toggleAll && typeof this.itemsIdSelected == "object") {
+      this.itemList.forEach((element) => {
+        if (typeof this.itemsIdSelected != "string")
+          this.itemsIdSelected.push(element.id);
+      });
+    }
   }
 
   scrollFetchVideos(): void {
