@@ -51,15 +51,20 @@ export default class ChannelPlaylist extends Vue {
   listPlaylistSelected: ItemStruct[] = [];
   itemType = "playlist";
   previousPlaylistListLength = 0;
+  totalItemsExpected = 0;
 
   get channelId(): string {
     return this.$route.params.id;
   }
 
+  /**
+   * Weird error for some channels when the nextPageToken doesn't return results at all, thus concept of previousPlalistListLength
+   */
   checkplaylistList() {
     return (
       this.playlistList.length < 100 &&
-      this.playlistList.length != this.previousPlaylistListLength
+      this.playlistList.length != this.previousPlaylistListLength &&
+      this.playlistList.length < this.totalItemsExpected
     );
   }
 
@@ -75,15 +80,18 @@ export default class ChannelPlaylist extends Vue {
         this.channelId,
         this.nextPageToken
       );
-      if (playlistsFetched.itemCount > this.playlistList.length) {
+      this.totalItemsExpected = playlistsFetched.itemCount;
+      if (this.totalItemsExpected > this.playlistList.length) {
         this.previousPlaylistListLength = this.playlistList.length;
         this.nextPageToken = playlistsFetched.nextPageToken;
         playlistsFetched.itemList.forEach((playlist) => {
           this.playlistList.push(playlist);
         });
+        console.log("hello firneds");
+        console.log(this.checkplaylistList());
         if (firstCall && this.checkplaylistList()) this.fetchPlaylists(true);
         console.log(
-          `item count: ${playlistsFetched.itemCount} - playlistList length ${this.playlistList.length}`
+          `item count: ${this.totalItemsExpected} - playlistList length ${this.playlistList.length}`
         );
       } else {
         // Display no more videos ?

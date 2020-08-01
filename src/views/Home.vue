@@ -43,7 +43,7 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import { Component, Inject, Provide, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 
 // Define the component in class-style
 @Component

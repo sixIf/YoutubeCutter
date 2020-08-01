@@ -66,7 +66,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Provide, Prop, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import * as _ from "lodash";
 import {
   YOUTUBESERVICE,

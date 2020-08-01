@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from "vue-property-decorator";
-import { ItemStruct, VideoSelected } from "@/config/litterals";
+import { ItemStruct } from "@/config/litterals";
 import _ from "lodash";
 
 @Component

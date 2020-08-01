@@ -33,7 +33,7 @@
 
 
 <script lang="ts">
-import { Component, Inject, Prop, Vue } from "vue-property-decorator";
+import { Component, Inject, Vue } from "vue-property-decorator";
 import DownloadModal from "@/components/DownloadModal.vue";
 import { YOUTUBESERVICE, ItemStruct } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
@@ -59,6 +59,7 @@ export default class ChannelVideos extends Vue {
   listVideoSelected: ItemStruct[] = [];
   itemType = "video";
   previousVideoListLength = 0;
+  totalItemsExpected = 0;
 
   get channelId(): string {
     return this.$route.params.id;
@@ -83,10 +84,14 @@ export default class ChannelVideos extends Vue {
       this.listVideoSelected = _.cloneDeep(videoSelected);
   }
 
+  /**
+   * Weird error for some channels when the nextPageToken doesn't return results at all, thus concept of previousVideoListLength
+   */
   checkVideoList() {
     return (
       this.videoList.length < 100 &&
-      this.videoList.length != this.previousVideoListLength
+      this.videoList.length != this.previousVideoListLength &&
+      this.videoList.length < this.totalItemsExpected
     );
   }
 
@@ -100,7 +105,8 @@ export default class ChannelVideos extends Vue {
         this.nextPageToken
       );
       // Please hold tight, protect me from the deadly infinite loop aka quota slayer
-      if (videoFetched.itemCount > this.videoList.length) {
+      this.totalItemsExpected = videoFetched.itemCount;
+      if (this.totalItemsExpected > this.videoList.length) {
         this.previousVideoListLength = this.videoList.length;
         this.nextPageToken = videoFetched.nextPageToken;
         videoFetched.itemList.forEach((video) => {
@@ -108,7 +114,7 @@ export default class ChannelVideos extends Vue {
         });
         if (firstCall && this.checkVideoList()) this.fetchVideos(true);
         console.log(
-          `item count: ${videoFetched.itemCount} - videoList length ${this.videoList.length}`
+          `item count: ${this.totalItemsExpected} - videoList length ${this.videoList.length}`
         );
       } else {
         // Display no more videos ?
