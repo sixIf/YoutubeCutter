@@ -1,6 +1,13 @@
 <template>
   <div>
-    <v-btn color="white" dark icon id="download-queue" @click.stop="drawer = !drawer">
+    <v-btn
+      :class="isDownloading ? 'bounce' : ''"
+      color="white"
+      dark
+      icon
+      id="download-queue"
+      @click.stop="drawer = !drawer"
+    >
       <v-icon>mdi-chevron-triple-left</v-icon>
     </v-btn>
     <v-navigation-drawer v-model="drawer" absolute right temporary width="500" style="z-index: 101">
@@ -39,19 +46,16 @@
           </v-list>
         </v-tab-item>
         <v-tab-item>
-          <v-btn
+          <!-- <v-btn
             style="position: fixed; bottom: 5px; right: 20px"
             @click="clearDownloadedList"
-          >Clear list</v-btn>
+          >Clear list</v-btn>-->
           <v-list v-for="(infos) in videoDownloaded" :key="infos.video.id">
             <v-list-item>
               <template v-slot:default>
                 <v-list-item-content>
                   <v-list-item-title>{{infos.video.title}}</v-list-item-title>
                 </v-list-item-content>
-                <!-- <v-list-item-action>
-                  <v-icon @click="removeVideo(index)">mdi-delete</v-icon>
-                </v-list-item-action>-->
               </template>
             </v-list-item>
           </v-list>
@@ -68,7 +72,7 @@ import {
   YOUTUBESERVICE,
   ItemStruct,
   ItemDownloading,
-  ERROR_TYPES
+  ERROR_TYPES,
 } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 const { myIpcRenderer } = window;
@@ -81,12 +85,13 @@ export default class DownloadQueueDrawer extends Vue {
   tabs = ["Downloading", "Finished"];
   videoDownloading: Array<ItemDownloading> = [];
   videoDownloaded: Array<ItemDownloading> = [];
+  isDownloading = false;
   removeVideo() {
     console.log("To implement");
   }
   clearDownloadedList() {
     // Not reactive for an obscure reason
-    _.remove(this.videoDownloaded, function(x) {
+    _.remove(this.videoDownloaded, function (x) {
       return true;
     });
   }
@@ -94,8 +99,9 @@ export default class DownloadQueueDrawer extends Vue {
     window.myIpcRenderer.receive(
       "download-progress",
       (data: ItemDownloading) => {
+        this.isDownloading = true;
         const index = this.videoDownloading.findIndex(
-          x => x.video.id === data.video.id
+          (x) => x.video.id === data.video.id
         );
         if (index == -1) this.videoDownloading.push(data);
         else {
@@ -113,7 +119,8 @@ export default class DownloadQueueDrawer extends Vue {
     });
 
     window.myIpcRenderer.receive("item-downloaded", (data: string) => {
-      const indexToDelete = _.findIndex(this.videoDownloading, function(x) {
+      this.isDownloading = false;
+      const indexToDelete = _.findIndex(this.videoDownloading, function (x) {
         return x.video.id === data;
       });
       console.log(`Index found ${indexToDelete}`);
@@ -123,7 +130,7 @@ export default class DownloadQueueDrawer extends Vue {
         this.videoDownloaded.push(
           _.cloneDeep(this.videoDownloading[indexToDelete])
         );
-        _.remove(this.videoDownloading, function(
+        _.remove(this.videoDownloading, function (
           value: ItemDownloading,
           index: number
         ) {
@@ -152,4 +159,26 @@ export default class DownloadQueueDrawer extends Vue {
   bottom 8px
   right  5px
   background: #d32f2f
+
+.bounce
+  -webkit-animation bounce 1s infinite
+
+    
+</style>
+<style>
+@-webkit-keyframes bounce {
+  0% {
+    bottom: 5px;
+  }
+  25%,
+  75% {
+    bottom: 15px;
+  }
+  50% {
+    bottom: 20px;
+  }
+  100% {
+    bottom: 0;
+  }
+}
 </style>

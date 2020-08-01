@@ -23,7 +23,6 @@
             <v-icon>mdi-help-circle</v-icon>
           </v-btn>
         </router-link>
-        <h1 style="color: white;">{{messageReceived}}</h1>
         <router-link to="/api-key">
           <v-btn icon>
             <v-icon>mdi-cog</v-icon>
@@ -46,11 +45,10 @@ const { myIpcRenderer } = window;
 // Define the component in class-style
 @Component({
   components: {
-    DownloadQueueDrawer
-  }
+    DownloadQueueDrawer,
+  },
 })
 export default class App extends Vue {
-  messageReceived = "";
   isDownloading = false;
   snackbar = false;
   snackbarMessage = "";
