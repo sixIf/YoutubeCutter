@@ -52,7 +52,6 @@ export default class ListItems extends Vue {
   @Prop({ default: "video" }) itemType!: string;
   @Prop({ default: [] }) itemList!: ItemStruct[];
   @Prop({ default: true }) clickEnabled!: boolean;
-  @Prop({ default: false }) toggleAll!: boolean;
 
   itemsIdSelected: Array<string> | string = [];
   itemsSelected: Array<ItemStruct> = [];
@@ -63,35 +62,22 @@ export default class ListItems extends Vue {
   @Watch("itemsIdSelected", { immediate: true, deep: true })
   onItemListChanged() {
     this.itemsSelected = [];
-    if (
-      this.itemsIdSelected.length > 0 &&
-      typeof this.itemsIdSelected != "string"
-    ) {
-      this.itemsIdSelected.forEach((itemId) => {
-        const index = _.findIndex(this.itemList, function (x) {
-          return x.id == itemId;
-        });
-        this.itemsSelected.push(this.itemList[index]);
-      });
-    } else {
+    if (typeof this.itemsIdSelected == "string") {
       const itemIdSelected = this.itemsIdSelected;
       const index = _.findIndex(this.itemList, function (x) {
         return x.id == itemIdSelected;
       });
       this.itemsSelected.push(this.itemList[index]);
-    }
-    this.$emit("update-list", this.itemsSelected);
-  }
-
-  @Watch("toggleAll")
-  toggleAllItems() {
-    this.itemsIdSelected = [];
-    if (this.toggleAll && typeof this.itemsIdSelected == "object") {
-      this.itemList.forEach((element) => {
-        if (typeof this.itemsIdSelected != "string")
-          this.itemsIdSelected.push(element.id);
+    } else if (this.itemsIdSelected && this.itemsIdSelected.length > 0) {
+      this.itemsIdSelected.forEach((itemId) => {
+        const index = _.findIndex(this.itemList, function (x) {
+          return x.id == itemId;
+        });
+        console.log(`index:: ${index}`);
+        this.itemsSelected.push(this.itemList[index]);
       });
     }
+    this.$emit("update-list", this.itemsSelected);
   }
 
   scrollFetchVideos(): void {

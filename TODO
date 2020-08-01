@@ -14,6 +14,3 @@ Ajout du téléchargement des meilleurs commentaires
 !!!!!!!!!!!! ATTENTION !!!!!!!!
 Copier manuellement ffmpeg.exe dans le répertoire dist pcq pour le dev (npm run electron:serve), ce débile cherche le path dans dist_electron. C'est effectivement normal car le source
 du JS est dans ce folder -->   var ffmpegPath = path.join(__dirname,platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg' ) dans la lib ffmpeg-static
-
-************** DEPRECATED **********************
-Intégrer OAuth 2.0 pour gérer ses propres vidéos ----> Rendre playlist public le temps du téléchargement ?----------> 
