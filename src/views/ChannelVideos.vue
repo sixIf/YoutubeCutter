@@ -7,7 +7,6 @@
           <h1 v-else>Playlists : {{ playlistTitle }}</h1>
         </v-row>
         <v-row justify="end">
-          <v-btn button @click="toggleAll = !toggleAll">{{ computeToggleBtnName }}</v-btn>
           <download-modal
             :itemType="itemType"
             :itemsSelected="listVideoSelected"
@@ -22,7 +21,6 @@
           style="position: relative; z-index: 3"
           @update-list="updateSelectedList"
           @more-items="fetchVideos(false)"
-          :toggleAll="toggleAll"
           :itemType="itemType"
           :itemList="videoList"
         />
@@ -55,7 +53,6 @@ export default class ChannelVideos extends Vue {
   nextPageToken = "";
   videoList: ItemStruct[] = [];
   itemCount = 0;
-  toggleAll = false;
   listVideoSelected: ItemStruct[] = [];
   itemType = "video";
   previousVideoListLength = 0;
@@ -73,9 +70,6 @@ export default class ChannelVideos extends Vue {
     return this.$route.params.playlistTitle
       ? this.$route.params.playlistTitle
       : "Uploaded Videos";
-  }
-  get computeToggleBtnName(): string {
-    return this.toggleAll ? "Uncheck all" : "Check all";
   }
 
   updateSelectedList(videoSelected: ItemStruct[]): void {
@@ -127,7 +121,6 @@ export default class ChannelVideos extends Vue {
   }
 
   async created() {
-    // Reset video list
     this.fetchVideos(true);
   }
 }

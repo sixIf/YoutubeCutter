@@ -27,7 +27,7 @@ import { YOUTUBESERVICE, ERROR_TYPES } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 
 @Component({
-  components: { NavDrawer }
+  components: { NavDrawer },
 })
 export default class ChannelDashboard extends Vue {
   @Inject(YOUTUBESERVICE)
