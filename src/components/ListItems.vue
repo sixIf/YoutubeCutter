@@ -73,7 +73,6 @@ export default class ListItems extends Vue {
         const index = _.findIndex(this.itemList, function (x) {
           return x.id == itemId;
         });
-        console.log(`index:: ${index}`);
         this.itemsSelected.push(this.itemList[index]);
       });
     }

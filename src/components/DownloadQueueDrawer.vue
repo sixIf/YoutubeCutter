@@ -39,7 +39,6 @@
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-progress-circular indeterminate color="primary" />
-                  <!-- <v-icon @click="removeVideo(index)">mdi-delete</v-icon> -->
                 </v-list-item-action>
               </template>
             </v-list-item>
@@ -86,9 +85,7 @@ export default class DownloadQueueDrawer extends Vue {
   videoDownloading: Array<ItemDownloading> = [];
   videoDownloaded: Array<ItemDownloading> = [];
   isDownloading = false;
-  removeVideo() {
-    console.log("To implement");
-  }
+
   clearDownloadedList() {
     // Not reactive for an obscure reason
     _.remove(this.videoDownloaded, function (x) {
@@ -119,7 +116,6 @@ export default class DownloadQueueDrawer extends Vue {
         return x.video.id === data;
       });
       console.log(`Index found ${indexToDelete}`);
-      console.log();
       // LODASH ShOULD HANDLE THE COPY BETWEEN ARRAYS
       if (indexToDelete != -1) {
         this.videoDownloaded.push(

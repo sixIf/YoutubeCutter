@@ -87,12 +87,7 @@ export default class ChannelPlaylist extends Vue {
         playlistsFetched.itemList.forEach((playlist) => {
           this.playlistList.push(playlist);
         });
-        console.log("hello firneds");
-        console.log(this.checkplaylistList());
         if (firstCall && this.checkplaylistList()) this.fetchPlaylists(true);
-        console.log(
-          `item count: ${this.totalItemsExpected} - playlistList length ${this.playlistList.length}`
-        );
       } else {
         // Display no more videos ?
       }

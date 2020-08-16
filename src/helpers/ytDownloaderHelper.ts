@@ -13,10 +13,7 @@ import { BrowserWindow } from 'electron';
 
 export default function downloadItems(items: Array<ItemStruct>, audioOnly: boolean, output: string, win: BrowserWindow | null) {
   // Notify renderer to display the donwload icon
-  if (win)
-    win.webContents.send('download-started', items.length)
   items.forEach((videoToFetch) => {
-    console.log(pathToFfmpeg);
     const url = `https://www.youtube.com/watch?v=${videoToFetch.id}`;
     const audioOutputMp4 = path.resolve(output, sanitize(`TEMP_AUDIO_${videoToFetch.title}.mp4`));
     const audioOutputMp3 = path.resolve(output, sanitize(`${videoToFetch.title}.mp3`));

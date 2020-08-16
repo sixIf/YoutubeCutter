@@ -30,8 +30,5 @@ import { IHelpItems, HelpItems } from "@/config/litterals/help";
 @Component
 export default class Help extends Vue {
   helpItems: Array<IHelpItems> = HelpItems;
-  mouted() {
-    console.log(this.helpItems);
-  }
 }
 </script>
