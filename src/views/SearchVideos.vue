@@ -31,17 +31,17 @@ import SearchVideosToolbar from "@/components/SearchVideosToolbar.vue";
 import { YOUTUBESERVICE, ItemStruct } from "@/config/litterals";
 import DownloadModal from "@/components/DownloadModal.vue";
 import ListItems from "@/components/ListItems.vue";
+import _ from "lodash";
 
 @Component({
-  components: { SearchVideosToolbar, ListItems, DownloadModal }
+  components: { SearchVideosToolbar, ListItems, DownloadModal },
 })
 export default class SearchVideos extends Vue {
   itemType = "video";
   videoList: ItemStruct[] = [];
 
   updateVideoList(newVideoList: ItemStruct[]): void {
-    // TODO: Lodash ?
-    this.videoList = newVideoList;
+    this.videoList = _.cloneDeep(newVideoList);
   }
 }
 </script>

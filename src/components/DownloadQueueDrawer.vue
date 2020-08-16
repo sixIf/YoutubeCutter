@@ -113,11 +113,6 @@ export default class DownloadQueueDrawer extends Vue {
       }
     );
 
-    window.myIpcRenderer.receive("download-started", (data: number) => {
-      // this.nbItemToDownload += data;
-      console.log("Behold, download started");
-    });
-
     window.myIpcRenderer.receive("item-downloaded", (data: string) => {
       this.isDownloading = false;
       const indexToDelete = _.findIndex(this.videoDownloading, function (x) {
@@ -139,15 +134,6 @@ export default class DownloadQueueDrawer extends Vue {
         console.log(`Behold, video with id ${data} downloaded`);
       }
     });
-
-    /**
-     * TODO : Add a status on item list to track if item is downloading or finished
-     * Fire event on download finished wich will increment the nbItemDownloadedValue
-     *  When nbItemDownloadValue is equal to nbItemToDownload, Display snackbar download finished
-     * and hide button
-     *
-     * Lets see if we put the download list in a dismissible panel to the left / bottom ?
-     */
   }
 }
 </script>

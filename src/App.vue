@@ -52,14 +52,5 @@ export default class App extends Vue {
   isDownloading = false;
   snackbar = false;
   snackbarMessage = "";
-
-  mounted() {
-    // window.myIpcRenderer.receive("download-started", (data: any) => {
-    //   this.isDownloading = true;
-    //   this.snackbarMessage = "Download started !";
-    //   this.snackbar = true;
-    //   console.log("Behold, download started");
-    // });
-  }
 }
 </script>
