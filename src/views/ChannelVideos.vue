@@ -7,11 +7,18 @@
           <h1 v-else>Playlists : {{ playlistTitle }}</h1>
         </v-row>
         <v-row justify="end">
-          <download-modal
+          <download-videos-modal
             :itemType="itemType"
             :itemsSelected="listVideoSelected"
             :disabled="listVideoSelected.length == 0"
-          ></download-modal>
+          ></download-videos-modal>
+          <download-playlist-modal
+            v-if="isMainPlaylist"
+            :playlistId="playlistId"
+            :isMainPlaylist="isMainPlaylist"
+            :parentNextPageToken="nextPageToken"
+            :parentVideoList="videoList"
+          ></download-playlist-modal>
         </v-row>
       </v-col>
     </v-row>
@@ -32,7 +39,8 @@
 
 <script lang="ts">
 import { Component, Inject, Vue } from "vue-property-decorator";
-import DownloadModal from "@/components/DownloadModal.vue";
+import DownloadVideosModal from "@/components/DownloadVideosModal.vue";
+import DownloadPlaylistModal from "@/components/DownloadPlaylistModal.vue";
 import { YOUTUBESERVICE, ItemStruct } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 import FiltersToolbar from "@/components/FiltersToolbar.vue";
@@ -43,7 +51,8 @@ import _ from "lodash";
   components: {
     FiltersToolbar,
     ListItems,
-    DownloadModal,
+    DownloadVideosModal,
+    DownloadPlaylistModal,
   },
 })
 export default class ChannelVideos extends Vue {
@@ -66,10 +75,14 @@ export default class ChannelVideos extends Vue {
     return this.$route.params.playlistId;
   }
 
+  get isMainPlaylist(): boolean {
+    return this.$route.params.playlistTitle ? false : true;
+  }
+
   get playlistTitle(): string {
-    return this.$route.params.playlistTitle
-      ? this.$route.params.playlistTitle
-      : "Uploaded Videos";
+    return this.isMainPlaylist
+      ? "Uploaded Videos"
+      : this.$route.params.playlistTitle;
   }
 
   updateSelectedList(videoSelected: ItemStruct[]): void {

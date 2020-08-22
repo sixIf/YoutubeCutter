@@ -3,11 +3,12 @@
     <v-row class="sticky-toolbar">
       <v-col>
         <v-row justify="end">
-          <download-modal
-            :itemType="itemType"
-            :itemsSelected="listPlaylistSelected"
+          <download-playlist-modal
             :disabled="listPlaylistSelected.length == 0"
-          ></download-modal>
+            :playlistId="getSelectedPlaylistId"
+            :playlistTitle="getSelectedPlaylistTitle"
+            :isMainPlaylist="false"
+          ></download-playlist-modal>
         </v-row>
       </v-col>
     </v-row>
@@ -28,7 +29,7 @@
 
 <script lang="ts">
 import { Component, Inject, Vue } from "vue-property-decorator";
-import DownloadModal from "@/components/DownloadModal.vue";
+import DownloadPlaylistModal from "@/components/DownloadPlaylistModal.vue";
 import { YOUTUBESERVICE, ItemStruct } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 import FiltersToolbar from "@/components/FiltersToolbar.vue";
@@ -39,7 +40,7 @@ import _ from "lodash";
   components: {
     FiltersToolbar,
     ListItems,
-    DownloadModal,
+    DownloadPlaylistModal,
   },
 })
 export default class ChannelPlaylist extends Vue {
@@ -55,6 +56,18 @@ export default class ChannelPlaylist extends Vue {
 
   get channelId(): string {
     return this.$route.params.id;
+  }
+
+  get getSelectedPlaylistId(): string {
+    return this.listPlaylistSelected.length > 0
+      ? this.listPlaylistSelected[0].id
+      : "";
+  }
+
+  get getSelectedPlaylistTitle(): string {
+    return this.listPlaylistSelected.length > 0
+      ? this.listPlaylistSelected[0].title
+      : "";
   }
 
   /**

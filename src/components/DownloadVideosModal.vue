@@ -38,13 +38,12 @@ import { DownloadItem } from "electron";
 const { myIpcRenderer } = window;
 
 @Component
-export default class DownloadModal extends Vue {
+export default class DownloadVideosModal extends Vue {
   @Inject(YOUTUBESERVICE)
   service!: IYoutubeService;
 
   @Prop({ default: true }) disabled!: boolean;
-  @Prop({ default: [] }) itemsSelected!: ItemStruct[];
-  @Prop({ default: "video" }) itemType!: string;
+  @Prop({ default: [] }) videosSelected!: ItemStruct[];
   dialog = false;
   audioOnly = false;
 
@@ -60,49 +59,16 @@ export default class DownloadModal extends Vue {
       : "";
   }
 
-  // async fetchPlaylistContent(playlistId: string) {
-  //   let nextPageToken = '';
-  //   while(nextPageToken){
-
-  //   }
-  //   try {
-  //     const videoFetched = await this.service.getVideoList(
-  //       playlistId,
-  //       this.nextPageToken
-  //     );
-  //     if (videoFetched.nextPageToken != this.nextPageToken) {
-  //       this.nextPageToken = videoFetched.nextPageToken;
-  //       videoFetched.itemList.forEach(video => {
-  //         this.videoList.push(video);
-  //       });
-  //     } else {
-  //       // Display no more videos ?
-  //     }
-  //   } catch (err) {
-  //     // TODO send error back to home ?
-  //     console.log("Channel video error:" + err);
-  //     // this.$router.push("/");
-  //   }
-  // }
-
   downloadItems(): void {
     console.log(`channel title ${this.channelTitle}`);
     const downloadRequest: DownloadRequest = {
       audioOnly: this.audioOnly,
       playlistTitle: this.playlistTitle,
       channelTitle: this.channelTitle,
-      itemSelected: this.itemsSelected,
+      itemSelected: this.videosSelected,
     };
-    switch (this.itemType) {
-      case "video":
-        // Send videos array of json
-        window.myIpcRenderer.send("download-videos", downloadRequest);
-        break;
 
-      case "playlist":
-        // Get videos in playlists then download
-        break;
-    }
+    window.myIpcRenderer.send("download-videos", downloadRequest);
     this.dialog = false;
   }
 }

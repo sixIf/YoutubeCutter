@@ -51,19 +51,19 @@ export default class NavDrawer extends Vue {
       icon: "mdi-video-box",
       link: {
         name: "channel-uploaded-videos",
-        params: { playlistId: this.mainPlaylistId }
-      }
+        params: { playlistId: this.mainPlaylistId },
+      },
     },
     {
       title: "Playlists",
       icon: "mdi-playlist-play",
-      link: { name: "channel-playlists" }
+      link: { name: "channel-playlists" },
     },
     {
       title: "Exit channel",
       icon: "mdi-exit-run",
-      link: { name: "exit" }
-    }
+      link: { name: "exit" },
+    },
   ];
 }
 </script>

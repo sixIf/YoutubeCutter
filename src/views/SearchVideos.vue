@@ -7,11 +7,11 @@
         </v-col>
         <v-col cols="5" sm="7" lg="9">
           <v-row class="download-button" justify="end">
-            <download-modal
+            <download-videos-modal
               :itemType="itemType"
               :itemsSelected="videoList"
               :disabled="videoList.length == 0"
-            ></download-modal>
+            ></download-videos-modal>
           </v-row>
           <list-items
             style="position: relative; z-index: 3"
@@ -29,12 +29,12 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import SearchVideosToolbar from "@/components/SearchVideosToolbar.vue";
 import { YOUTUBESERVICE, ItemStruct } from "@/config/litterals";
-import DownloadModal from "@/components/DownloadModal.vue";
+import DownloadVideosModal from "@/components/DownloadVideosModal.vue";
 import ListItems from "@/components/ListItems.vue";
 import _ from "lodash";
 
 @Component({
-  components: { SearchVideosToolbar, ListItems, DownloadModal },
+  components: { SearchVideosToolbar, ListItems, DownloadVideosModal },
 })
 export default class SearchVideos extends Vue {
   itemType = "video";
