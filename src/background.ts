@@ -83,7 +83,7 @@ app.on('ready', async () => {
   createWindow()
 })
 
-ipcMain.on("open-github", (event, args: String) => {
+ipcMain.on("open-github", (event, args: string) => {
   shell.openExternal(args)
 });
 

@@ -1,4 +1,6 @@
-Warning de factory sur props des Donwload modal ( itemSelected )
+Mettre icon !
+
+Le rendre minimizable
 
 Ajouter un filtrage des vidéos déjà téléchargée. Avec nedb, lorsqu'on affiche des vidéos, faire une reqûete nedb cherchant si on a déjà la vidéo ids
 
