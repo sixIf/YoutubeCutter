@@ -44,26 +44,27 @@
 </template>
 
 <script lang="ts">
-import { Component, Inject, Watch, Vue } from "vue-property-decorator";
+import { Component, Inject, Watch, Vue, Prop } from "vue-property-decorator";
 import {
   YOUTUBESERVICE,
   VideoFetched,
   ItemStruct,
   ERROR_TYPES,
-  IAlert
+  IAlert,
 } from "@/config/litterals";
 import Alert from "@/components/Alert.vue";
 import { IYoutubeService } from "@/services/youtubeService";
 
 @Component({
   components: {
-    Alert
-  }
+    Alert,
+  },
 })
 export default class SearchVideosToolbar extends Vue {
   @Inject(YOUTUBESERVICE)
   youtubeService!: IYoutubeService;
 
+  @Prop({ default: false }) emptyToolbar!: boolean;
   videoUrl = "";
   videosFetched: ItemStruct[] = [];
   alert: IAlert | null = null;
@@ -76,7 +77,7 @@ export default class SearchVideosToolbar extends Vue {
   }
   async findVideo() {
     this.alert = null;
-    if (this.videosFetched.findIndex(x => x.id == this.videoId()) == -1) {
+    if (this.videosFetched.findIndex((x) => x.id == this.videoId()) == -1) {
       try {
         const response = await this.youtubeService.findVideoById(
           this.videoId()
@@ -84,7 +85,7 @@ export default class SearchVideosToolbar extends Vue {
         if (response.totalResults == 0) {
           this.alert = {
             type: "error",
-            message: "Video not found. Please check your video's URL."
+            message: "Video not found. Please check your video's URL.",
           };
         } else {
           this.videosFetched.push(response.videoInfos);
@@ -94,13 +95,13 @@ export default class SearchVideosToolbar extends Vue {
         console.log("Catch error " + error.message);
         this.alert = {
           type: "error",
-          message: `${ERROR_TYPES[error.response.status]}`
+          message: `${ERROR_TYPES[error.response.status]}`,
         };
       }
     } else {
       this.alert = {
         type: "error",
-        message: "Video already in the list."
+        message: "Video already in the list.",
       };
     }
   }
@@ -108,6 +109,11 @@ export default class SearchVideosToolbar extends Vue {
   @Watch("videosFetched")
   onVideoFetchedChanged(val: ItemStruct[], oldVal: ItemStruct[]) {
     this.$emit("update-video-list", val);
+  }
+
+  @Watch("emptyToolbar")
+  onEmptyToolbarChanged(val: boolean, oldVal: boolean) {
+    if (val) this.videosFetched = [];
   }
 }
 </script>

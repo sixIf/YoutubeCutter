@@ -34,7 +34,6 @@ import {
 } from "@/config/litterals";
 import * as _ from "lodash";
 import { IYoutubeService } from "@/services/youtubeService";
-import { DownloadItem } from "electron";
 const { myIpcRenderer } = window;
 
 @Component
@@ -43,7 +42,13 @@ export default class DownloadVideosModal extends Vue {
   service!: IYoutubeService;
 
   @Prop({ default: true }) disabled!: boolean;
-  @Prop({ default: [] }) videosSelected!: ItemStruct[];
+  @Prop({
+    type: Array,
+    default: () => {
+      return [];
+    },
+  })
+  videosSelected!: ItemStruct[];
   dialog = false;
   audioOnly = false;
 
@@ -70,6 +75,7 @@ export default class DownloadVideosModal extends Vue {
 
     window.myIpcRenderer.send("download-videos", downloadRequest);
     this.dialog = false;
+    this.$emit("download-started");
   }
 }
 </script>

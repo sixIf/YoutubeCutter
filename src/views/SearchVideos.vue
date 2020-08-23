@@ -3,13 +3,13 @@
     <v-container fluid>
       <v-row>
         <v-col cols="7" sm="5" lg="3">
-          <search-videos-toolbar @update-video-list="updateVideoList"></search-videos-toolbar>
+          <search-videos-toolbar @update-video-list="updateVideoList" :emptyToolbar="emptyToolbar"></search-videos-toolbar>
         </v-col>
         <v-col cols="5" sm="7" lg="9">
           <v-row class="download-button" justify="end">
             <download-videos-modal
-              :itemType="itemType"
-              :itemsSelected="videoList"
+              @download-started="emptyToolbar=!emptyToolbar"
+              :videosSelected="videoList"
               :disabled="videoList.length == 0"
             ></download-videos-modal>
           </v-row>
@@ -38,6 +38,7 @@ import _ from "lodash";
 })
 export default class SearchVideos extends Vue {
   itemType = "video";
+  emptyToolbar = false;
   videoList: ItemStruct[] = [];
 
   updateVideoList(newVideoList: ItemStruct[]): void {
