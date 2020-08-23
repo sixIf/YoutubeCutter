@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, ipcMain, BrowserWindow } from 'electron'
+import { app, protocol, ipcMain, BrowserWindow, shell } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -83,6 +83,10 @@ app.on('ready', async () => {
   createWindow()
 })
 
+ipcMain.on("open-github", (event, args: String) => {
+  shell.openExternal(args)
+});
+
 
 ipcMain.on("download-videos", (event, args: DownloadRequest) => {
   // Loop over args to download each videos selected
@@ -91,6 +95,7 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
     fs.mkdirSync(path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle), { recursive: true });
   }
   const output = path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle);
+  console.log("on va dl")
   downloadItems(args.itemSelected, args.audioOnly, output, win);
 });
 
