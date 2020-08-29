@@ -1,4 +1,4 @@
-# youtube-downloader
+# youtube-dl
 
 ## Project setup
 ```
@@ -15,15 +15,32 @@ npm run serve
 npm run build
 ```
 
+### Run your unit tests
+```
+npm run test:unit
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 
-### TECHNO
+## Architecture des des dossiers 
 
-Vuetify
-Stylus
+Dans une chaine ou dans vrac :
 
-### NPM  dependencies
-axios
-ytdl-core@latest
+  - Videos
+    - videoX
+    - videoY
+    - playlistX
+      - videoXinPlaylistX
+  - Audios
+    - audioX
+    - audioY
+    - playlistX
+      - audioXinPlaylistX      
+  
