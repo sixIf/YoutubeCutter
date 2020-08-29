@@ -8,16 +8,37 @@
       <v-card-title class="headline">{{ getModalTitle }}</v-card-title>
       <v-card-text>
         <v-container>
-          <v-progress-linear
-            :active="isFetching"
-            color="deep-purple accent-4"
-            indeterminate
-            rounded
-            height="6"
-          ></v-progress-linear>
-          <v-col cols="12">
-            <h2>{{videoList.length}}/{{itemsInPlaylist}} fetched</h2>
-          </v-col>
+          <v-row v-if="displayFetchButton" align="center">
+            <v-col cols="12">
+              <h3>Playlist has {{ itemsInPlaylist }} videos. You can fetch videos by group of {{ maxItemDownloadable }}.</h3>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="nextPageToken"
+                label="Page id"
+                :hint="`Keep this page code if you want to resume download at the ${this.videoList.length} th video later.`"
+                name="nextPageToken"
+                :disabled="isFetching"
+                type="text"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-btn @click="fetchVideosInPlaylist(false)" primary>Fetch videos</v-btn>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-progress-linear
+              :active="isFetching"
+              color="deep-purple accent-4"
+              indeterminate
+              rounded
+              height="6"
+            ></v-progress-linear>
+            <v-col v-if="!checkVideoList || isFetching" cols="12">
+              <h2>{{ videoList.length }}/{{ itemsInPlaylist }} videos fetched</h2>
+            </v-col>
+          </v-row>
           <v-row>
             <v-col cols="12">
               <v-switch v-model="audioOnly" label="Audio only"></v-switch>
@@ -53,7 +74,13 @@ export default class DownloadPlaylistModal extends Vue {
   @Prop({ default: false }) isMainPlaylist!: boolean;
   @Prop({ default: false }) disabled!: boolean;
   @Prop({ default: "" }) parentNextPageToken!: string;
-  @Prop({ default: [] }) parentVideoList!: ItemStruct[];
+  @Prop({
+    type: Array,
+    default: () => {
+      return [];
+    },
+  })
+  parentVideoList!: ItemStruct[];
   @Prop({ default: "" }) playlistId!: string;
   @Prop({ default: "" }) playlistTitle!: string;
 
@@ -64,6 +91,8 @@ export default class DownloadPlaylistModal extends Vue {
   isFetching = false;
   nextPageToken = "";
   previousVideoListLength = 0;
+  maxItemDownloadable = 1000;
+  currentMaxItemLimit = this.maxItemDownloadable;
 
   get getModalTitle(): string {
     return this.isMainPlaylist
@@ -93,6 +122,69 @@ export default class DownloadPlaylistModal extends Vue {
     return this.$route.params.channelTitle;
   }
 
+  get displayFetchButton(): boolean {
+    return (
+      this.videoList.length != this.itemsInPlaylist && this.isLargePlaylist
+    );
+  }
+
+  get isLargePlaylist(): boolean {
+    return this.itemsInPlaylist > this.maxItemDownloadable;
+  }
+
+  /**
+   * Weird error for some channels when the nextPageToken doesn't return results at all, thus concept of previousVideoListLength
+   */
+  get checkVideoList(): boolean {
+    return (
+      this.videoList.length < this.currentMaxItemLimit &&
+      this.videoList.length != this.previousVideoListLength &&
+      this.videoList.length < this.itemsInPlaylist
+    );
+  }
+  async fetchVideosInPlaylist(firstRun: boolean) {
+    this.isFetching = true;
+    if (this.currentMaxItemLimit <= this.videoList.length)
+      this.currentMaxItemLimit += 1000;
+    try {
+      const response = await this.youtubeService.getVideoList(
+        this.playlistId,
+        this.nextPageToken
+      );
+      this.itemsInPlaylist = response.itemCount;
+      this.nextPageToken = response.nextPageToken;
+      this.previousVideoListLength = this.videoList.length;
+      if (this.videoList.length < this.itemsInPlaylist)
+        this.videoList = _.concat(this.videoList, response.itemList);
+      if (this.checkVideoList && this.dialog && !firstRun)
+        this.fetchVideosInPlaylist(false);
+      else this.isFetching = false;
+    } catch (error) {
+      this.isFetching = false;
+      throw new Error("fetchVideosInPLaylistError: " + error);
+    }
+  }
+
+  @Watch("parentVideoList")
+  onParentVideoListChanged() {
+    this.copyParentData();
+  }
+
+  @Watch("dialog")
+  async onDialogChanged(val: boolean, oldVal: boolean) {
+    this.resetState();
+    if (val && this.playlistId) this.fetchVideosInPlaylist(true);
+  }
+
+  copyParentData() {
+    this.nextPageToken = this.isParentAhead
+      ? this.parentNextPageToken
+      : this.nextPageToken;
+    this.videoList = this.isParentAhead
+      ? _.cloneDeep(this.parentVideoList)
+      : this.videoList;
+  }
+
   formatLongTitle(title: string): string {
     return title.substr(0, 15).length == title.length
       ? title
@@ -111,57 +203,10 @@ export default class DownloadPlaylistModal extends Vue {
     this.dialog = false;
   }
 
-  /**
-   * Weird error for some channels when the nextPageToken doesn't return results at all, thus concept of previousVideoListLength
-   */
-  get checkVideoList(): boolean {
-    return (
-      this.videoList.length < 1000 &&
-      this.videoList.length != this.previousVideoListLength &&
-      this.videoList.length < this.itemsInPlaylist
-    );
-  }
-
-  async fetchVideosInPlaylist() {
-    this.isFetching = true;
-    try {
-      const response = await this.youtubeService.getVideoList(
-        this.playlistId,
-        this.nextPageToken
-      );
-      this.itemsInPlaylist = response.itemCount;
-      this.nextPageToken = response.nextPageToken;
-      this.previousVideoListLength = this.videoList.length;
-      if (this.videoList.length < this.itemsInPlaylist)
-        this.videoList = _.concat(this.videoList, response.itemList);
-      if (this.checkVideoList && this.dialog) this.fetchVideosInPlaylist();
-      else this.isFetching = false;
-    } catch (error) {
-      throw new Error("fetchVideosInPLaylistError: " + error);
-    }
-  }
-
-  @Watch("parentVideoList")
-  onParentVideoListChanged() {
-    this.nextPageToken = this.isParentAhead
-      ? this.parentNextPageToken
-      : this.nextPageToken;
-    this.videoList = this.isParentAhead
-      ? _.cloneDeep(this.parentVideoList)
-      : this.videoList;
-  }
-
-  @Watch("dialog")
-  async onDialogChanged(val: boolean, oldVal: boolean) {
-    if (this.parentVideoList.length == 0) this.resetState();
-    if (val && this.playlistId) {
-      this.fetchVideosInPlaylist();
-    }
-  }
-
   resetState() {
     this.videoList = [];
     this.nextPageToken = "";
+    if (this.parentVideoList.length != 0) this.copyParentData();
   }
 }
 </script>

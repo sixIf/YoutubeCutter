@@ -150,9 +150,12 @@ export class YoutubeService implements IYoutubeService {
   * https://www.youtube.com/watch?v=MItG5VNI0Uk&playlit=fafafaa
   */
   extractVideoIdFromUrl(videoUrl: string): string {
-    const indexOfId = videoUrl.indexOf("?v=") + 3;
+    const idOffset = 3;
+    const indexOfId = videoUrl.indexOf("?v=") != -1 ? videoUrl.indexOf("?v=") + idOffset : -1;
     const indexOfAmp = videoUrl.indexOf("&");
+    const indexOfSlash = videoUrl.lastIndexOf("/");
     if (indexOfAmp != -1) return videoUrl.slice(indexOfId, indexOfAmp);
-    else return videoUrl.slice(indexOfId);
+    else if (indexOfId != -1) return videoUrl.slice(indexOfId);
+    else return videoUrl.slice(indexOfSlash + 1);
   }
 }
