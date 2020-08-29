@@ -62,7 +62,7 @@ export default class Help extends Vue {
   githubLink = "https://www.youtube.com/watch?v=I6_RC7QDspE";
 
   openGithubOsBrowser() {
-    window.myIpcRenderer.send("open-github", this.githubLink);
+    window.myIpcRenderer.send("open-external-url", this.githubLink);
   }
 }
 </script>
