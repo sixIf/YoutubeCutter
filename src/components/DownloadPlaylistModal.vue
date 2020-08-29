@@ -8,6 +8,7 @@
       <v-card-title class="headline">{{ getModalTitle }}</v-card-title>
       <v-card-text>
         <v-container>
+          <alert v-if="alert" :alert="alert"></alert>
           <v-row v-if="displayFetchButton" align="center">
             <v-col cols="12">
               <h3>Playlist has {{ itemsInPlaylist }} videos. You can fetch videos by group of {{ maxItemDownloadable }}.</h3>
@@ -49,7 +50,12 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="primary darken-1" text @click="dialog = false">Cancel</v-btn>
-        <v-btn :disabled="isFetching" color="green darken-1" text @click="downloadItems">Download</v-btn>
+        <v-btn
+          :disabled="disableDownloadButton"
+          color="green darken-1"
+          text
+          @click="downloadItems"
+        >Download</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -62,11 +68,18 @@ import {
   YOUTUBESERVICE,
   ItemFetched,
   DownloadRequest,
+  IAlert,
+  DOWNLOAD_ERROR_TYPES,
 } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
+import Alert from "@/components/Alert.vue";
 import _ from "lodash";
 
-@Component
+@Component({
+  components: {
+    Alert,
+  },
+})
 export default class DownloadPlaylistModal extends Vue {
   @Inject(YOUTUBESERVICE)
   youtubeService!: IYoutubeService;
@@ -84,6 +97,7 @@ export default class DownloadPlaylistModal extends Vue {
   @Prop({ default: "" }) playlistId!: string;
   @Prop({ default: "" }) playlistTitle!: string;
 
+  alert: IAlert | null = null;
   audioOnly = false;
   dialog = false;
   videoList: ItemStruct[] = [];
@@ -128,6 +142,14 @@ export default class DownloadPlaylistModal extends Vue {
     );
   }
 
+  get disableDownloadButton(): boolean {
+    return (
+      (this.videoList.length < this.maxItemDownloadable &&
+        this.isLargePlaylist) ||
+      this.isFetching
+    );
+  }
+
   get isLargePlaylist(): boolean {
     return this.itemsInPlaylist > this.maxItemDownloadable;
   }
@@ -161,6 +183,11 @@ export default class DownloadPlaylistModal extends Vue {
       else this.isFetching = false;
     } catch (error) {
       this.isFetching = false;
+      const status = error.response ? error.response.status : "404";
+      this.alert = {
+        type: "error",
+        message: `${DOWNLOAD_ERROR_TYPES[status]}`,
+      };
       throw new Error("fetchVideosInPLaylistError: " + error);
     }
   }
