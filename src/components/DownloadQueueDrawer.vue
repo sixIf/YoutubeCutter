@@ -45,10 +45,11 @@
           </v-list>
         </v-tab-item>
         <v-tab-item>
-          <!-- <v-btn
-            style="position: fixed; bottom: 5px; right: 20px"
+          <v-btn
+            v-if="videoDownloaded.length!=0"
+            style="margin: 20px"
             @click="clearDownloadedList"
-          >Clear list</v-btn>-->
+          >Clear list</v-btn>
           <v-list v-for="(infos) in videoDownloaded" :key="infos.video.id">
             <v-list-item>
               <template v-slot:default>
@@ -87,11 +88,9 @@ export default class DownloadQueueDrawer extends Vue {
   isDownloading = false;
 
   clearDownloadedList() {
-    // Not reactive for an obscure reason
-    _.remove(this.videoDownloaded, function (x) {
-      return true;
-    });
+    this.videoDownloaded = _.cloneDeep([]);
   }
+
   mounted() {
     window.myIpcRenderer.receive(
       "download-progress",
@@ -110,13 +109,11 @@ export default class DownloadQueueDrawer extends Vue {
       }
     );
 
-    window.myIpcRenderer.receive("item-downloaded", (data: string) => {
+    window.myIpcRenderer.receive("item-downloaded", (data: ItemStruct) => {
       this.isDownloading = false;
       const indexToDelete = _.findIndex(this.videoDownloading, function (x) {
-        return x.video.id === data;
+        return x.video.id === data.id;
       });
-      console.log(`Index found ${indexToDelete}`);
-      // LODASH ShOULD HANDLE THE COPY BETWEEN ARRAYS
       if (indexToDelete != -1) {
         this.videoDownloaded.push(
           _.cloneDeep(this.videoDownloading[indexToDelete])
@@ -128,6 +125,14 @@ export default class DownloadQueueDrawer extends Vue {
           return index == indexToDelete;
         });
         console.log(`Behold, video with id ${data} downloaded`);
+      } else {
+        this.videoDownloaded.push({
+          video: data,
+          progressAudio: "100",
+          progressVideo: "100",
+          type: "video",
+          audioOnly: false,
+        });
       }
     });
   }

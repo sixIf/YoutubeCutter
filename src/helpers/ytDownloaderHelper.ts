@@ -21,11 +21,8 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
 
     let fileAlreadyExist = false;
 
-    if (audioOnly) {
+    if (audioOnly)
       fileAlreadyExist = fs.existsSync(audioOutputMp3) ? true : false;
-      if (win)
-        win.webContents.send('item-downloaded', videoToFetch.id)
-    }
     else
       fileAlreadyExist = fs.existsSync(mainOutput) ? true : false;
 
@@ -41,8 +38,11 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
         win.webContents.send('download-progress', objectToSend)
     };
 
-    if (fileAlreadyExist)
+    if (fileAlreadyExist) {
       console.log('File already downloaded');
+      if (win)
+        win.webContents.send('item-downloaded', videoToFetch)
+    }
     else {
       console.log('downloading audio track');
       ffmpeg.setFfmpegPath(
@@ -82,7 +82,7 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
                   if (err) console.error(err);
                   else console.log(`\nfinished downloading, saved to ${mainOutput}`);
                   if (win)
-                    win.webContents.send('item-downloaded', videoToFetch.id)
+                    win.webContents.send('item-downloaded', videoToFetch)
                 });
               });
           }
@@ -98,7 +98,7 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
                   if (err) console.error(err);
                   else console.log(`\nfinished converting audio to mp3, saved to ${audioOutputMp3}`);
                   if (win)
-                    win.webContents.send('item-downloaded', videoToFetch.id)
+                    win.webContents.send('item-downloaded', videoToFetch)
                 });
               });
           }

@@ -95,7 +95,6 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
     fs.mkdirSync(path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle), { recursive: true });
   }
   const output = path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle);
-  console.log("on va dl")
   downloadItems(args.itemSelected, args.audioOnly, output, win);
 });
 

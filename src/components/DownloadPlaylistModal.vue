@@ -100,7 +100,6 @@ export default class DownloadPlaylistModal extends Vue {
   }
 
   downloadItems(): void {
-    console.log(`channel title ${this.channelTitle}`);
     const downloadRequest: DownloadRequest = {
       audioOnly: this.audioOnly,
       playlistTitle: this.playlistTitle,
@@ -154,7 +153,6 @@ export default class DownloadPlaylistModal extends Vue {
 
   @Watch("dialog")
   async onDialogChanged(val: boolean, oldVal: boolean) {
-    console.log("yoo");
     if (this.parentVideoList.length == 0) this.resetState();
     if (val && this.playlistId) {
       this.fetchVideosInPlaylist();
@@ -162,7 +160,6 @@ export default class DownloadPlaylistModal extends Vue {
   }
 
   resetState() {
-    console.log("yo");
     this.videoList = [];
     this.nextPageToken = "";
   }

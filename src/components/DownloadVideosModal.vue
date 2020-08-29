@@ -65,7 +65,6 @@ export default class DownloadVideosModal extends Vue {
   }
 
   downloadItems(): void {
-    console.log(`channel title ${this.channelTitle}`);
     const downloadRequest: DownloadRequest = {
       audioOnly: this.audioOnly,
       playlistTitle: this.playlistTitle,
