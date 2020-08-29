@@ -4,13 +4,7 @@ Le rendre minimizable
 
 Ajouter un filtrage des vidéos déjà téléchargée. Avec nedb, lorsqu'on affiche des vidéos, faire une reqûete nedb cherchant si on a déjà la vidéo ids
 
-Mettre une popup d'avertissement si les videos / playlists de la chaine sont trop nombreuses -> ça evitera le fumage de quota
-conseiller à l'user pour cette chaîne de parcourir sur youtube et copier coller les IDs
 +++++++ ADD virtual scroll
-
-Lors de téléchargement de playlist / chaîne --> si le quota est dépassé : donné le nextPageToken où la requête c'est arrêté pour reprendre au bon endroit
-
-
 
 https://developers.google.com/youtube/v3/docs/commentThreads/list?apix_params=%7B%22part%22%3A%5B%22snippet%2Creplies%22%5D%2C%22videoId%22%3A%22_VB39Jo8mAQ%22%7D
 Ajout du téléchargement des meilleurs commentaires

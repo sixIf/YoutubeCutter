@@ -26,7 +26,6 @@
     "fluent-ffmpeg": "^2.1.2",
     "lodash": "^4.17.19",
     "material-design-icons-iconfont": "^5.0.1",
-    "nedb": "^1.8.0",
     "reflect-metadata": "^0.1.13",
     "sanitize-filename": "^1.6.3",
     "tsyringe": "^4.3.0",
