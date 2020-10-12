@@ -1,6 +1,9 @@
+/* global __static */
+declare const __static: string;
+
 'use strict'
 
-import { app, protocol, ipcMain, BrowserWindow, shell } from 'electron'
+import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -9,10 +12,10 @@ import downloadItems from '@/helpers/ytDownloaderHelper'
 import { DownloadRequest, ItemStruct } from '@/config/litterals/index'
 import fs from 'fs'
 const isDevelopment = process.env.NODE_ENV !== 'production'
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: BrowserWindow | null
+
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -21,6 +24,8 @@ protocol.registerSchemesAsPrivileged([
 
 function createWindow() {
   // Create the browser window.
+  let tray: Tray | null = null;
+
   win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -29,9 +34,11 @@ function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
         .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
       contextIsolation: true
-    }
+    },
+    /* global __static */
+    icon: path.join(__static, 'icon.png')
   })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -44,9 +51,44 @@ function createWindow() {
     win.loadURL('app://./index.html')
   }
 
+  win.on('minimize', function (event: any) {
+    event.preventDefault();
+    if (win) win.hide();
+    tray = createTray();
+  });
+
+  win.on('restore', function (event: any) {
+    if (win) win.show();
+    if (tray) tray.destroy();
+  });
+
   win.on('closed', () => {
     win = null
   })
+}
+
+
+function createTray() {
+  let appIcon = new Tray(path.join(__static, 'icon.png'));
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show', click: function () {
+        if (win) win.show();
+      }
+    },
+    {
+      label: 'Exit', click: function () {
+        app.quit();
+      }
+    }
+  ]);
+
+  appIcon.on('double-click', function (event) {
+    if (win) win.show();
+  });
+  appIcon.setToolTip('Tray Tutorial');
+  appIcon.setContextMenu(contextMenu);
+  return appIcon;
 }
 
 // Quit when all windows are closed.
@@ -57,6 +99,7 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
@@ -78,13 +121,11 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
-
-  // Create NEDB and init with Application path
   createWindow()
 })
 
 ipcMain.on("open-external-url", (event, args: string) => {
-  shell.openExternal(args)
+  shell.openExternal(args);
 });
 
 

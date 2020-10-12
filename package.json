@@ -13,7 +13,8 @@
     "postuninstall": "electron-builder install-app-deps",
     "package-mac": "rm -rf ./node_modules && npm build && electron-builder build --mac",
     "package-linux": "rm -rf ./node_modules && npm build && electron-builder build --linux",
-    "package-win": "rm -rf ./node_modules && npm build && electron-builder build --win --x64"
+    "package-win": "rm -rf ./node_modules && npm build && electron-builder build --win --x64",
+    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten"
   },
   "main": "background.js",
   "dependencies": {
@@ -52,6 +53,7 @@
     "@vue/test-utils": "^1.0.3",
     "electron": "^9.0.0",
     "electron-devtools-installer": "^3.1.0",
+    "electron-icon-builder": "^1.0.2",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "sass": "^1.19.0",

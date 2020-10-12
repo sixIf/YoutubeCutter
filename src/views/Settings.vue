@@ -16,7 +16,7 @@ import { Component, Inject, Provide, Vue } from "vue-property-decorator";
 import ApiKeyForm from "@/components/ApiKeyForm.vue";
 
 @Component({
-  components: { ApiKeyForm }
+  components: { ApiKeyForm },
 })
-export default class ApiKeyManager extends Vue {}
+export default class Settings extends Vue {}
 </script>

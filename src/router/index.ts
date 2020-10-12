@@ -8,7 +8,7 @@ import ChannelPlaylists from '@/views/ChannelPlaylists.vue'
 import SearchChannel from '@/views/SearchChannel.vue'
 import SearchVideos from '@/views/SearchVideos.vue'
 import Help from '@/views/Help.vue'
-import ApiKeyManager from '@/views/ApiKeyManager.vue'
+import Settings from '@/views/Settings.vue'
 import { ApiKeyService } from "@/services/apiKeyService"
 import { ApplicationContainer } from "@/di/index"
 
@@ -43,7 +43,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/api-key',
     name: 'api-manager',
-    component: ApiKeyManager
+    component: Settings
   },
   {
     path: '/channel/:channelTitle/:id',

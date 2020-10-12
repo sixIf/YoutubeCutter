@@ -1,6 +1,8 @@
-Mettre icon !
+Ajout choix du dossier d'installation 
+  - Handle error si plus de place sur le device
+  - voir pour l'affichage des vidéos en téléchargement si y'en a bcp ? peut être télécharger les vidéos par paquets de X, et afficher le nombre de vidéos en attente
 
-Le rendre minimizable
+Traduction en français
 
 Ajouter un filtrage des vidéos déjà téléchargée. Avec nedb, lorsqu'on affiche des vidéos, faire une reqûete nedb cherchant si on a déjà la vidéo ids
 
