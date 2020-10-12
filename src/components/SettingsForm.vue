@@ -26,6 +26,7 @@
                         v-model="folderPath"
                         label="Download Folder"
                         prepend-icon="folder"
+                        required
                         @click="selectDirectory()"
                     ></v-text-field>
                 </v-form>
@@ -56,7 +57,7 @@ import { IYoutubeService } from "@/services/youtubeService";
 import { IDownloadFolderService } from "@/services/downloadFolderService";
 
 @Component
-export default class ApiKeyForm extends Vue {
+export default class SettingsForm extends Vue {
     @Inject(API_KEY_SERVICE)
     apiKeyService!: IApiKeyService;
     @Inject(DOWNLOAD_FOLDER_SERVICE)
