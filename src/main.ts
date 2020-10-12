@@ -8,7 +8,8 @@ import '@/assets/css/main.styl'
 import axios from 'axios'
 import { YoutubeService } from '@/services/youtubeService'
 import { ApiKeyService } from '@/services/apiKeyService'
-import { YOUTUBESERVICE, APIKEYSERVICE } from '@/config/litterals'
+import { DownloadFolderService } from '@/services/downloadFolderService'
+import { YOUTUBE_SERVICE, API_KEY_SERVICE, DOWNLOAD_FOLDER_SERVICE } from '@/config/litterals'
 import { ApplicationContainer } from '@/di/index'
 
 Vue.config.productionTip = false
@@ -17,11 +18,12 @@ axios.defaults.baseURL = (process.env.NODE_ENV !== 'production') ? 'http://local
 
 
 new Vue({
-  router,
-  vuetify,
-  provide: {
-    [YOUTUBESERVICE]: ApplicationContainer.resolve(YoutubeService), // Tsyringe pour injection de dépendence
-    [APIKEYSERVICE]: ApplicationContainer.resolve(ApiKeyService), // Tsyringe pour injection de dépendence
-  },
-  render: h => h(App)
+    router,
+    vuetify,
+    provide: {
+        [YOUTUBE_SERVICE]: ApplicationContainer.resolve(YoutubeService), // Tsyringe pour injection de dépendence
+        [API_KEY_SERVICE]: ApplicationContainer.resolve(ApiKeyService), // Tsyringe pour injection de dépendence
+        [DOWNLOAD_FOLDER_SERVICE]: ApplicationContainer.resolve(DownloadFolderService), // Tsyringe pour injection de dépendence
+    },
+    render: h => h(App)
 }).$mount('#app')
