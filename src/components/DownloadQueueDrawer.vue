@@ -40,7 +40,7 @@
                         :key="infos.video.id"
                     >
                         <v-list-item>
-                            <!-- <template v-slot:default>
+                            <template v-slot:default>
                                 <v-list-item-content>
                                     <v-list-item-title>{{
                                         infos.video.title
@@ -68,8 +68,9 @@
                                         color="primary"
                                     />
                                 </v-list-item-action>
-                            </template> -->
+                            </template>
                         </v-list-item>
+                        <v-divider></v-divider>
                     </v-list>
                 </v-tab-item>
                 <v-tab-item>
@@ -186,6 +187,27 @@ export default class DownloadQueueDrawer extends Vue {
                     type: "video",
                     audioOnly: false,
                 });
+            }
+        });
+
+        window.myIpcRenderer.receive("download-error", (data: ItemStruct) => {
+            this.isDownloading = false;
+            const indexToDelete = _.findIndex(this.videoDownloading, function (
+                x
+            ) {
+                return x.video.id === data.id;
+            });
+            if (indexToDelete != -1) {
+                this.videoDownloaded.push(
+                    _.cloneDeep(this.videoDownloading[indexToDelete])
+                );
+                _.remove(this.videoDownloading, function (
+                    value: ItemDownloading,
+                    index: number
+                ) {
+                    return index == indexToDelete;
+                });
+                console.log(`Error downloading video with id ${data}`);
             }
         });
     }

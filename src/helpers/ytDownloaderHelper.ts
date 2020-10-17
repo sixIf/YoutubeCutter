@@ -41,6 +41,12 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
                 win.webContents.send('download-progress', objectToSend)
         };
 
+        const handleDownloadError = (videoError: ItemStruct) => {
+            console.error
+            if (win)
+                win.webContents.send('download-error', videoError)
+        }
+
         if (fileAlreadyExist) {
             console.log('File already downloaded');
             if (win)
@@ -55,7 +61,7 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
 
             ytdl(url, {
                 filter: format => format.container === 'mp4' && !format.qualityLabel,
-            }).on('error', console.error)
+            }).on('error', () => { handleDownloadError(videoToFetch) })
                 .on('progress', (chunkLength: number, downloaded: number, total: number) => {
                     onProgress(chunkLength, downloaded, total, 'audio', videoToFetch)
                 })
@@ -79,7 +85,7 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
                             .input(audioOutputMp4)
                             .audioCodec('copy')
                             .save(mainOutput)
-                            .on('error', console.error)
+                            .on('error', () => { handleDownloadError(videoToFetch) })
                             .on('end', () => {
                                 fs.unlink(audioOutputMp4, err => {
                                     if (err) console.error(err);
@@ -95,7 +101,7 @@ export default function downloadItems(items: Array<ItemStruct>, audioOnly: boole
                             .input(audioOutputMp4)
                             .audioCodec('libmp3lame')
                             .save(audioOutputMp3)
-                            .on('error', console.error)
+                            .on('error', () => { handleDownloadError(videoToFetch) })
                             .on('end', () => {
                                 fs.unlink(audioOutputMp4, err => {
                                     if (err) console.error(err);
