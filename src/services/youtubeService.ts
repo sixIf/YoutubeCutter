@@ -159,7 +159,6 @@ export class YoutubeService implements IYoutubeService {
         } else if (videoUrl.indexOf("youtu.be/") != -1) {
             const indexOfFormatted = videoUrl.indexOf("youtu.be/");
             const indexOfList = videoUrl.indexOf("?list=");
-            console.log(videoUrl.slice(indexOfFormatted + "youtu.be/".length, indexOfList))
             return videoUrl.slice(indexOfFormatted + "youtu.be/".length, indexOfList);
         } else {
             const indexOfSlash = videoUrl.lastIndexOf("/");
