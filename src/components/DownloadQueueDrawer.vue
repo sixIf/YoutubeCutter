@@ -40,7 +40,7 @@
                         :key="infos.video.id"
                     >
                         <v-list-item>
-                            <template v-slot:default>
+                            <!-- <template v-slot:default>
                                 <v-list-item-content>
                                     <v-list-item-title>{{
                                         infos.video.title
@@ -68,7 +68,7 @@
                                         color="primary"
                                     />
                                 </v-list-item-action>
-                            </template>
+                            </template> -->
                         </v-list-item>
                     </v-list>
                 </v-tab-item>
@@ -90,8 +90,18 @@
                                         infos.video.title
                                     }}</v-list-item-title>
                                 </v-list-item-content>
+                                <v-list-item-icon>
+                                    <v-icon
+                                        @click="open(infos.video.folderPath)"
+                                        >mdi-folder
+                                    </v-icon>
+                                    <v-icon @click="open(infos.video.filePath)"
+                                        >mdi-play
+                                    </v-icon>
+                                </v-list-item-icon>
                             </template>
                         </v-list-item>
+                        <v-divider></v-divider>
                     </v-list>
                 </v-tab-item>
             </v-tabs-items>
@@ -123,6 +133,10 @@ export default class DownloadQueueDrawer extends Vue {
 
     clearDownloadedList() {
         this.videoDownloaded = _.cloneDeep([]);
+    }
+
+    open(path: string) {
+        window.myIpcRenderer.send("open-shell", path);
     }
 
     mounted() {

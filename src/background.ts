@@ -27,8 +27,8 @@ function createWindow() {
     let tray: Tray | null = null;
 
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 855,
+        height: 655,
         webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -113,6 +113,8 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+    await installExtension(VUEJS_DEVTOOLS)
+    console.log(process.env.IS_TEST)
     if (isDevelopment && !process.env.IS_TEST) {
         // Install Vue Devtools
         try {
@@ -126,6 +128,10 @@ app.on('ready', async () => {
 
 ipcMain.on("open-external-url", (event, args: string) => {
     shell.openExternal(args);
+});
+
+ipcMain.on("open-shell", (event, args: string) => {
+    shell.openPath(args);
 });
 
 ipcMain.on("select-folder", (event, args: string) => {
