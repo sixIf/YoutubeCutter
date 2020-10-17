@@ -1,9 +1,13 @@
 <template>
     <v-dialog v-model="dialog" max-width="500">
         <template v-slot:activator="{ on }">
-            <v-btn :disabled="disabled" v-on="on" color="primary">{{
-                getButtonTitle
-            }}</v-btn>
+            <v-btn
+                :disabled="disabled"
+                v-on="on"
+                color="primary"
+                style="margin: 5px"
+                >{{ getButtonTitle }}</v-btn
+            >
         </template>
         <slot></slot>
         <v-card>

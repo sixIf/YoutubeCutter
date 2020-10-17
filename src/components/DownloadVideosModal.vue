@@ -1,7 +1,11 @@
 <template>
     <v-dialog v-model="dialog" max-width="500">
         <template v-slot:activator="{ on }">
-            <v-btn v-on="on" :disabled="disabled" color="primary"
+            <v-btn
+                v-on="on"
+                :disabled="disabled"
+                color="primary"
+                style="margin: 5px"
                 >Download</v-btn
             >
         </template>
