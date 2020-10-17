@@ -3,10 +3,10 @@
         <v-row class="sticky-toolbar">
             <v-col>
                 <v-row>
-                    <h1 v-if="playlistTitle == 'Uploaded Videos'">
-                        {{ playlistTitle }}
+                    <h1>
+                        {{ isMainPlaylist ? "" : "Playlists : "
+                        }}{{ playlistTitle }}
                     </h1>
-                    <h1 v-else>Playlists : {{ playlistTitle }}</h1>
                 </v-row>
                 <v-row justify="end">
                     <download-videos-modal

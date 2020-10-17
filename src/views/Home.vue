@@ -1,44 +1,68 @@
 <template>
-  <v-main>
-    <v-container class="home-container fill-height" fluid>
-      <v-row align="center" justify="center" no-gutters>
-        <v-col cols="4" lg="4">
-          <v-card elevation="15" min-height="200" class="mx-auto my-12" max-width="374">
-            <v-card-title>Explore a Youtube channel</v-card-title>
+    <v-main>
+        <v-container class="home-container fill-height" fluid>
+            <v-row align="center" justify="center" no-gutters>
+                <v-col cols="12" md="8">
+                    <v-card flat tile>
+                        <v-window v-model="onboarding">
+                            <v-window-item
+                                v-for="(item, index) in items"
+                                :key="`card-${index}`"
+                            >
+                                <v-card
+                                    @click="$router.push(item.route)"
+                                    class="clickable"
+                                    color="#d32f2f"
+                                    height="300"
+                                >
+                                    <v-row
+                                        class="fill-height"
+                                        align="center"
+                                        justify="center"
+                                    >
+                                        <h1
+                                            style="font-size: 3rem"
+                                            class="white--text"
+                                        >
+                                            {{ item.name }}
+                                        </h1>
+                                    </v-row>
+                                </v-card>
+                            </v-window-item>
+                        </v-window>
 
-            <v-card-text>
-              <v-row align="center" class="mx-0"></v-row>
-
-              <div>Display all the videos and playlists uploaded to a channel. Choose what you want to download.</div>
-            </v-card-text>
-
-            <v-divider class="mx-4"></v-divider>
-
-            <v-card-actions>
-              <v-btn color="primary" text :to="{name: 'search-channel'}">Let's go</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-        <v-col cols="4" lg="4" offset="1" offset-md="1">
-          <v-card elevation="15" min-height="200" class="mx-auto my-12" max-width="374">
-            <v-card-title>Choose video by URLs</v-card-title>
-
-            <v-card-text>
-              <v-row align="center" class="mx-0"></v-row>
-
-              <div>Find and download the videos of your choice by copying and pasting their URLs.</div>
-            </v-card-text>
-
-            <v-divider class="mx-4"></v-divider>
-
-            <v-card-actions>
-              <v-btn color="primary" text :to="{name: 'search-videos'}">Let's go</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-main>
+                        <v-card-actions class="justify-space-between">
+                            <v-btn text @click="prev">
+                                <v-icon>mdi-chevron-left</v-icon>
+                            </v-btn>
+                            <v-item-group
+                                v-model="onboarding"
+                                class="text-center"
+                                mandatory
+                            >
+                                <v-item
+                                    v-for="item in items.length"
+                                    :key="`btn-${item}`"
+                                    v-slot:default="{ active, toggle }"
+                                >
+                                    <v-btn
+                                        :input-value="active"
+                                        icon
+                                        @click="toggle"
+                                    >
+                                        <v-icon>mdi-record</v-icon>
+                                    </v-btn>
+                                </v-item>
+                            </v-item-group>
+                            <v-btn text @click="next">
+                                <v-icon>mdi-chevron-right</v-icon>
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+    </v-main>
 </template>
 
 <script lang="ts">
@@ -47,5 +71,32 @@ import { Component, Vue } from "vue-property-decorator";
 
 // Define the component in class-style
 @Component
-export default class Home extends Vue {}
+export default class Home extends Vue {
+    onboarding = 0;
+    items = [
+        {
+            name: "Explore Channel",
+            route: "search-channel",
+        },
+        {
+            name: "Search Videos",
+            route: "search-videos",
+        },
+    ];
+    next() {
+        this.onboarding =
+            this.onboarding + 1 === this.items.length ? 0 : this.onboarding + 1;
+    }
+    prev() {
+        this.onboarding =
+            this.onboarding - 1 < 0
+                ? this.items.length - 1
+                : this.onboarding - 1;
+    }
+}
 </script>
+<style>
+.clickable {
+    cursor: pointer;
+}
+</style>
