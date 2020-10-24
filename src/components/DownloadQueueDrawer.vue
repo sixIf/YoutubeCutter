@@ -18,7 +18,7 @@
             width="500"
             style="z-index: 101"
         >
-            <v-list-item style="position=sticky">
+            <v-list-item style="position: sticky">
                 <v-list-item-content>
                     <v-tabs
                         v-model="tab"
@@ -32,79 +32,16 @@
             </v-list-item>
 
             <v-divider></v-divider>
-            <!-- TODO merge 2 tabs in a component -->
             <v-tabs-items v-model="tab">
-                <v-tab-item>
-                    <v-list
-                        v-for="infos in videoDownloading"
-                        :key="infos.video.id"
-                    >
-                        <v-list-item>
-                            <template v-slot:default>
-                                <v-list-item-content>
-                                    <v-list-item-title>{{
-                                        infos.video.title
-                                    }}</v-list-item-title>
-                                    <v-list-item-subtitle
-                                        style="padding-left: 10px"
-                                        >1. Downloading audio
-                                        {{
-                                            infos.progressAudio
-                                        }}%</v-list-item-subtitle
-                                    >
-                                    <div v-if="!infos.audioOnly">
-                                        <v-list-item-subtitle
-                                            style="padding-left: 10px"
-                                            >2. Downloading video
-                                            {{
-                                                infos.progressVideo
-                                            }}%</v-list-item-subtitle
-                                        >
-                                    </div>
-                                </v-list-item-content>
-                                <v-list-item-action>
-                                    <v-progress-circular
-                                        indeterminate
-                                        color="primary"
-                                    />
-                                </v-list-item-action>
-                            </template>
-                        </v-list-item>
-                        <v-divider></v-divider>
-                    </v-list>
-                </v-tab-item>
-                <v-tab-item>
-                    <v-btn
-                        v-if="videoDownloaded.length != 0"
-                        style="margin: 20px"
-                        @click="clearDownloadedList"
-                        >Clear list</v-btn
-                    >
-                    <v-list
-                        v-for="infos in videoDownloaded"
-                        :key="infos.video.id"
-                    >
-                        <v-list-item>
-                            <template v-slot:default>
-                                <v-list-item-content>
-                                    <v-list-item-title>{{
-                                        infos.video.title
-                                    }}</v-list-item-title>
-                                </v-list-item-content>
-                                <v-list-item-icon>
-                                    <v-icon
-                                        @click="open(infos.video.folderPath)"
-                                        >mdi-folder
-                                    </v-icon>
-                                    <v-icon @click="open(infos.video.filePath)"
-                                        >mdi-play
-                                    </v-icon>
-                                </v-list-item-icon>
-                            </template>
-                        </v-list-item>
-                        <v-divider></v-divider>
-                    </v-list>
-                </v-tab-item>
+                <queue-list-item
+                    :isDownloading="true"
+                    :videos="videoDownloading"
+                />
+                <queue-list-item
+                    :isDownloading="false"
+                    :videos="videoDownloaded"
+                    @clear="clearDownloadedList()"
+                />
             </v-tabs-items>
         </v-navigation-drawer>
     </div>
@@ -121,8 +58,13 @@ import {
 } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 const { myIpcRenderer } = window;
+import QueueListItem from "@/components/QueueListItem.vue";
 
-@Component
+@Component({
+    components: {
+        QueueListItem,
+    },
+})
 export default class DownloadQueueDrawer extends Vue {
     dialog = false;
     drawer = null;
@@ -157,7 +99,6 @@ export default class DownloadQueueDrawer extends Vue {
                         this.videoDownloading[index].progressVideo =
                             data.progressVideo;
                 }
-                console.log("Update progress");
             }
         );
 
@@ -178,7 +119,7 @@ export default class DownloadQueueDrawer extends Vue {
                 ) {
                     return index == indexToDelete;
                 });
-                console.log(`Behold, video with id ${data} downloaded`);
+                console.log(`Behold, video ${data.title} downloaded`);
             } else {
                 this.videoDownloaded.push({
                     video: data,
@@ -207,7 +148,7 @@ export default class DownloadQueueDrawer extends Vue {
                 ) {
                     return index == indexToDelete;
                 });
-                console.log(`Error downloading video with id ${data}`);
+                console.log(`Error downloading video ${data.title}`);
             }
         });
     }
@@ -242,5 +183,9 @@ export default class DownloadQueueDrawer extends Vue {
     100% {
         bottom: 0;
     }
+}
+.v-navigation-drawer__content {
+    overflow: hidden !important;
+    height: 100vh;
 }
 </style>

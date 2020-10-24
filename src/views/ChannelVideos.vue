@@ -24,7 +24,7 @@
                 </v-row>
             </v-col>
         </v-row>
-        <v-row>
+        <v-row style="height: 80vh; overflow-y: scroll">
             <v-col>
                 <list-items
                     style="position: relative; z-index: 3"
@@ -122,9 +122,9 @@ export default class ChannelVideos extends Vue {
                     this.videoList.push(video);
                 });
                 if (firstCall && this.checkVideoList()) this.fetchVideos(true);
-                console.log(
-                    `item count: ${this.totalItemsExpected} - videoList length ${this.videoList.length}`
-                );
+                // console.log(
+                //     `item count: ${this.totalItemsExpected} - videoList length ${this.videoList.length}`
+                // );
             } else {
                 // Display no more videos ?
             }
