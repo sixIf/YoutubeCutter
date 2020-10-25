@@ -8,7 +8,12 @@
                         :emptyToolbar="emptyToolbar"
                     ></search-videos-toolbar>
                 </v-col>
-                <v-col cols="5" sm="7" lg="9">
+                <v-col
+                    cols="5"
+                    sm="7"
+                    lg="9"
+                    style="height: 80vh; overflow-y: scroll"
+                >
                     <v-row class="download-button" justify="end">
                         <download-videos-modal
                             @download-started="emptyToolbar = !emptyToolbar"

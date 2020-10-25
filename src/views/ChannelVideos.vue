@@ -24,17 +24,13 @@
                 </v-row>
             </v-col>
         </v-row>
-        <v-row style="height: 80vh; overflow-y: scroll">
-            <v-col>
-                <list-items
-                    style="position: relative; z-index: 3"
-                    @update-list="updateSelectedList"
-                    @more-items="fetchVideos(false)"
-                    :itemType="itemType"
-                    :itemList="videoList"
-                />
-            </v-col>
-        </v-row>
+        <list-items
+            style="position: relative; z-index: 3"
+            @update-list="updateSelectedList"
+            @more-items="fetchVideos(false)"
+            :itemType="itemType"
+            :itemList="videoList"
+        />
     </v-container>
 </template>
 

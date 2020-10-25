@@ -12,17 +12,13 @@
                 </v-row>
             </v-col>
         </v-row>
-        <v-row>
-            <v-col>
-                <list-items
-                    style="z-index: 3"
-                    @update-list="updateSelectedList"
-                    @more-items="fetchPlaylists(false)"
-                    :itemType="itemType"
-                    :itemList="playlistList"
-                />
-            </v-col>
-        </v-row>
+        <list-items
+            style="z-index: 3"
+            @update-list="updateSelectedList"
+            @more-items="fetchPlaylists(false)"
+            :itemType="itemType"
+            :itemList="playlistList"
+        />
     </v-container>
 </template>
 
