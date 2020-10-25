@@ -158,8 +158,8 @@ export class YoutubeService implements IYoutubeService {
             else return videoUrl.slice(indexOfId);
         } else if (videoUrl.indexOf("youtu.be/") != -1) {
             const indexOfFormatted = videoUrl.indexOf("youtu.be/");
-            const indexOfList = videoUrl.indexOf("?list=");
-            return videoUrl.slice(indexOfFormatted + "youtu.be/".length, indexOfList);
+            const indexOfParmameters = videoUrl.indexOf("?");
+            return videoUrl.slice(indexOfFormatted + "youtu.be/".length, indexOfParmameters != -1 ? indexOfParmameters : videoUrl.length);
         } else {
             const indexOfSlash = videoUrl.lastIndexOf("/");
             return videoUrl.slice(indexOfSlash + 1);
