@@ -143,7 +143,7 @@ ipcMain.on("select-folder", (event, args: string) => {
 ipcMain.on("download-videos", (event, args: DownloadRequest) => {
     // Loop over args to download each videos selected
     const appMainPath = args.downloadFolder;
-    const WORKER_NUMBER = 5;
+    const WORKER_NUMBER = 3;
     if (appMainPath) {
         const subDirectory = args.audioOnly ? "Audios" : "Videos";
         if (!fs.existsSync(path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle))) {
@@ -151,7 +151,7 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
         }
         const output = path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle);
         for (var i = 0; i < WORKER_NUMBER; i++)
-            downloadItems(args.itemSelected, args.audioOnly, output, win);
+            downloadItems(args, output, win);
     } else {
         console.log('There is no download folder set, wow..')
     }

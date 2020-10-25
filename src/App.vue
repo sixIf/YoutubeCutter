@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import DownloadQueueDrawer from "@/components/DownloadQueueDrawer.vue";
-import { ItemStruct } from "./config/litterals";
+import { DownloadRequest, ItemStruct } from "./config/litterals";
 const { myIpcRenderer } = window;
 
 // Define the component in class-style
@@ -57,10 +57,13 @@ export default class App extends Vue {
     snackbarMessage = "";
 
     mounted() {
-        window.myIpcRenderer.receive("download-error", (data: ItemStruct) => {
-            this.snackbar = true;
-            this.snackbarMessage = `Download error : ${data.title}`;
-        });
+        window.myIpcRenderer.receive(
+            "download-error",
+            (data: DownloadRequest) => {
+                this.snackbar = true;
+                this.snackbarMessage = `Download error : ${data.itemSelected[0].title}`;
+            }
+        );
     }
 }
 </script>
@@ -75,7 +78,7 @@ html {
 
 /* Track */
 ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px grey;
+    box-shadow: inset 0 0 5px white;
     border-radius: 10px;
 }
 

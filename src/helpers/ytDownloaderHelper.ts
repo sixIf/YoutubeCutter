@@ -3,21 +3,28 @@ import fs from 'fs';
 import ytdl from 'ytdl-core';
 import ffmpeg from 'fluent-ffmpeg';
 import pathToFfmpeg from 'ffmpeg-static';
-import { ItemStruct, ItemDownloading } from '@/config/litterals/index'
+import { ItemStruct, ItemDownloading, DownloadRequest } from '@/config/litterals/index'
 import sanitize from 'sanitize-filename'
 import { BrowserWindow } from 'electron';
 import _ from 'lodash';
 
-// Send for video text 1/2 download audio - download video - merge audio / video
-// For audio 1/2 download audio to mp4 - convert to mp3
 
-
-
-export default async function downloadItems(items: Array<ItemStruct>, audioOnly: boolean, output: string, win: BrowserWindow | null) {
-    while (items.length != 0) {
+export default async function downloadItems(args: DownloadRequest, output: string, win: BrowserWindow | null) {
+    while (args.itemSelected.length != 0) {
+        const videoToFetch = args.itemSelected.shift()!;
         try {
-            await download(items.shift(), audioOnly, output, win);
+            console.log(await download(videoToFetch, args.audioOnly, output, win));
+            if (win) win.webContents.send('item-downloaded', videoToFetch)
         } catch (err) {
+            const downloadRequestError: DownloadRequest = {
+                requestId: args.requestId,
+                audioOnly: args.audioOnly,
+                playlistTitle: args.playlistTitle,
+                channelTitle: args.channelTitle,
+                itemSelected: [videoToFetch],
+                downloadFolder: args.downloadFolder,
+            };
+            if (win) win.webContents.send('download-error', downloadRequestError)
             console.log(`An error occurred:  ${err}`);
         }
     }
@@ -58,16 +65,20 @@ function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, outp
             };
 
             const handleDownloadError = (videoError: ItemStruct, err: Error, source: string) => {
-                if (win)
-                    win.webContents.send('download-error', videoError)
-                reject(`\nSource:${source}\nError:${err}`)
+                unlikTempAudio('\nYtdl error', false);
+                reject(`\nSource:${source}\nVideo:${videoError.title}\n${err}`)
             }
 
-            if (fileAlreadyExist) {
-                console.log('File already downloaded');
-                if (win)
-                    win.webContents.send('item-downloaded', videoToFetch)
+            const unlikTempAudio = (resolveMessage: string, resolved: boolean) => {
+                fs.unlink(audioOutputMp4, err => {
+                    if (!resolved) console.log("I swear im unlinking")
+                    if (err) console.error(err);
+                    else if (resolved) resolve(resolveMessage)
+                });
             }
+
+            if (fileAlreadyExist)
+                resolve('File already downloaded')
             else {
                 console.log('downloading audio track');
                 ffmpeg.setFfmpegPath(
@@ -77,15 +88,17 @@ function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, outp
 
                 ytdl(url, {
                     filter: format => format.container === 'mp4' && !format.qualityLabel,
-                }).on('error', (err) => { handleDownloadError(videoToFetch, err, 'ytdl') })
+                }).on('error', (err) => handleDownloadError(videoToFetch, err, 'ytdl'))
                     .on('progress', (chunkLength: number, downloaded: number, total: number) => {
                         onProgress(chunkLength, downloaded, total, 'audio', videoToFetch)
                     })
 
                     // Write audio to file since ffmpeg supports only one input stream.
-                    .pipe(fs.createWriteStream(audioOutputMp4))
+                    .pipe(fs.createWriteStream(audioOutputMp4).on("error", (err) => {
+                        console.log(`Fs write error: ${err}`);
+                    }))
                     .on('finish', () => {
-                        console.log('audio track downloaded')
+                        console.log(`Audio track downloaded for ${videoToFetch.title}`)
                         if (!audioOnly) {
                             // Download and merge video
                             console.log('\ndownloading video');
@@ -101,16 +114,8 @@ function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, outp
                                 .input(audioOutputMp4)
                                 .audioCodec('copy')
                                 .save(mainOutput)
-                                .on('error', (err) => { handleDownloadError(videoToFetch, err, 'ffmpeg-video') })
-                                .on('end', () => {
-                                    fs.unlink(audioOutputMp4, err => {
-                                        if (err) console.error(err);
-                                        else console.log(`\nfinished downloading, saved to ${mainOutput}`);
-                                        if (win)
-                                            win.webContents.send('item-downloaded', videoToFetch)
-                                        resolve(true)
-                                    });
-                                });
+                                .on('error', (err) => handleDownloadError(videoToFetch, err, 'ffmpeg-video'))
+                                .on('end', () => unlikTempAudio(`\nFinished downloading, saved to ${mainOutput}`, true));
                         }
                         else {
                             // Convert audio to mp3
@@ -119,15 +124,7 @@ function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, outp
                                 .audioCodec('libmp3lame')
                                 .save(audioOutputMp3)
                                 .on('error', (err) => { handleDownloadError(videoToFetch, err, 'ffmpeg-mp3') })
-                                .on('end', () => {
-                                    fs.unlink(audioOutputMp4, err => {
-                                        if (err) console.error(err);
-                                        else console.log(`\nfinished converting audio to mp3, saved to ${audioOutputMp3}`);
-                                        if (win)
-                                            win.webContents.send('item-downloaded', videoToFetch)
-                                        resolve(true)
-                                    });
-                                });
+                                .on('end', () => unlikTempAudio(`\nFinished converting audio to mp3, saved to ${audioOutputMp3}`, true));
                         }
                     });
             }
