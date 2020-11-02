@@ -67,6 +67,7 @@ export interface ItemStruct {
     readonly thumbnail: string;
     folderPath?: string;
     filePath?: string;
+    downloadTry?: number;
 }
 
 export interface ChannelInfos {

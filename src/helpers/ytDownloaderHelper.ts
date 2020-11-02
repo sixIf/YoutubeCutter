@@ -7,25 +7,33 @@ import { ItemStruct, ItemDownloading, DownloadRequest } from '@/config/litterals
 import sanitize from 'sanitize-filename'
 import { BrowserWindow } from 'electron';
 import _ from 'lodash';
+import { generateUniqueId } from './stringHelper';
 
 
 export default async function downloadItems(args: DownloadRequest, output: string, win: BrowserWindow | null) {
+    console.log(args)
     while (args.itemSelected.length != 0) {
         const videoToFetch = args.itemSelected.shift()!;
+        videoToFetch.downloadTry = videoToFetch.downloadTry ? videoToFetch.downloadTry + 1 : 1;
         try {
             console.log(await download(videoToFetch, args.audioOnly, output, win));
             if (win) win.webContents.send('item-downloaded', videoToFetch)
         } catch (err) {
-            const downloadRequestError: DownloadRequest = {
-                requestId: args.requestId,
-                audioOnly: args.audioOnly,
-                playlistTitle: args.playlistTitle,
-                channelTitle: args.channelTitle,
-                itemSelected: [videoToFetch],
-                downloadFolder: args.downloadFolder,
-            };
-            if (win) win.webContents.send('download-error', downloadRequestError)
             console.log(`An error occurred:  ${err}`);
+            if (videoToFetch.downloadTry < 3) args.itemSelected.push(videoToFetch);
+            else {
+                console.log("On recommence pas, voici la video:")
+                console.log(videoToFetch)
+                const downloadRequestError: DownloadRequest = {
+                    requestId: args.requestId,
+                    audioOnly: args.audioOnly,
+                    playlistTitle: args.playlistTitle,
+                    channelTitle: args.channelTitle,
+                    itemSelected: [videoToFetch],
+                    downloadFolder: args.downloadFolder,
+                };
+                if (win) win.webContents.send('download-error', downloadRequestError)
+            }
         }
     }
 }
@@ -38,7 +46,7 @@ function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, outp
         else {
 
             const url = `https://www.youtube.com/watch?v=${videoToFetch.id}`;
-            const audioOutputMp4 = path.resolve(output, sanitize(`TEMP_AUDIO_${videoToFetch.title}.mp4`));
+            const audioOutputMp4 = path.resolve(output, sanitize(`TEMP_AUDIO_${videoToFetch.title}_${generateUniqueId()}.mp4`));
             const audioOutputMp3 = path.resolve(output, sanitize(`${videoToFetch.title}.mp3`));
             const mainOutput = path.resolve(output, sanitize(`${videoToFetch.title}.mp4`));
 
@@ -71,8 +79,8 @@ function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, outp
 
             const unlikTempAudio = (resolveMessage: string, resolved: boolean) => {
                 fs.unlink(audioOutputMp4, err => {
-                    if (!resolved) console.log("I swear im unlinking")
                     if (err) console.error(err);
+                    if (!resolved) console.log("I swear im unlinking")
                     else if (resolved) resolve(resolveMessage)
                 });
             }
