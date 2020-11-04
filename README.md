@@ -1,8 +1,17 @@
 # Youtube-downloader
+<h1 align="center">
+  <img src="https://i.imgur.com/JFIO6mh.png" alt="Youtube To MP3" width="200">
+  <br>
+  Youtube Downloader
+  <br>
+  <br>
+  <img src="https://i.imgur.com/5KaLtmF.gif" alt="Youtube To MP3">
+</h1>
+
+### About
 
 Yet another youtube downloader made with vue-electron. You can download full videos or only audios.<br/>
 If you have an Api Key, you can browse youtube channels through an easy to use interface.
-
 
 ### Features
 
