@@ -125,7 +125,7 @@ export default class ListItems extends Vue {
     }
 
     get getRowHeight(): string{
-        return `height: ${this.rowHeight}`;
+        return `height: ${this.rowHeight}vh;`;
     }
 
     scrollFetchVideos(event: EventListenerOrEventListenerObject): void {
