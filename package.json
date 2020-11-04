@@ -35,7 +35,7 @@
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.2.0",
     "vuetify": "^2.3.4",
-    "ytdl-core": "^3.4.2"
+    "ytdl-core": "^4.0.3"
   },
   "devDependencies": {
     "@types/ffmpeg-static": "^3.0.0",
