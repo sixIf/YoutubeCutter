@@ -14,7 +14,7 @@
             <v-card-title class="headline">{{ getModalTitle }}</v-card-title>
             <v-card-text>
                 <v-container>
-                    <alert v-if="alert" :alert="alert"></alert>
+                    <alert :alert="alert"></alert>
                     <v-row v-if="displayFetchButton" align="center">
                         <v-col cols="12">
                             <h3>

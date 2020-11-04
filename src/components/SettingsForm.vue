@@ -6,13 +6,7 @@
                 <v-spacer></v-spacer>
             </v-toolbar>
             <v-card-text>
-                <v-alert
-                    v-if="alert"
-                    dismissible
-                    v-model="displayAlert"
-                    :type="alert.type"
-                    >{{ alert.message }}</v-alert
-                >
+                <alert :alert="alert"></alert>
                 <v-form @submit.prevent="setApiKey">
                     <v-text-field
                         v-model="folderPath"
@@ -56,8 +50,13 @@ import {
 import { IApiKeyService } from "@/services/apiKeyService";
 import { IYoutubeService } from "@/services/youtubeService";
 import { IDownloadFolderService } from "@/services/downloadFolderService";
+import Alert from "@/components/Alert.vue";
 
-@Component
+@Component({
+    components: {
+        Alert,
+    },
+})
 export default class SettingsForm extends Vue {
     @Inject(API_KEY_SERVICE)
     apiKeyService!: IApiKeyService;
@@ -68,11 +67,6 @@ export default class SettingsForm extends Vue {
     folderPath: string | null = this.downloadFolderService.getDownloadFolder();
 
     alert: { type: string; message: string } | null = null;
-
-    get displayAlert() {
-        if (this.alert) return true;
-        else return false;
-    }
 
     selectDirectory() {
         window.myIpcRenderer.send("select-folder", {});
@@ -87,7 +81,7 @@ export default class SettingsForm extends Vue {
             if (this.apiKeyService.setApiKey(this.apiKey)) {
                 this.alert = {
                     type: "success",
-                    message: "It's all good.",
+                    message: "Your Api key is perfect !",
                 };
             } else {
                 this.alert = {
@@ -107,11 +101,16 @@ export default class SettingsForm extends Vue {
         window.myIpcRenderer.receive(
             "selected-folder",
             (data: string[] | undefined) => {
+                this.alert = null;
                 if (data) {
                     this.folderPath = data[0];
                     this.downloadFolderService.setDownloadFolder(
                         this.folderPath
                     );
+                    this.alert = {
+                        type: "success",
+                        message: "The folder has been set. You can start downloading !",
+                    };
                 }
             }
         );

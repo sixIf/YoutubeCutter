@@ -11,7 +11,7 @@
                             <v-spacer></v-spacer>
                         </v-toolbar>
                         <v-card-text>
-                            <alert v-if="alert" :alert="alert"></alert>
+                            <alert :alert="alert"></alert>
                             <v-form @submit.prevent="getChannel">
                                 <v-text-field
                                     v-model="videoUrl"

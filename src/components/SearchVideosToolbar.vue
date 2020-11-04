@@ -5,7 +5,7 @@
                 <v-col cols="12">
                     <v-card-title>Search Youtube video</v-card-title>
                     <v-divider></v-divider>
-                    <alert v-if="alert" :alert="alert"></alert>
+                    <alert :alert="alert"></alert>
                     <v-card-actions>
                         <v-form style="width: 100%" v-on:submit.prevent>
                             <v-text-field
