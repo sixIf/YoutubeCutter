@@ -18,6 +18,8 @@ If you have an Api Key, you can browse youtube channels through an easy to use i
 -   [x] Downloading videos as well as MP3s
 -   [x] Download channels and playlists ( Youtube Api key required )
 -   [x] Multiple downloads at a time
+-   [x] Works on Windows
+-   [] Currently Mac - Linux are untested
 
 
 ### Stack
