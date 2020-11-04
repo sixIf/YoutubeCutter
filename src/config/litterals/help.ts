@@ -4,8 +4,12 @@ export const HelpItems: Array<IHelpItems> = [
         message: 'Download videos/playlists from a Youtube channel.'
     },
     {
-        title: 'What is an API Key ?',
-        message: 'To use this app, you will need an API Key. You only need a Google Account.</br>Follow this link to get a step by step explanation: ',
+        title: 'How to download videos ?',
+        message: 'You have to copy the video URL and paste it inside the form using (CTRL + V).',
+    },
+    {
+        title: 'How to browse a channel ?',
+        message: 'If you want to browse channel, you will need an API Key. You only need a Google Account.</br>Follow this link to get a step by step explanation: ',
         link: 'https://developers.google.com/youtube/v3/getting-started'
     },
     {
