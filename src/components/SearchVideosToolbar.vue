@@ -1,5 +1,5 @@
 <template>
-    <v-card min-width="100%">
+    <v-card min-width="100%" height="100%">
         <v-container class="search-toolbar">
             <v-row>
                 <v-col cols="12">
@@ -14,7 +14,7 @@
                                 hint="https://www.youtube.com/watch?v=jNQXAC9IVRw"
                                 outlined
                                 v-model="videoUrl"
-                                label="Youtube URL"
+                                label="Video URL"
                                 @click:append-outer="findVideo"
                                 @keydown.enter="findVideo"
                                 full-width
@@ -75,6 +75,7 @@ export default class SearchVideosToolbar extends Vue {
     videoUrl = "";
     videosFetched: ItemStruct[] = [];
     alert: IAlert | null = null;
+    searchType = "video";
 
     videoId(): string {
         return this.youtubeService.extractVideoIdFromUrl(this.videoUrl);
