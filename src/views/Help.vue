@@ -2,7 +2,7 @@
   <v-main>
     <v-container>
       <a
-        @click.prevent="openGithubOsBrowser"
+        @click.prevent="openExternalUrl(githubLink)"
         :href="githubLink"
         target="_blank"
         class="github-corner"
@@ -42,7 +42,7 @@
           <v-expansion-panels>
             <v-expansion-panel v-for="(item,i) in helpItems" :key="i">
               <v-expansion-panel-header>{{item.title}}</v-expansion-panel-header>
-              <v-expansion-panel-content>{{item.message}}</v-expansion-panel-content>
+              <v-expansion-panel-content><p><span v-html="item.message"></span><a @click.prevent="openExternalUrl(item.link)" v-if="item.link" :href="item.link">Click me</a></p></v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
         </v-col>
@@ -61,8 +61,8 @@ export default class Help extends Vue {
   helpItems: Array<IHelpItems> = HelpItems;
   githubLink = "https://www.youtube.com/watch?v=I6_RC7QDspE";
 
-  openGithubOsBrowser() {
-    window.myIpcRenderer.send("open-external-url", this.githubLink);
+  openExternalUrl(link: string) {
+    window.myIpcRenderer.send("open-external-url", link);
   }
 }
 </script>

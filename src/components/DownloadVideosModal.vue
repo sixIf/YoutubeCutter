@@ -49,6 +49,7 @@ import {
 import * as _ from "lodash";
 import { IYoutubeService } from "@/services/youtubeService";
 import { IDownloadFolderService } from "@/services/downloadFolderService";
+import { generateUniqueId } from "@/helpers/stringHelper";
 const { myIpcRenderer } = window;
 
 @Component
@@ -83,6 +84,7 @@ export default class DownloadVideosModal extends Vue {
 
     downloadItems(): void {
         const downloadRequest: DownloadRequest = {
+            requestId: generateUniqueId(),
             audioOnly: this.audioOnly,
             playlistTitle: this.playlistTitle,
             channelTitle: this.channelTitle,

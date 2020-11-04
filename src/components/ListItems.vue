@@ -3,7 +3,7 @@
     <v-row
         id="list-items"
         @scroll="scrollFetchVideos($event)"
-        style="height: 80vh; overflow-y: scroll"
+        :style="getRowHeight"
     >
         <v-col>
             <v-item-group
@@ -96,6 +96,7 @@ export default class ListItems extends Vue {
     @Prop({ default: "video" }) itemType!: string;
     @Prop({ default: [] }) itemList!: ItemStruct[];
     @Prop({ default: true }) clickEnabled!: boolean;
+    @Prop({ default: 80 }) rowHeight!: number;
 
     itemsIdSelected: Array<string> | string = [];
     itemsSelected: Array<ItemStruct> = [];
@@ -123,6 +124,10 @@ export default class ListItems extends Vue {
         this.$emit("update-list", this.itemsSelected);
     }
 
+    get getRowHeight(): string{
+        return `height: ${this.rowHeight}`;
+    }
+
     scrollFetchVideos(event: EventListenerOrEventListenerObject): void {
         const elemHeight =
             document.getElementById("list-items")!.scrollHeight -
@@ -137,4 +142,7 @@ export default class ListItems extends Vue {
 .fav-icon
   position absolute
   top 5px
+
+#list-items
+  overflow-y: scroll
 </style>

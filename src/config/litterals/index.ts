@@ -29,6 +29,7 @@ export const LOCAL_STORAGE_FOLDER = "DownloadFolder"
  */
 
 export interface DownloadRequest {
+    readonly requestId: string;
     readonly audioOnly: boolean;
     readonly channelTitle: string;
     readonly playlistTitle: string;
@@ -66,6 +67,7 @@ export interface ItemStruct {
     readonly thumbnail: string;
     folderPath?: string;
     filePath?: string;
+    downloadTry?: number;
 }
 
 export interface ChannelInfos {

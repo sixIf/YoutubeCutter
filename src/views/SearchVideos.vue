@@ -26,6 +26,7 @@
                         :clickEnabled="false"
                         :itemType="itemType"
                         :itemList="videoList"
+                        :rowHeight="70"
                     />
                 </v-col>
             </v-row>
@@ -58,4 +59,8 @@ export default class SearchVideos extends Vue {
 <style lang="stylus">
 .download-button
   margin-right 10px
+  position: sticky
+  top: 0px
+  background-color white
+
 </style>

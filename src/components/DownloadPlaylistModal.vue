@@ -97,6 +97,7 @@ import { IYoutubeService } from "@/services/youtubeService";
 import Alert from "@/components/Alert.vue";
 import _ from "lodash";
 import { IDownloadFolderService } from "@/services/downloadFolderService";
+import { generateUniqueId } from "@/helpers/stringHelper";
 
 @Component({
     components: {
@@ -204,7 +205,7 @@ export default class DownloadPlaylistModal extends Vue {
             this.previousVideoListLength = this.videoList.length;
             if (this.videoList.length < this.itemsInPlaylist)
                 this.videoList = _.concat(this.videoList, response.itemList);
-            if (this.checkVideoList && this.dialog && !firstRun)
+            if (this.checkVideoList && this.dialog)
                 this.fetchVideosInPlaylist(false);
             else this.isFetching = false;
         } catch (error) {
@@ -246,6 +247,7 @@ export default class DownloadPlaylistModal extends Vue {
 
     downloadItems(): void {
         const downloadRequest: DownloadRequest = {
+            requestId: generateUniqueId(),
             audioOnly: this.audioOnly,
             playlistTitle: this.playlistTitle,
             channelTitle: this.channelTitle,

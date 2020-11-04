@@ -33,15 +33,95 @@
 
             <v-divider></v-divider>
             <v-tabs-items v-model="tab">
-                <queue-list-item
-                    :isDownloading="true"
-                    :videos="videoDownloading"
-                />
-                <queue-list-item
-                    :isDownloading="false"
-                    :videos="videoDownloaded"
-                    @clear="clearDownloadedList()"
-                />
+                <v-tab-item>
+                    <v-list
+                        v-for="infos in videoDownloading"
+                        :key="infos.video.id"
+                    >
+                        <v-list-item>
+                            <template v-slot:default>
+                                <v-list-item-content>
+                                    <v-list-item-title>{{
+                                        infos.video.title
+                                    }}</v-list-item-title>
+                                    <v-list-item-subtitle
+                                        style="padding-left: 10px"
+                                        >1. Downloading audio
+                                        {{
+                                            infos.progressAudio
+                                        }}%</v-list-item-subtitle
+                                    >
+                                    <div v-if="!infos.audioOnly">
+                                        <v-list-item-subtitle
+                                            style="padding-left: 10px"
+                                            >2. Downloading video
+                                            {{
+                                                infos.progressVideo
+                                            }}%</v-list-item-subtitle
+                                        >
+                                    </div>
+                                </v-list-item-content>
+                                <v-list-item-action>
+                                    <v-progress-circular
+                                        indeterminate
+                                        color="primary"
+                                    />
+                                </v-list-item-action>
+                            </template>
+                        </v-list-item>
+                        <v-divider></v-divider>
+                    </v-list>
+                </v-tab-item>
+                <v-tab-item
+                    style="height: 90vh; overflow-y: scroll; overflow-x: hidden"
+                >
+                    <v-alert
+                        type="warning"
+                        v-if="errorDownloadRequest.length > 0"
+                        >{{ `Some download failed.` }}</v-alert
+                    >
+                    <v-row>
+                        <v-col cols="6" v-if="errorDownloadRequest.length != 0">
+                            <v-btn
+                                @click="redownloadFailed"
+                                style="margin: 20px"
+                                color="warning"
+                                >Retry failed download</v-btn
+                            >
+                        </v-col>
+                        <v-col cols="6" v-if="videoDownloaded.length != 0">
+                            <v-btn
+                                style="margin: 20px"
+                                @click="clearDownloadedList"
+                                >Clear list</v-btn
+                            >
+                        </v-col>
+                    </v-row>
+                    <v-list
+                        v-for="infos in videoDownloaded"
+                        :key="infos.video.id"
+                    >
+                        <v-list-item>
+                            <template v-slot:default>
+                                <v-list-item-content>
+                                    <v-list-item-title>{{
+                                        infos.video.title
+                                    }}</v-list-item-title>
+                                </v-list-item-content>
+                                <v-list-item-icon>
+                                    <v-icon
+                                        @click="open(infos.video.folderPath)"
+                                        >mdi-folder
+                                    </v-icon>
+                                    <v-icon @click="open(infos.video.filePath)"
+                                        >mdi-play
+                                    </v-icon>
+                                </v-list-item-icon>
+                            </template>
+                        </v-list-item>
+                        <v-divider></v-divider>
+                    </v-list>
+                </v-tab-item>
             </v-tabs-items>
         </v-navigation-drawer>
     </div>
@@ -55,16 +135,12 @@ import {
     ItemStruct,
     ItemDownloading,
     ERROR_TYPES,
+    DownloadRequest,
 } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 const { myIpcRenderer } = window;
-import QueueListItem from "@/components/QueueListItem.vue";
 
-@Component({
-    components: {
-        QueueListItem,
-    },
-})
+@Component
 export default class DownloadQueueDrawer extends Vue {
     dialog = false;
     drawer = null;
@@ -72,7 +148,14 @@ export default class DownloadQueueDrawer extends Vue {
     tabs = ["Downloading", "Finished"];
     videoDownloading: Array<ItemDownloading> = [];
     videoDownloaded: Array<ItemDownloading> = [];
+    errorDownloadRequest: Array<DownloadRequest> = [];
     isDownloading = false;
+
+    redownloadFailed() {
+        this.errorDownloadRequest.forEach((request: DownloadRequest) => {
+            window.myIpcRenderer.send("download-videos", request);
+        });
+    }
 
     clearDownloadedList() {
         this.videoDownloaded = _.cloneDeep([]);
@@ -131,26 +214,42 @@ export default class DownloadQueueDrawer extends Vue {
             }
         });
 
-        window.myIpcRenderer.receive("download-error", (data: ItemStruct) => {
-            this.isDownloading = false;
-            const indexToDelete = _.findIndex(this.videoDownloading, function (
-                x
-            ) {
-                return x.video.id === data.id;
-            });
-            if (indexToDelete != -1) {
-                this.videoDownloaded.push(
-                    _.cloneDeep(this.videoDownloading[indexToDelete])
+        window.myIpcRenderer.receive(
+            "download-error",
+            (data: DownloadRequest) => {
+                console.log("Download error in vue");
+                console.log(data);
+                this.isDownloading = false;
+                const indexToDelete = _.findIndex(
+                    this.videoDownloading,
+                    function (x) {
+                        return x.video.id === data.itemSelected[0].id;
+                    }
                 );
-                _.remove(this.videoDownloading, function (
-                    value: ItemDownloading,
-                    index: number
-                ) {
-                    return index == indexToDelete;
-                });
-                console.log(`Error downloading video ${data.title}`);
+                if (indexToDelete != -1) {
+                    _.remove(this.videoDownloading, function (
+                        value: ItemDownloading,
+                        index: number
+                    ) {
+                        return index == indexToDelete;
+                    });
+                }
+                const indexToUpdate = _.findIndex(
+                    this.errorDownloadRequest,
+                    function (x) {
+                        return x.requestId === data.requestId;
+                    }
+                );
+                if (indexToUpdate != -1)
+                    this.errorDownloadRequest[
+                        indexToDelete
+                    ].itemSelected.concat(data.itemSelected);
+                else this.errorDownloadRequest.push(_.cloneDeep(data));
+                console.log(
+                    `Error downloading video ${data.itemSelected[0].title}`
+                );
             }
-        });
+        );
     }
 }
 </script>
