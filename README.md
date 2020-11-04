@@ -27,7 +27,7 @@ If you have an Api Key, you can browse youtube channels through an easy to use i
 -   [Sass](https://github.com/sass/sass) - CSS with superpowers
 -   [Webpack](https://webpack.js.org/) - A module bundler for JavaScript
 
-## Project setup
+## Setup locally
 ```
 npm install
 ```
@@ -42,11 +42,13 @@ npm run electron:serve
 npm run electron:build
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Download ffmpeg.exe
+[https://ffmpeg.org/download.html](https://ffmpeg.org/download.html)<br/>
+You have to put ffmpeg executable inside ./dist_electron in order to handle sounds.
+
       
 
-### Disclaimer
+## Disclaimer
 
 This program should only be used on non-copyrighted material.
       
