@@ -16,7 +16,7 @@ export class ApiKeyService implements IApiKeyService {
   }
 
   setApiKey(key: string | null) {
-    if (key)
+    if (key != null)
       return this.apiKeyStoreAccessor.setApiKey(key);
     else
       return false

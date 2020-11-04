@@ -135,13 +135,15 @@ ipcMain.on("open-shell", (event, args: string) => {
 });
 
 ipcMain.handle("getVideoInfo", async (event, args: string) => {
-    console.log(args)
     try {
         const returnValue = await getVideoInfo(args);
         return returnValue;
     } catch (err) {
         console.log(err)
-        return err
+        return {
+            type: "error",
+            error: err
+        }
     }
     // console.log(returnValue)
 });

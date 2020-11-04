@@ -93,19 +93,22 @@ export default class SearchVideosToolbar extends Vue {
     }
 
     async findVideoNoApi() {
+        this.alert = null;
         const VIDEO_ID = this.youtubeService.extractVideoIdFromUrl(this.videoId());
-        console.log("On query le backend")
         try {
-            const test = await window.myIpcRenderer.invoke("getVideoInfo", VIDEO_ID)
-            if (typeof test == 'string'){
+            const response = await window.myIpcRenderer.invoke("getVideoInfo", VIDEO_ID)
+            if (response.type == 'error'){
                 // handle error
+                this.alert = {
+                    type: "error",
+                    message: "Video not found. Please verify your link and retry.",
+                };
             }
             else {
-                console.log(test)
-                const thumbnail = test.videoDetails.thumbnail.thumbnails[test.videoDetails.thumbnail.thumbnails.length -1];
+                const thumbnail = response.videoDetails.thumbnail.thumbnails[response.videoDetails.thumbnail.thumbnails.length -1];
                 this.videosFetched.push({
                     id: VIDEO_ID,
-                    title: test.videoDetails.title,
+                    title: response.videoDetails.title,
                     thumbnail: thumbnail ? thumbnail.url : ""
                 })
                 this.videoUrl = "";
