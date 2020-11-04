@@ -10,7 +10,7 @@ import _ from 'lodash';
 import { generateUniqueId } from './stringHelper';
 
 
-export default async function downloadItems(args: DownloadRequest, output: string, win: BrowserWindow | null) {
+export async function downloadItems(args: DownloadRequest, output: string, win: BrowserWindow | null) {
     console.log(args)
     while (args.itemSelected.length != 0) {
         const videoToFetch = args.itemSelected.shift()!;
@@ -36,6 +36,10 @@ export default async function downloadItems(args: DownloadRequest, output: strin
             }
         }
     }
+}
+
+export async function getVideoInfo(videoId: string){
+    return ytdl.getInfo(`https://www.youtube.com/watch?v=${videoId}`)
 }
 
 function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, output: string, win: BrowserWindow | null) {

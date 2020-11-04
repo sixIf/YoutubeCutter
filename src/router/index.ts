@@ -87,9 +87,9 @@ const router = new VueRouter({
 
 // Check if API_Key is set, if not redirect to set api key page
 router.beforeEach((to, from, next) => {
-    const apiKeyService = ApplicationContainer.resolve(ApiKeyService)
+    // const apiKeyService = ApplicationContainer.resolve(ApiKeyService)
     const downloadFolderService = ApplicationContainer.resolve(DownloadFolderService)
-    if (to.name !== 'api-manager' && (!apiKeyService.getApiKey() || !downloadFolderService.getDownloadFolder())) next({ name: 'api-manager' })
+    if (to.name !== 'api-manager' && (!downloadFolderService.getDownloadFolder())) next({ name: 'api-manager' })
     else next()
 })
 

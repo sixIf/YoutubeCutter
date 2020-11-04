@@ -8,7 +8,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
 // import { appMainPath } from '@/helpers/pathHelper'
-import downloadItems from '@/helpers/ytDownloaderHelper'
+import {downloadItems, getVideoInfo} from '@/helpers/ytDownloaderHelper'
 import { DownloadRequest, ItemStruct } from '@/config/litterals/index'
 import fs from 'fs'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -132,6 +132,20 @@ ipcMain.on("open-external-url", (event, args: string) => {
 
 ipcMain.on("open-shell", (event, args: string) => {
     shell.openPath(args);
+});
+
+ipcMain.handle("getVideoInfo", async (event, args: string) => {
+    try {
+        const returnValue = await getVideoInfo(args);
+        return returnValue;
+    } catch (err) {
+        console.log(err)
+        return {
+            type: "error",
+            error: err
+        }
+    }
+    // console.log(returnValue)
 });
 
 ipcMain.on("select-folder", (event, args: string) => {

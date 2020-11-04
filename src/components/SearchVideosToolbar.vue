@@ -54,13 +54,14 @@
 import { Component, Inject, Watch, Vue, Prop } from "vue-property-decorator";
 import {
     YOUTUBE_SERVICE,
-    VideoFetched,
     ItemStruct,
     ERROR_TYPES,
     IAlert,
+    API_KEY_SERVICE,
 } from "@/config/litterals";
 import Alert from "@/components/Alert.vue";
 import { IYoutubeService } from "@/services/youtubeService";
+import { IApiKeyService } from '@/services/apiKeyService';
 
 @Component({
     components: {
@@ -70,6 +71,8 @@ import { IYoutubeService } from "@/services/youtubeService";
 export default class SearchVideosToolbar extends Vue {
     @Inject(YOUTUBE_SERVICE)
     youtubeService!: IYoutubeService;
+    @Inject(API_KEY_SERVICE)
+    apiKeyService!: IApiKeyService;
 
     @Prop({ default: false }) emptyToolbar!: boolean;
     videoUrl = "";
@@ -83,7 +86,39 @@ export default class SearchVideosToolbar extends Vue {
     removeVideo(index: number) {
         this.videosFetched.splice(index, 1);
     }
-    async findVideo() {
+
+    findVideo() {
+        if (this.apiKeyService.getApiKey()) this.findVideoApi();
+        else this.findVideoNoApi();
+    }
+
+    async findVideoNoApi() {
+        this.alert = null;
+        const VIDEO_ID = this.youtubeService.extractVideoIdFromUrl(this.videoId());
+        try {
+            const response = await window.myIpcRenderer.invoke("getVideoInfo", VIDEO_ID)
+            if (response.type == 'error'){
+                // handle error
+                this.alert = {
+                    type: "error",
+                    message: "Video not found. Please verify your link and retry.",
+                };
+            }
+            else {
+                const thumbnail = response.videoDetails.thumbnail.thumbnails[response.videoDetails.thumbnail.thumbnails.length -1];
+                this.videosFetched.push({
+                    id: VIDEO_ID,
+                    title: response.videoDetails.title,
+                    thumbnail: thumbnail ? thumbnail.url : ""
+                })
+                this.videoUrl = "";
+            }
+        } catch (err) {
+            console.log(err)
+        }        
+    }
+
+    async findVideoApi() {
         this.alert = null;
         if (this.videosFetched.findIndex((x) => x.id == this.videoId()) == -1) {
             try {

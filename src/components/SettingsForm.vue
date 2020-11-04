@@ -2,7 +2,7 @@
     <div>
         <v-card class="elevation-12">
             <v-toolbar color="primary" dark flat>
-                <v-toolbar-title>Youtube Api Key</v-toolbar-title>
+                <v-toolbar-title>App settings</v-toolbar-title>
                 <v-spacer></v-spacer>
             </v-toolbar>
             <v-card-text>
@@ -15,19 +15,20 @@
                 >
                 <v-form @submit.prevent="setApiKey">
                     <v-text-field
-                        v-model="apiKey"
-                        label="Api Key"
-                        name="api-key"
-                        prepend-icon="vpn_key"
-                        type="text"
-                        required
-                    ></v-text-field>
-                    <v-text-field
                         v-model="folderPath"
                         label="Download Folder"
                         prepend-icon="folder"
                         required
                         @click="selectDirectory()"
+                    ></v-text-field>
+                    <v-text-field
+                        v-model="apiKey"
+                        label="Youtube Api Key"
+                        name="api-key"
+                        prepend-icon="vpn_key"
+                        type="text"
+                        clearable
+                        @click:clear="apiKeyService.setApiKey('')"
                     ></v-text-field>
                 </v-form>
             </v-card-text>
@@ -38,7 +39,7 @@
                     :disabled="!apiKey"
                     type="submit"
                     @click.prevent="setApiKey"
-                    >Save</v-btn
+                    >Check API key</v-btn
                 >
             </v-card-actions>
         </v-card>
@@ -84,9 +85,15 @@ export default class SettingsForm extends Vue {
         try {
             const response = await this.youtubeService.testApiKey(this.apiKey);
             if (this.apiKeyService.setApiKey(this.apiKey)) {
-                this.$router.push("/");
+                this.alert = {
+                    type: "success",
+                    message: "It's all good.",
+                };
             } else {
-                // Handle error ?
+                this.alert = {
+                    type: "error",
+                    message: "Your Api Key is invalid.",
+                };
             }
         } catch (err) {
             this.alert = {

@@ -1,4 +1,6 @@
-# youtube-dl
+# Youtube-downloader
+
+
 
 ## Project setup
 ```
@@ -29,9 +31,9 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 
-## Architecture des des dossiers 
+## Downloaded file folder hierarchy 
 
-Dans une chaine ou dans vrac :
+Elements are sorted by types (Audio / Video) :
 
   - Videos
     - videoX
