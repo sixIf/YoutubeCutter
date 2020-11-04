@@ -81,7 +81,7 @@ export default class Home extends Vue {
         {
             name: "Search Videos",
             route: "search-videos",
-        },
+        }
     ];
     next() {
         this.onboarding =
