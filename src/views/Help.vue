@@ -59,7 +59,7 @@ const { myIpcRenderer } = window;
 @Component
 export default class Help extends Vue {
   helpItems: Array<IHelpItems> = HelpItems;
-  githubLink = "https://www.youtube.com/watch?v=I6_RC7QDspE";
+  githubLink = "https://github.com/groCervo/Youtube-downloader";
 
   openExternalUrl(link: string) {
     window.myIpcRenderer.send("open-external-url", link);

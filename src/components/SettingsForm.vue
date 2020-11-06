@@ -11,6 +11,7 @@
                     <v-text-field
                         v-model="folderPath"
                         label="Download Folder"
+                        placeholder="Click to select where your video get downloaded"
                         prepend-icon="folder"
                         required
                         @click="selectDirectory()"
