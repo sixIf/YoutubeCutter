@@ -15,7 +15,7 @@
                         <v-icon>mdi-home</v-icon>
                     </v-btn>
                 </router-link>
-                <v-toolbar-title>Youtube Downloader</v-toolbar-title>
+                <v-toolbar-title @click="$router.push('/')" style="cursor: pointer">Youtube Downloader</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn icon v-if="isDownloading">
                     <v-icon>mdi-download-circle</v-icon>
@@ -25,7 +25,7 @@
                         <v-icon>mdi-help-circle</v-icon>
                     </v-btn>
                 </router-link>
-                <router-link to="/api-key">
+                <router-link to="/settings">
                     <v-btn icon>
                         <v-icon>mdi-cog</v-icon>
                     </v-btn>

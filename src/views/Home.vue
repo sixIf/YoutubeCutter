@@ -10,9 +10,9 @@
                                 :key="`card-${index}`"
                             >
                                 <v-card
-                                    @click="handleCardClick(item.needApiKey, item.route)"
+                                    @click="handleCardClick(item)"
                                     class="clickable"
-                                    :color="computeCardColor(item.needApiKey)"
+                                    :color="computeCardColor(item)"
                                     height="300"
                                 >
                                     <v-row
@@ -30,9 +30,9 @@
                                                 {{ item.name }}
                                             </h1>
                                         </v-col>
-                                        <v-col cols="12" v-if="item.needApiKey && !isApiKeySet">
+                                        <v-col cols="12" v-if="!isDependencyFulfilled(item)">
                                             <br/>
-                                            <p style="color: white">Set a Youtube API Key in settings to unlock this feature !</p>
+                                            <p style="color: white">{{item.hint}}</p>
                                         </v-col>
                                     </v-row>
                                 </v-card>
@@ -75,7 +75,7 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import { API_KEY_SERVICE } from '@/config/litterals';
+import { API_KEY_SERVICE, MenuDependency, MenuItems } from '@/config/litterals';
 import { IApiKeyService } from '@/services/apiKeyService';
 import _ from 'lodash';
 import { Component, Inject, Vue } from "vue-property-decorator";
@@ -86,31 +86,49 @@ export default class Home extends Vue {
     @Inject(API_KEY_SERVICE)
     apiKeyService!: IApiKeyService;    
     onboarding = 0;
-    items = [
+    items: Array<MenuItems> = [
         {
-            needApiKey: true,
+            dependency: MenuDependency.API,
             name: "Explore Channel",
             route: "search-channel",
+            hint: "Set a Youtube API Key in settings to unlock this feature !"
         },
         {
-            needApiKey: false,
+            dependency: MenuDependency.NONE,
             name: "Search Videos",
             route: "search-videos",
+        },
+        {
+            dependency: MenuDependency.CHANNEL,
+            name: "My channel",
+            route: "search-videos",
+            hint: "Register your channel in settings to unlock this feature !",
         }
     ];
 
     isApiKeySet = this.apiKeyService.getApiKey();
 
-    computeCardColor(needApiKey: boolean): string {
-        if(needApiKey && !this.isApiKeySet)
-            return "#483D3F"
-        else
-            return "#d32f2f"
+    computeCardColor(item: MenuItems): string {
+        return this.isDependencyFulfilled(item) ? "#d32f2f" : "#483D3F";
     }
 
-    handleCardClick(needApiKey: boolean, route: string) {
-        if(!needApiKey || this.isApiKeySet)
-            this.$router.push(route)
+    handleCardClick(item: MenuItems) {
+        return this.isDependencyFulfilled(item) ? this.$router.push(item.route) : this.$router.push('/settings'); // Maybe pop up settings
+    }
+    
+    isDependencyFulfilled(item: MenuItems): boolean {
+        switch(item.dependency) {
+            case MenuDependency.API:
+                if (this.isApiKeySet) return true;
+                else return false;
+            case MenuDependency.CHANNEL:
+                // Mieux : avoir une possibilité de sauvegarder une chaîne lorsque l'on est dessus
+                // if (this.channelFound) return true;
+                // else return false;
+                return false;
+            default:
+                return true;
+        }
     }
 
     next() {

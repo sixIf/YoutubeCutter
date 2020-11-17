@@ -10,7 +10,7 @@
                 </v-row>
                 <v-row justify="end">
                     <download-videos-modal
-                        :itemsSelected="listVideoSelected"
+                        :videosSelected="listVideoSelected"
                         :disabled="listVideoSelected.length == 0"
                     ></download-videos-modal>
                     <download-playlist-modal
