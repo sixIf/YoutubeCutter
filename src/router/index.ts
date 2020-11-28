@@ -42,8 +42,8 @@ const routes: Array<RouteConfig> = [
         component: Help
     },
     {
-        path: '/api-key',
-        name: 'api-manager',
+        path: '/settings',
+        name: 'settings',
         component: Settings
     },
     {
@@ -89,7 +89,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     // const apiKeyService = ApplicationContainer.resolve(ApiKeyService)
     const downloadFolderService = ApplicationContainer.resolve(DownloadFolderService)
-    if (to.name !== 'api-manager' && (!downloadFolderService.getDownloadFolder())) next({ name: 'api-manager' })
+    if (to.name !== 'settings' && (!downloadFolderService.getDownloadFolder())) next({ name: 'settings' })
     else next()
 })
 
