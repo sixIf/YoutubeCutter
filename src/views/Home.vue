@@ -100,7 +100,7 @@ export default class Home extends Vue {
         },
         {
             dependency: MenuDependency.CHANNEL,
-            name: "My channel",
+            name: "Saved channels",
             route: "search-videos",
             hint: "Register your channel in settings to unlock this feature !",
         }
