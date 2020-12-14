@@ -117,7 +117,7 @@ export default class ChannelVideos extends Vue {
                     this.videoList.push(video);
                 });
                 if (firstCall && this.checkVideoList()) this.fetchVideos(true);
-                // console.log(
+                // window.log.info(
                 //     `item count: ${this.totalItemsExpected} - videoList length ${this.videoList.length}`
                 // );
             } else {
@@ -125,7 +125,7 @@ export default class ChannelVideos extends Vue {
             }
         } catch (err) {
             // TODO send error back to home ?
-            console.log("Channel video error:" + err);
+            window.log.info("Channel video error:" + err);
             // this.$router.push("/");
         }
     }

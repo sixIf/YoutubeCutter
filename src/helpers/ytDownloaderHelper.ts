@@ -8,22 +8,26 @@ import sanitize from 'sanitize-filename'
 import { BrowserWindow } from 'electron';
 import _ from 'lodash';
 import { generateUniqueId } from './stringHelper';
+import { ApplicationContainer } from '../di';
+import { LoggerService } from "../services/loggerService"
+
+const loggerService = ApplicationContainer.resolve(LoggerService);
 
 
 export async function downloadItems(args: DownloadRequest, output: string, win: BrowserWindow | null) {
-    console.log(args)
+    loggerService.logInfo(JSON.stringify(args))
     while (args.itemSelected.length != 0) {
         const videoToFetch = args.itemSelected.shift()!;
         videoToFetch.downloadTry = videoToFetch.downloadTry ? videoToFetch.downloadTry + 1 : 1;
         try {
-            console.log(await download(videoToFetch, args.audioOnly, output, win));
+            loggerService.logInfo(JSON.stringify(await download(videoToFetch, args.audioOnly, output, win)));
             if (win) win.webContents.send('item-downloaded', videoToFetch)
         } catch (err) {
-            console.log(`An error occurred:  ${err}`);
+            loggerService.logInfo(`An error occurred:  ${err}`);
             if (videoToFetch.downloadTry < 3) args.itemSelected.push(videoToFetch);
             else {
-                console.log("On recommence pas, voici la video:")
-                console.log(videoToFetch)
+                loggerService.logInfo("Max try exceeded, this video failed:")
+                loggerService.logInfo(JSON.stringify(videoToFetch))
                 const downloadRequestError: DownloadRequest = {
                     requestId: args.requestId,
                     audioOnly: args.audioOnly,
@@ -83,8 +87,8 @@ function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, outp
 
             const unlikTempAudio = (resolveMessage: string, resolved: boolean) => {
                 fs.unlink(audioOutputMp4, err => {
-                    if (err) console.error(err);
-                    if (!resolved) console.log("I swear im unlinking")
+                    if (err) loggerService.logError(err);
+                    if (!resolved) loggerService.logInfo("I swear im unlinking")
                     else if (resolved) resolve(resolveMessage)
                 });
             }
@@ -92,7 +96,7 @@ function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, outp
             if (fileAlreadyExist)
                 resolve('File already downloaded')
             else {
-                console.log('downloading audio track');
+                loggerService.logInfo('downloading audio track');
                 ffmpeg.setFfmpegPath(
                     // Ffmpeg.exe is unpacked into app.asar.unpacked
                     pathToFfmpeg.toString().replace("app.asar", "app.asar.unpacked")
@@ -107,13 +111,13 @@ function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, outp
 
                     // Write audio to file since ffmpeg supports only one input stream.
                     .pipe(fs.createWriteStream(audioOutputMp4).on("error", (err) => {
-                        console.log(`Fs write error: ${err}`);
+                        loggerService.logInfo(`Fs write error: ${err}`);
                     }))
                     .on('finish', () => {
-                        console.log(`Audio track downloaded for ${videoToFetch.title}`)
+                        loggerService.logInfo(`Audio track downloaded for ${videoToFetch.title}`)
                         if (!audioOnly) {
                             // Download and merge video
-                            console.log('\ndownloading video');
+                            loggerService.logInfo('\ndownloading video');
                             const video = ytdl(url, {
                                 filter: format => format.container === 'mp4' && !format.audioBitrate,
                             })

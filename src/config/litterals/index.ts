@@ -5,6 +5,7 @@
 export const YOUTUBE_SERVICE = "youtubeService";
 export const API_KEY_SERVICE = "apiKeyService";
 export const DOWNLOAD_FOLDER_SERVICE = "downloadFolderService";
+export const LOGGER_SERVICE = "loggerService";
 
 export const ERROR_TYPES: Record<string, string> = {
     403: 'Quota exceeded for your API key. Buy more credit on your google account or retry tomorrow.',

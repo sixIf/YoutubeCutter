@@ -114,7 +114,7 @@ export default class SearchVideosToolbar extends Vue {
                 this.videoUrl = "";
             }
         } catch (err) {
-            console.log(err)
+            window.log.info(err)
         }        
     }
 
@@ -136,7 +136,7 @@ export default class SearchVideosToolbar extends Vue {
                     this.videoUrl = "";
                 }
             } catch (error) {
-                console.log("Catch error " + error.message);
+                window.log.info("Catch error " + error.message);
                 this.alert = {
                     type: "error",
                     message: `${ERROR_TYPES[error.response.status]}`,

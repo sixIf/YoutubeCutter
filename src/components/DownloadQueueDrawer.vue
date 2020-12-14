@@ -202,7 +202,7 @@ export default class DownloadQueueDrawer extends Vue {
                 ) {
                     return index == indexToDelete;
                 });
-                console.log(`Behold, video ${data.title} downloaded`);
+                window.log.info(`Behold, video ${data.title} downloaded`);
             } else {
                 this.videoDownloaded.push({
                     video: data,
@@ -217,8 +217,8 @@ export default class DownloadQueueDrawer extends Vue {
         window.myIpcRenderer.receive(
             "download-error",
             (data: DownloadRequest) => {
-                console.log("Download error in vue");
-                console.log(data);
+                window.log.info("Download error in vue");
+                window.log.info(JSON.stringify(data));
                 this.isDownloading = false;
                 const indexToDelete = _.findIndex(
                     this.videoDownloading,
@@ -245,7 +245,7 @@ export default class DownloadQueueDrawer extends Vue {
                         indexToDelete
                     ].itemSelected.concat(data.itemSelected);
                 else this.errorDownloadRequest.push(_.cloneDeep(data));
-                console.log(
+                window.log.info(
                     `Error downloading video ${data.itemSelected[0].title}`
                 );
             }

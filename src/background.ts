@@ -2,7 +2,9 @@
 declare const __static: string;
 
 'use strict'
-
+import "reflect-metadata"
+import { ApplicationContainer } from './di';
+import { LoggerService } from "./services/loggerService"
 import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, autoUpdater } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
@@ -15,6 +17,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: BrowserWindow | null
+const loggerService = ApplicationContainer.resolve(LoggerService);
+
 
 // Set auto updater
 if (!isDevelopment){
@@ -38,8 +42,8 @@ if (!isDevelopment){
     });
       
     autoUpdater.on('error', message => {
-        console.error('There was a problem updating the application')
-        console.error(message)
+        loggerService.logError('There was a problem updating the application')
+        loggerService.logError(message)
     });
 
 
@@ -146,13 +150,12 @@ app.on('activate', () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
     await installExtension(VUEJS_DEVTOOLS)
-    console.log(process.env.IS_TEST)
     if (isDevelopment && !process.env.IS_TEST) {
         // Install Vue Devtools
         try {
             await installExtension(VUEJS_DEVTOOLS)
         } catch (e) {
-            console.error('Vue Devtools failed to install:', e.toString())
+            loggerService.logError(`Vue Devtools failed to install: , ${e.toString()}`)
         }
     }
     
@@ -189,13 +192,13 @@ ipcMain.handle("getVideoInfo", async (event, args: string) => {
         const returnValue = await getVideoInfo(args);
         return returnValue;
     } catch (err) {
-        console.log(err)
+        loggerService.logError(err)
         return {
             type: "error",
             error: err
         }
     }
-    // console.log(returnValue)
+    // loggerService.logInfo(returnValue)
 });
 
 ipcMain.on("select-folder", (event, args: string) => {
@@ -217,7 +220,7 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
         for (var i = 0; i < WORKER_NUMBER; i++)
             downloadItems(args, output, win);
     } else {
-        console.log('There is no download folder set, wow..')
+        loggerService.logInfo('There is no download folder set, wow..')
     }
 });
 

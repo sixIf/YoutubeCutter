@@ -12,7 +12,7 @@
 
 
 <script lang="ts">
-import { Component, Inject, Provide, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import SettingsForm from "@/components/SettingsForm.vue";
 
 @Component({

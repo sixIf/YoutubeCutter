@@ -1,4 +1,7 @@
 // Preload (Isolated World)
+import "reflect-metadata"
+import { ApplicationContainer } from './di';
+import { LoggerService } from "./services/loggerService"
 import { contextBridge, ipcRenderer } from 'electron'
 
 
@@ -28,4 +31,20 @@ contextBridge.exposeInMainWorld(
             }
         }
     }
+)
+
+contextBridge.exposeInMainWorld(
+    'log',
+    {
+        info: (info: string) => {
+            const loggerService = ApplicationContainer.resolve(LoggerService);
+            return loggerService.logInfo(info);
+        },
+        
+        error: (error: string | Error) => {
+            const loggerService = ApplicationContainer.resolve(LoggerService);
+            return loggerService.logError(error);
+        },
+    }
+
 )

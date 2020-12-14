@@ -50,8 +50,8 @@ export default class ChannelDashboard extends Vue {
             this.mainPlaylistId = response.mainPlaylistId;
             this.displayDrawer = true;
         } catch (err) {
-            console.log("Channel dashboard:" + err.message);
-            console.log(err);
+            window.log.info("Channel dashboard:" + err.message);
+            window.log.info(err);
             this.$router.push("/");
         }
     }

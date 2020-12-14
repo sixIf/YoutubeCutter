@@ -92,7 +92,7 @@ export default class SearchChannel extends Vue {
                 });
             }
         } catch (err) {
-            console.log("err: " + err);
+            window.log.info("err: " + err);
             const status = err.response ? err.response.status : "404";
             this.alert = {
                 type: "error",

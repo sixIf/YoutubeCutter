@@ -103,7 +103,7 @@ export default class ChannelPlaylist extends Vue {
             }
         } catch (err) {
             // TODO send error back to home ?
-            console.log("Playlist video error:" + err);
+            window.log.info("Playlist video error:" + err);
             // this.$router.push("/");
         }
     }

@@ -21,6 +21,7 @@
     "@types/electron-devtools-installer": "^2.2.0",
     "@types/lodash": "^4.14.157",
     "@types/node": "12.12.6",
+    "@types/winston": "^2.4.4",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "ffmpeg-static": "^4.2.5",
@@ -35,6 +36,7 @@
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.2.0",
     "vuetify": "^2.3.4",
+    "winston": "^3.3.3",
     "ytdl-core": "^4.0.3"
   },
   "devDependencies": {
