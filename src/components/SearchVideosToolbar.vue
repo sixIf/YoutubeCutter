@@ -3,7 +3,7 @@
         <v-container class="search-toolbar">
             <v-row>
                 <v-col cols="12">
-                    <v-card-title>Search Youtube video</v-card-title>
+                    <v-card-title>{{$__('Toolbar.search')}}</v-card-title>
                     <v-divider></v-divider>
                     <alert :alert="alert"></alert>
                     <v-card-actions>
@@ -101,7 +101,7 @@ export default class SearchVideosToolbar extends Vue {
                 // handle error
                 this.alert = {
                     type: "error",
-                    message: "Video not found. Please verify your link and retry.",
+                    message: this.$__("Toolbar.notFound"),
                 };
             }
             else {
@@ -128,8 +128,7 @@ export default class SearchVideosToolbar extends Vue {
                 if (response.totalResults == 0) {
                     this.alert = {
                         type: "error",
-                        message:
-                            "Video not found. Please check your video's URL.",
+                        message: this.$__("Toolbar.notFound"),
                     };
                 } else {
                     this.videosFetched.push(response.videoInfos);
@@ -139,13 +138,13 @@ export default class SearchVideosToolbar extends Vue {
                 window.log.info("Catch error " + error.message);
                 this.alert = {
                     type: "error",
-                    message: `${ERROR_TYPES[error.response.status]}`,
+                    message: this.$__(`Errors.${ERROR_TYPES[error.response.status]}`),
                 };
             }
         } else {
             this.alert = {
                 type: "error",
-                message: "Video already in the list.",
+                message: this.$__("Toolbar.duplicateVideo"),
             };
         }
     }

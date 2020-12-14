@@ -131,13 +131,10 @@
 import { Component, Vue } from "vue-property-decorator";
 import * as _ from "lodash";
 import {
-    YOUTUBE_SERVICE,
     ItemStruct,
     ItemDownloading,
-    ERROR_TYPES,
     DownloadRequest,
 } from "@/config/litterals";
-import { IYoutubeService } from "@/services/youtubeService";
 const { myIpcRenderer } = window;
 
 @Component

@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import DownloadQueueDrawer from "@/components/DownloadQueueDrawer.vue";
-import { DownloadRequest, ItemStruct } from "./config/litterals";
+import { DownloadRequest } from "./config/litterals";
 const { myIpcRenderer } = window;
 
 // Define the component in class-style

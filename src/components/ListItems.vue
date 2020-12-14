@@ -72,7 +72,7 @@
                                                 color="primary"
                                             >
                                                 <v-icon>location-enter</v-icon
-                                                >Explore
+                                                >{{$__("ListItems.explore")}}
                                             </v-btn>
                                         </v-spacer>
                                     </v-card-actions>

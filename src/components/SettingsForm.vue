@@ -42,7 +42,7 @@
                     :disabled="!apiKey"
                     type="submit"
                     @click.prevent="submitForm"
-                    >Save</v-btn
+                    >{{$__("Settings.save")}}</v-btn
                 >
             </v-card-actions>
         </v-card>

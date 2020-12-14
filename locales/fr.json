@@ -12,6 +12,20 @@
         "folderTip": "Cliquer pour choisir le dossier de destination des vidéos",
         "apiKey": "Clé API",
         "formError": "Votre clé API est invalide.",
-        "formSuccess": "Tout est bon !"
-    }
+        "formSuccess": "Tout est bon !",
+        "save": "Enregistrer"
+    },
+    "Toolbar": {
+        "search": "Rechercher une vidéo",
+        "notFound": "Vidéo non trouvée. SVP vérifier le lien et réessayer",
+        "duplicateVideo": "La vidéo est déjà dans la liste."
+    },
+    "Errors": {
+        "quota": "Quota excédé pour votre clé API. Acheter plus de crédit via votre compte Google ou attendez demain.",
+        "notFound": "Vidéo non trouvée. SVP vérifier le lien et réessayer.",
+        "apiKeyInvalid": "Votre clé API est invalide."
+    },
+    "ListItems": {
+        "explore": "Explorer"
+    }    
 }

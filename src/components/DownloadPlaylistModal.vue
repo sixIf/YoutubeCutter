@@ -90,7 +90,7 @@ import {
     ItemFetched,
     DownloadRequest,
     IAlert,
-    DOWNLOAD_ERROR_TYPES,
+    ERROR_TYPES,
     DOWNLOAD_FOLDER_SERVICE,
 } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
@@ -213,7 +213,7 @@ export default class DownloadPlaylistModal extends Vue {
             const status = error.response ? error.response.status : "404";
             this.alert = {
                 type: "error",
-                message: `${DOWNLOAD_ERROR_TYPES[status]}`,
+                message: this.$__(`Errors.${ERROR_TYPES[status]}`),
             };
             throw new Error("fetchVideosInPLaylistError: " + error);
         }
