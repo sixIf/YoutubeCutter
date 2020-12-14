@@ -13,6 +13,7 @@ import path from 'path'
 import {downloadItems, getVideoInfo} from '@/helpers/ytDownloaderHelper'
 import { DownloadRequest, ItemStruct } from '@/config/litterals/index'
 import fs from 'fs'
+import { availableLocales } from "./config/litterals/i18n";
 const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -42,8 +43,8 @@ if (!isDevelopment){
     });
       
     autoUpdater.on('error', message => {
-        loggerService.logError('There was a problem updating the application')
-        loggerService.logError(message)
+        loggerService.error('There was a problem updating the application')
+        loggerService.error(message)
     });
 
 
@@ -57,6 +58,29 @@ if (!isDevelopment){
 protocol.registerSchemesAsPrivileged([
     { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
+
+function createTray() {
+    const appIcon = new Tray(path.join(__static, 'icon.png'));
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Show', click: function () {
+                if (win) win.show();
+            }
+        },
+        {
+            label: 'Exit', click: function () {
+                app.quit();
+            }
+        }
+    ]);
+
+    appIcon.on('double-click', function (event) {
+        if (win) win.show();
+    });
+    appIcon.setToolTip('Youtube downloader');
+    appIcon.setContextMenu(contextMenu);
+    return appIcon;
+}
 
 function createWindow() {
     // Create the browser window.
@@ -103,30 +127,6 @@ function createWindow() {
     })
 }
 
-
-function createTray() {
-    let appIcon = new Tray(path.join(__static, 'icon.png'));
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: 'Show', click: function () {
-                if (win) win.show();
-            }
-        },
-        {
-            label: 'Exit', click: function () {
-                app.quit();
-            }
-        }
-    ]);
-
-    appIcon.on('double-click', function (event) {
-        if (win) win.show();
-    });
-    appIcon.setToolTip('Youtube downloader');
-    appIcon.setContextMenu(contextMenu);
-    return appIcon;
-}
-
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
     // On macOS it is common for applications and their menu bar
@@ -155,7 +155,7 @@ app.on('ready', async () => {
         try {
             await installExtension(VUEJS_DEVTOOLS)
         } catch (e) {
-            loggerService.logError(`Vue Devtools failed to install: , ${e.toString()}`)
+            loggerService.error(`Vue Devtools failed to install: , ${e.toString()}`)
         }
     }
     
@@ -192,13 +192,13 @@ ipcMain.handle("getVideoInfo", async (event, args: string) => {
         const returnValue = await getVideoInfo(args);
         return returnValue;
     } catch (err) {
-        loggerService.logError(err)
+        loggerService.error(err)
         return {
             type: "error",
             error: err
         }
     }
-    // loggerService.logInfo(returnValue)
+    // loggerService.info(returnValue)
 });
 
 ipcMain.on("select-folder", (event, args: string) => {
@@ -217,10 +217,10 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
             fs.mkdirSync(path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle), { recursive: true });
         }
         const output = path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle);
-        for (var i = 0; i < WORKER_NUMBER; i++)
+        for (let i = 0; i < WORKER_NUMBER; i++)
             downloadItems(args, output, win);
     } else {
-        loggerService.logInfo('There is no download folder set, wow..')
+        loggerService.info('There is no download folder set, wow..')
     }
 });
 

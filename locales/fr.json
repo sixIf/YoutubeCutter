@@ -1,0 +1,17 @@
+{
+    "Home": {
+        "exploreChannel": "Explorer une chaîne",
+        "channelHint": "Enregistre une clé API dans les paramètres pour débloquer cette fonctionnalitée !",
+        "searchVideos": "Chercher des videos",
+        "savedChannels": "Chaînes sauvegardées",
+        "savedTips": "Enregistre ta chaîne dans les paramètres pour accéder à cette fonctionnalité !"
+    },
+    "Settings": {
+        "title": "Paramètres",
+        "folder": "Dossier de téléchargement",
+        "folderTip": "Cliquer pour choisir le dossier de destination des vidéos",
+        "apiKey": "Clé API",
+        "formError": "Votre clé API est invalide.",
+        "formSuccess": "Tout est bon !"
+    }
+}

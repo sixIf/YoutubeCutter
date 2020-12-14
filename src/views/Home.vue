@@ -89,20 +89,20 @@ export default class Home extends Vue {
     items: Array<MenuItems> = [
         {
             dependency: MenuDependency.API,
-            name: "Explore Channel",
+            name: this.$__("Home.exploreChannel"),
             route: "search-channel",
-            hint: "Set a Youtube API Key in settings to unlock this feature !"
+            hint: `${console.log(window.i18n)}`
         },
         {
             dependency: MenuDependency.NONE,
-            name: "Search Videos",
+            name: this.$__("Home.searchVideos"),
             route: "search-videos",
         },
         {
             dependency: MenuDependency.CHANNEL,
-            name: "Saved channels",
+            name: this.$__("Home.savedChannels"),
             route: "search-videos",
-            hint: "Register your channel in settings to unlock this feature !",
+            hint: this.$__("Home.savedTips"),
         }
     ];
 

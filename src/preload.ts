@@ -2,9 +2,11 @@
 import "reflect-metadata"
 import { ApplicationContainer } from './di';
 import { LoggerService } from "./services/loggerService"
+import { LocaleService } from "./services/localeService"
 import { contextBridge, ipcRenderer } from 'electron'
 
-
+const loggerService = ApplicationContainer.resolve(LoggerService);
+const localeService = ApplicationContainer.resolve(LocaleService);
 
 contextBridge.exposeInMainWorld(
     'myIpcRenderer',
@@ -37,14 +39,34 @@ contextBridge.exposeInMainWorld(
     'log',
     {
         info: (info: string) => {
-            const loggerService = ApplicationContainer.resolve(LoggerService);
-            return loggerService.logInfo(info);
+            return loggerService.info(info);
         },
         
         error: (error: string | Error) => {
-            const loggerService = ApplicationContainer.resolve(LoggerService);
-            return loggerService.logError(error);
+            return loggerService.error(error);
         },
     }
+)
 
+contextBridge.exposeInMainWorld(
+    'i18n',
+    {
+        translate: (phrase: string, args?: any) => {
+            // console.log(`Translating window ${localeService.translate(phrase, args)}`)
+            return localeService.translate(phrase, args);
+        },
+        
+        setLocale: (locale: string) => {
+            // console.log('Window veut set la locale')
+            return localeService.setLocale(locale);
+        },
+
+        getCurrentLocale: () => {
+            return localeService.getCurrentLocale();
+        },
+        
+        getLocales: () => {
+            return localeService.getLocales();
+        },
+    }
 )

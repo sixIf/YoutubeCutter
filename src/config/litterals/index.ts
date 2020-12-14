@@ -24,6 +24,7 @@ export const API_KEY = 'AIzaSyDeSxTCCjIY0GQGLLFsw7aZeZqtdiSvznI'
 
 export const LOCAL_STORAGE_KEY = "YoutubeApiKey"
 export const LOCAL_STORAGE_FOLDER = "DownloadFolder"
+export const LOCAL_STORAGE_LOCALE = "CurrentLocale"
 
 /**
  * Interfaces

@@ -5,18 +5,16 @@ import router from './router'
 import vuetify from './plugins/vuetify'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import '@/assets/css/main.styl'
-import axios from 'axios'
 import { YoutubeService } from '@/services/youtubeService'
 import { ApiKeyService } from '@/services/apiKeyService'
 import { DownloadFolderService } from '@/services/downloadFolderService'
-import { YOUTUBE_SERVICE, API_KEY_SERVICE, DOWNLOAD_FOLDER_SERVICE, LOGGER_SERVICE } from '@/config/litterals'
+import { YOUTUBE_SERVICE, API_KEY_SERVICE, DOWNLOAD_FOLDER_SERVICE } from '@/config/litterals'
 import { ApplicationContainer } from '@/di/index'
-import { LoggerService } from "./services/loggerService"
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+Vue.prototype.$__ = window.i18n.translate;
 
-axios.defaults.baseURL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:8081' : ''
-
+console.log('on est dans le main' + window.i18n.translate('Home.exploreChannel'))
 new Vue({
     router,
     vuetify,

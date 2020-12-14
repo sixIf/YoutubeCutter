@@ -3,8 +3,8 @@ import { createLogger, format, transports } from "winston";
 import winston from "winston";
 
 export interface ILoggerService {
-    logError(error: string | Error): void;
-    logInfo(info: string): void;
+    error(error: string | Error): void;
+    info(info: string): void;
 }
 
 @injectable()
@@ -43,11 +43,11 @@ export class LoggerService implements ILoggerService {
         }
     }
 
-    logError(error: string | Error): void {
+    error(error: string | Error): void {
         this.logger.log('error', error);
     }
     
-    logInfo(info: string): void {
+    info(info: string): void {
         window.log.info("on es al")
         this.logger.log('info', info);
     }

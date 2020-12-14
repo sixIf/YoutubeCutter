@@ -1,0 +1,17 @@
+{
+    "Home": {
+        "exploreChannel": "Explore Channel",
+        "channelHint": "Set a Youtube API Key in settings to unlock this feature !",
+        "searchVideos": "Search Videos",
+        "savedChannels": "Saved channels",
+        "savedTips": "Register your channel in settings to unlock this feature !"
+    },
+    "Settings": {
+        "title": "Settings",
+        "folder": "Download Folder",
+        "folderTip": "Click to select where your video get downloaded",
+        "apiKey": "API key",
+        "formError": "Your Api Key is invalid.",
+        "formSuccess": "All set !"
+    }
+}
