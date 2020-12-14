@@ -3,7 +3,7 @@ declare const __static: string;
 
 'use strict'
 
-import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog } from 'electron'
+import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, autoUpdater } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -16,6 +16,38 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // be closed automatically when the JavaScript object is garbage collected.
 let win: BrowserWindow | null
 
+// Set auto updater
+if (!isDevelopment){
+    const server = 'https://youtube-downloader.sixif.vercel.app';
+    const url = `${server}/update/${process.platform}/${app.getVersion()}`;
+    
+    autoUpdater.setFeedURL({ url });
+
+    autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+        const dialogOpts = {
+          type: 'info',
+          buttons: ['Restart', 'Later'],
+          title: 'Application Update',
+          message: process.platform === 'win32' ? releaseNotes : releaseName,
+          detail: 'A new version has been downloaded. Restart the application to apply the updates.'
+        }
+      
+        dialog.showMessageBox(dialogOpts).then((returnValue) => {
+          if (returnValue.response === 0) autoUpdater.quitAndInstall()
+        })
+    });
+      
+    autoUpdater.on('error', message => {
+        console.error('There was a problem updating the application')
+        console.error(message)
+    });
+
+
+    setInterval(() => {
+        autoUpdater.checkForUpdates()
+    }, 60000)
+
+}
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([

@@ -245,3 +245,15 @@ export interface ChannelMainPlaylist {
     readonly mainPlaylistId: string;
     readonly channelTitle: string;
 }
+
+export interface MenuItems {
+    readonly dependency: number;
+    readonly name: string;
+    readonly route: string;
+    readonly hint?: string;
+}
+export enum MenuDependency {
+    NONE = 0,
+    API,
+    CHANNEL,
+}
