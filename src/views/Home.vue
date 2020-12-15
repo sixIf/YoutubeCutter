@@ -91,7 +91,7 @@ export default class Home extends Vue {
             dependency: MenuDependency.API,
             name: this.$__("Home.exploreChannel"),
             route: "search-channel",
-            hint: `${console.log(window.i18n)}`
+            hint: this.$__("Home.channelHint")
         },
         {
             dependency: MenuDependency.NONE,
@@ -143,6 +143,7 @@ export default class Home extends Vue {
     }
 
     created(){
+        // window.open("https://youtube.com", '_blank');
         if(!this.isApiKeySet)
             _.reverse(this.items)
     }

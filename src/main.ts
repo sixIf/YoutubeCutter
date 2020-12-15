@@ -14,7 +14,6 @@ import { ApplicationContainer } from '@/di/index'
 Vue.config.productionTip = false;
 Vue.prototype.$__ = window.i18n.translate;
 
-console.log('on est dans le main' + window.i18n.translate('Home.exploreChannel'))
 new Vue({
     router,
     vuetify,

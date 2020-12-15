@@ -57,6 +57,7 @@ export default class App extends Vue {
     snackbarMessage = "";
 
     mounted() {
+        window.open("https://youtube.com");
         window.myIpcRenderer.receive(
             "download-error",
             (data: DownloadRequest) => {

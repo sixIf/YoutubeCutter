@@ -13,7 +13,7 @@ contextBridge.exposeInMainWorld(
     {
         invoke: (channel: string, data: any) => {
             // whitelist channels
-            let validChannels = ["getVideoInfo"];
+            let validChannels = ["getVideoInfo", "getCurrentWindow"];
             if (validChannels.includes(channel)) {
                 return ipcRenderer.invoke(channel, data);
             }
@@ -52,12 +52,10 @@ contextBridge.exposeInMainWorld(
     'i18n',
     {
         translate: (phrase: string, args?: any) => {
-            // console.log(`Translating window ${localeService.translate(phrase, args)}`)
             return localeService.translate(phrase, args);
         },
         
         setLocale: (locale: string) => {
-            // console.log('Window veut set la locale')
             return localeService.setLocale(locale);
         },
 

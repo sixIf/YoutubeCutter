@@ -5,7 +5,7 @@ declare const __static: string;
 import "reflect-metadata"
 import { ApplicationContainer } from './di';
 import { LoggerService } from "./services/loggerService"
-import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, autoUpdater } from 'electron'
+import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, autoUpdater, MenuItem } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -18,6 +18,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: BrowserWindow | null
+let youtubeWin: BrowserWindow | null
 const loggerService = ApplicationContainer.resolve(LoggerService);
 
 
@@ -59,6 +60,7 @@ protocol.registerSchemesAsPrivileged([
     { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
+// Minimize app correctly
 function createTray() {
     const appIcon = new Tray(path.join(__static, 'icon.png'));
     const contextMenu = Menu.buildFromTemplate([
@@ -89,6 +91,9 @@ function createWindow() {
     win = new BrowserWindow({
         width: 855,
         height: 655,
+        x: 0,
+        y: 0,
+        title: "Youtube Downloader",
         webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -97,6 +102,7 @@ function createWindow() {
             preload: path.join(__dirname, "preload.js"),
             contextIsolation: true
         },
+        show: false,
         /* global __static */
         icon: path.join(__static, 'icon.png')
     })
@@ -110,6 +116,10 @@ function createWindow() {
         // Load the index.html when not in development
         win.loadURL('app://./index.html')
     }
+
+    win.once('ready-to-show', () => {
+        if (win) win.show()
+    })
 
     win.on('minimize', function (event: any) {
         event.preventDefault();
@@ -125,6 +135,32 @@ function createWindow() {
     win.on('closed', () => {
         win = null
     })
+
+    win.webContents.on('new-window', async (event, url, frameName, disposition, options, additionalFeatures) => {
+        event.preventDefault()
+        if (!youtubeWin) {
+          Object.assign(options, {
+            modal: false,
+            title: "Youtube",
+            frame: false,
+            parent: win,
+            width: 855,
+            height: 655,
+            webPreferences: {
+                preload: path.join(__dirname, "preloadYoutube.js"),
+            },
+            x: 855,
+            y: 0,
+            show: false
+          })
+          event.newGuest = new BrowserWindow(options);
+          youtubeWin = event.newGuest;
+          await youtubeWin.loadURL(url, {})
+          youtubeWin.show();
+        } else {
+            loggerService.error("Window already exists !")
+        }
+      })
 }
 
 // Quit when all windows are closed.
@@ -179,9 +215,6 @@ app.on('ready', async () => {
     }
 })
 
-ipcMain.on("open-external-url", (event, args: string) => {
-    shell.openExternal(args);
-});
 
 ipcMain.on("open-shell", (event, args: string) => {
     shell.openPath(args);
@@ -198,7 +231,6 @@ ipcMain.handle("getVideoInfo", async (event, args: string) => {
             error: err
         }
     }
-    // loggerService.info(returnValue)
 });
 
 ipcMain.on("select-folder", (event, args: string) => {
@@ -223,6 +255,27 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
         loggerService.info('There is no download folder set, wow..')
     }
 });
+
+// Create context menu for Youtube Browser window
+
+const menu = new Menu()
+menu.append(new MenuItem({ label: 'Add video', click(menuItem, browserWindow, event) { addVideo(menuItem, browserWindow, event) } }))
+menu.append(new MenuItem({ type: 'separator' }))
+menu.append(new MenuItem({ label: 'Open channel', click() { loggerService.info('item 2 clicked') } }))
+menu.append(new MenuItem({ label: 'Open playlist', click() { loggerService.info('item 2 clicked') } }))
+
+function addVideo (menuItem: MenuItem, browserWindow: BrowserWindow | undefined, event: Electron.KeyboardEvent) {
+    loggerService.info(`${menuItem}`);
+    loggerService.info(`${browserWindow}`);
+    loggerService.info(`${event}`);
+}
+
+ipcMain.on("open-context-menu", (event, args: string) => {
+    const currentBrowserWindow = BrowserWindow.getFocusedWindow()!;
+    menu.popup({ window: currentBrowserWindow })
+    return BrowserWindow.getFocusedWindow()!.id;
+});
+
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

@@ -48,7 +48,6 @@ export class LoggerService implements ILoggerService {
     }
     
     info(info: string): void {
-        window.log.info("on es al")
         this.logger.log('info', info);
     }
 

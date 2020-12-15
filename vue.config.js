@@ -7,7 +7,7 @@ module.exports = {
   ],
   pluginOptions: {
     electronBuilder: {
-      preload: 'src/preload.ts',
+      preload: { preload: 'src/preload.ts', preloadYoutube: 'src/preloadYoutube.ts'},
       builderOptions: {
         extraFiles: {
           from: 'node_modules/ffmpeg-static/ffmpeg.exe', // Todo replace with an absolute path
