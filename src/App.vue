@@ -43,6 +43,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import DownloadQueueDrawer from "@/components/DownloadQueueDrawer.vue";
 import { DownloadRequest } from "./config/litterals";
+import { clickInfo } from "./config/litterals/youtube";
 const { myIpcRenderer } = window;
 
 // Define the component in class-style
@@ -58,13 +59,43 @@ export default class App extends Vue {
 
     mounted() {
         window.open("https://youtube.com");
-        window.myIpcRenderer.receive(
+        myIpcRenderer.receive(
             "download-error",
             (data: DownloadRequest) => {
                 this.snackbar = true;
                 this.snackbarMessage = `Download error : ${data.itemSelected[0].title}`;
             }
         );
+
+        myIpcRenderer.receive(
+            "add-single-video",
+            (videoID: string) => {
+                if(this.$route.name != 'search-videos'){
+                    this.$router.push({
+                        name: "search-videos",
+                        params: {
+                            videoID: videoID
+                        }
+                    })
+                }
+            }
+        )
+
+        myIpcRenderer.receive(
+            "explore-channel",
+            (infos: clickInfo) => {
+                if(this.$route.params.channelID != infos.channelID){
+                    window.log.info(`voila les params: channel ${infos.channelID} playlist ${infos.playlistID} et channel params ${this.$route.params.channelID}`)
+                    const routeParams = {};
+                    if (infos.channelID) Object.assign(routeParams, { id: infos.channelID})
+                    if (infos.playlistID) Object.assign(routeParams, { id: infos.playlistID})
+                    this.$router.replace({
+                        name: "channel-view",
+                        params: routeParams
+                    })
+                }
+            }
+        )
     }
 }
 </script>

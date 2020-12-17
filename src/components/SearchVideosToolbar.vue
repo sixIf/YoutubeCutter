@@ -80,7 +80,7 @@ export default class SearchVideosToolbar extends Vue {
     alert: IAlert | null = null;
     searchType = "video";
 
-    videoId(): string {
+    get videoId(): string {
         return this.youtubeService.extractVideoIdFromUrl(this.videoUrl);
     }
     removeVideo(index: number) {
@@ -94,7 +94,7 @@ export default class SearchVideosToolbar extends Vue {
 
     async findVideoNoApi() {
         this.alert = null;
-        const VIDEO_ID = this.youtubeService.extractVideoIdFromUrl(this.videoId());
+        const VIDEO_ID = this.videoId;
         try {
             const response = await window.myIpcRenderer.invoke("getVideoInfo", VIDEO_ID)
             if (response.type == 'error'){
@@ -120,10 +120,10 @@ export default class SearchVideosToolbar extends Vue {
 
     async findVideoApi() {
         this.alert = null;
-        if (this.videosFetched.findIndex((x) => x.id == this.videoId()) == -1) {
+        if (this.videosFetched.findIndex((x) => x.id == this.videoId) == -1) {
             try {
                 const response = await this.youtubeService.findVideoById(
-                    this.videoId()
+                    this.videoId
                 );
                 if (response.totalResults == 0) {
                     this.alert = {
@@ -147,6 +147,20 @@ export default class SearchVideosToolbar extends Vue {
                 message: this.$__("Toolbar.duplicateVideo"),
             };
         }
+    }
+
+    mounted(){
+        if (this.$route.params.videoID) {
+            this.videoUrl = `https://www.youtube.com/watch?v=${this.$route.params.videoID}`;
+            this.findVideoNoApi();
+        }
+        window.myIpcRenderer.receive(
+            "add-single-video",
+            (videoID: string) => {
+                this.videoUrl = `https://www.youtube.com/watch?v=${videoID}`;
+                this.findVideoNoApi();
+            }
+        )        
     }
 
     @Watch("videosFetched")

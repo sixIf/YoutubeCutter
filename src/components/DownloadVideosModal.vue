@@ -67,20 +67,22 @@ export default class DownloadVideosModal extends Vue {
         },
     })
     videosSelected!: ItemStruct[];
+    @Prop({ default: "Vrac"}) channelTitle !: string;
+    @Prop({ default: ""}) playlistTitle !: string;
     dialog = false;
     audioOnly = false;
 
-    get channelTitle(): string {
-        return this.$route.params.hasOwnProperty("channelTitle")
-            ? this.$route.params.channelTitle
-            : "Vrac";
-    }
+    // get channelTitle(): string {
+    //     return this.$route.params.hasOwnProperty("channelTitle")
+    //         ? this.$route.params.channelTitle
+    //         : "Vrac";
+    // }
 
-    get playlistTitle(): string {
-        return this.$route.params.playlistTitle
-            ? this.$route.params.playlistTitle
-            : "";
-    }
+    // get playlistTitle(): string {
+    //     return this.$route.params.playlistTitle
+    //         ? this.$route.params.playlistTitle
+    //         : "";
+    // }
 
     downloadItems(): void {
         const downloadRequest: DownloadRequest = {
@@ -92,7 +94,7 @@ export default class DownloadVideosModal extends Vue {
             downloadFolder: this.downloadFolderService.getDownloadFolder(),
         };
 
-        window.myIpcRenderer.send("download-videos", downloadRequest);
+        myIpcRenderer.send("download-videos", downloadRequest);
         this.dialog = false;
         this.$emit("download-started");
     }

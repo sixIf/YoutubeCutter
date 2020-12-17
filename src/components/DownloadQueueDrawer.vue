@@ -150,7 +150,7 @@ export default class DownloadQueueDrawer extends Vue {
 
     redownloadFailed() {
         this.errorDownloadRequest.forEach((request: DownloadRequest) => {
-            window.myIpcRenderer.send("download-videos", request);
+            myIpcRenderer.send("download-videos", request);
         });
     }
 
@@ -159,11 +159,11 @@ export default class DownloadQueueDrawer extends Vue {
     }
 
     open(path: string) {
-        window.myIpcRenderer.send("open-shell", path);
+        myIpcRenderer.send("open-shell", path);
     }
 
     mounted() {
-        window.myIpcRenderer.receive(
+        myIpcRenderer.receive(
             "download-progress",
             (data: ItemDownloading) => {
                 this.isDownloading = true;
@@ -182,7 +182,7 @@ export default class DownloadQueueDrawer extends Vue {
             }
         );
 
-        window.myIpcRenderer.receive("item-downloaded", (data: ItemStruct) => {
+        myIpcRenderer.receive("item-downloaded", (data: ItemStruct) => {
             this.isDownloading = false;
             const indexToDelete = _.findIndex(this.videoDownloading, function (
                 x
@@ -211,7 +211,7 @@ export default class DownloadQueueDrawer extends Vue {
             }
         });
 
-        window.myIpcRenderer.receive(
+        myIpcRenderer.receive(
             "download-error",
             (data: DownloadRequest) => {
                 window.log.info("Download error in vue");

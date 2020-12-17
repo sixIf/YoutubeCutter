@@ -62,7 +62,7 @@ export default class Help extends Vue {
   githubLink = "https://github.com/groCervo/Youtube-downloader";
 
   openExternalUrl(link: string) {
-    window.myIpcRenderer.send("open-external-url", link);
+    myIpcRenderer.send("open-external-url", link);
   }
 }
 </script>

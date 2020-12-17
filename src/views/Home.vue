@@ -141,12 +141,6 @@ export default class Home extends Vue {
                 ? this.items.length - 1
                 : this.onboarding - 1;
     }
-
-    created(){
-        // window.open("https://youtube.com", '_blank');
-        if(!this.isApiKeySet)
-            _.reverse(this.items)
-    }
 }
 </script>
 <style>

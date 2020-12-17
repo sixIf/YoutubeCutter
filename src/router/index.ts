@@ -1,10 +1,7 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '@/views/Home.vue'
-import ChannelDashboard from '@/layouts/ChannelDashboard.vue'
-import ChannelVideos from '@/views/ChannelVideos.vue'
-import PlaylistVideos from '@/views/PlaylistVideos.vue'
-import ChannelPlaylists from '@/views/ChannelPlaylists.vue'
+import ChannelDashboard from '@/views/ChannelDashboard.vue'
 import SearchChannel from '@/views/SearchChannel.vue'
 import SearchVideos from '@/views/SearchVideos.vue'
 import Help from '@/views/Help.vue'
@@ -47,35 +44,9 @@ const routes: Array<RouteConfig> = [
         component: Settings
     },
     {
-        path: '/channel/:channelTitle/:id',
+        path: '/channel/:id/:playlistId?',
+        name: 'channel-view',
         component: ChannelDashboard,
-        children: [
-            {
-                path: '',
-                redirect: { name: 'channel-playlists' }
-            },
-            {
-                path: 'videos/:playlistId',
-                name: 'channel-uploaded-videos',
-                component: ChannelVideos
-            },
-            {
-                path: 'playlists',
-                name: 'channel-playlists',
-                component: ChannelPlaylists
-            },
-            {
-                path: 'playlist/:playlistId/:playlistTitle/videos',
-                name: 'playlist-videos',
-                component: PlaylistVideos
-            },
-            // {
-            //   path: 'help',
-            //   name: 'help',
-            //   component: Help
-            // }
-        ]
-
     },
 ]
 
@@ -85,9 +56,8 @@ const router = new VueRouter({
     routes
 })
 
-// Check if API_Key is set, if not redirect to set api key page
+// Check if Download Folder is set
 router.beforeEach((to, from, next) => {
-    // const apiKeyService = ApplicationContainer.resolve(ApiKeyService)
     const downloadFolderService = ApplicationContainer.resolve(DownloadFolderService)
     if (to.name !== 'settings' && (!downloadFolderService.getDownloadFolder())) next({ name: 'settings' })
     else next()

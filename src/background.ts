@@ -10,10 +10,11 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
 // import { appMainPath } from '@/helpers/pathHelper'
-import {downloadItems, getVideoInfo} from '@/helpers/ytDownloaderHelper'
+import {downloadItems, getPlaylistInfo, getVideoInfo} from '@/helpers/ytDownloaderHelper'
 import { DownloadRequest, ItemStruct } from '@/config/litterals/index'
 import fs from 'fs'
 import { availableLocales } from "./config/litterals/i18n";
+import { clickInfo } from "./config/litterals/youtube";
 const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -233,6 +234,19 @@ ipcMain.handle("getVideoInfo", async (event, args: string) => {
     }
 });
 
+ipcMain.handle("getPlaylistVideos", async (event, args: string) => {
+    try {
+        const returnValue = await getPlaylistInfo(args, { limit: Infinity });
+        return returnValue;
+    } catch (err) {
+        loggerService.error(err)
+        return {
+            type: "error",
+            error: err
+        }
+    }
+});
+
 ipcMain.on("select-folder", (event, args: string) => {
     if (win)
         win.webContents.send('selected-folder', dialog.showOpenDialogSync({ properties: ['openDirectory'] }));
@@ -256,24 +270,74 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
     }
 });
 
+
 // Create context menu for Youtube Browser window
 
-const menu = new Menu()
-menu.append(new MenuItem({ label: 'Add video', click(menuItem, browserWindow, event) { addVideo(menuItem, browserWindow, event) } }))
-menu.append(new MenuItem({ type: 'separator' }))
-menu.append(new MenuItem({ label: 'Open channel', click() { loggerService.info('item 2 clicked') } }))
-menu.append(new MenuItem({ label: 'Open playlist', click() { loggerService.info('item 2 clicked') } }))
-
-function addVideo (menuItem: MenuItem, browserWindow: BrowserWindow | undefined, event: Electron.KeyboardEvent) {
-    loggerService.info(`${menuItem}`);
-    loggerService.info(`${browserWindow}`);
-    loggerService.info(`${event}`);
+async function addVideo (menuItem: MenuItem) {
+    const videoID = menuItem.id;
+    loggerService.info(`Voila add  ${videoID}`);
+    if (win)
+        win.webContents.send('add-single-video', videoID);
 }
 
-ipcMain.on("open-context-menu", (event, args: string) => {
+function goChannelUploads (menuItem: MenuItem) {
+    const channelID = menuItem.id;
+    loggerService.info(`Voila channelID ${channelID}`);
+    if (win)
+        win.webContents.send('explore-channel', {
+            playlistID: undefined,
+            channelID: channelID
+        });
+}
+
+function goChannelPlaylist (menuItem: MenuItem) {
+    const playlistID = menuItem.id.slice(0, menuItem.id.indexOf(`/`));
+    const channelID = menuItem.id.slice(menuItem.id.indexOf(`/`)+1);
+    loggerService.info(`Voila playlistID ${playlistID}`);
+    if (win)
+        win.webContents.send('explore-channel', {
+            playlistID: playlistID,
+            channelID: channelID
+        });
+}
+
+
+ipcMain.on("open-context-menu", async (event, args: clickInfo) => {
+    let {videoID, channelID, playlistID} = args;
+    const menu = new Menu()
     const currentBrowserWindow = BrowserWindow.getFocusedWindow()!;
-    menu.popup({ window: currentBrowserWindow })
-    return BrowserWindow.getFocusedWindow()!.id;
+
+    // Get the channelID if we clicked on playlist or video
+    if (videoID){ 
+        menu.append(new MenuItem({ id: videoID, label: 'Add video', click(menuItem) { addVideo(menuItem) } }))
+        menu.append(new MenuItem({ type: 'separator' }))
+        try {
+            const videoInfos = await getVideoInfo(videoID);
+            channelID = videoInfos.videoDetails.channelId;
+        } catch (err) {
+            loggerService.error(err);
+        }
+        menu.popup({ window: currentBrowserWindow })
+    }
+    else if (playlistID) {
+        try {
+            const playlistInfo = await getPlaylistInfo(playlistID);
+            channelID = playlistInfo.author.channelID;
+        } catch (err) {
+            loggerService.error(err);
+        }
+        menu.append(new MenuItem({ id: playlistID.concat(`/${channelID}`), label: 'Open playlist in app', click(menuItem) { goChannelPlaylist(menuItem) } }))
+        menu.append(new MenuItem({ type: 'separator' }))
+        menu.popup({ window: currentBrowserWindow })
+    }
+    
+    // Display pop up and append Open channel menu
+    if (channelID) {
+        menu.append(new MenuItem({ id: channelID, label: 'Open channel in app', click(menuItem) { goChannelUploads(menuItem) } }))
+        menu.popup({ window: currentBrowserWindow })
+    }
+
+    loggerService.info(`${args.videoID} ${args.channelID} ${args.playlistID}`)
 });
 
 

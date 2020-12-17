@@ -1,4 +1,6 @@
 import "reflect-metadata"
+import 'vue-class-component/hooks' 
+import '@/router/componentHooks'
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'

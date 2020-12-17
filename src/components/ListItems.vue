@@ -97,6 +97,7 @@ export default class ListItems extends Vue {
     @Prop({ default: [] }) itemList!: ItemStruct[];
     @Prop({ default: true }) clickEnabled!: boolean;
     @Prop({ default: 80 }) rowHeight!: number;
+    @Prop({default: false}) selectAll!: boolean;
 
     itemsIdSelected: Array<string> | string = [];
     itemsSelected: Array<ItemStruct> = [];
@@ -122,6 +123,13 @@ export default class ListItems extends Vue {
             });
         }
         this.$emit("update-list", this.itemsSelected);
+    }
+
+    @Watch("selectAll")
+    onSelectAllChanged(newVal: boolean){
+        if(newVal) {
+            this.itemsIdSelected = this.itemList.map((item) => { return item.id} )
+        } else this.itemsIdSelected = [];
     }
 
     get getRowHeight(): string{

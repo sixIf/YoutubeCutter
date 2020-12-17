@@ -16,15 +16,6 @@
                         required
                         @click="selectDirectory()"
                     ></v-text-field>
-                    <v-text-field
-                        v-model="apiKey"
-                        :label="$__('Settings.apiKey')"
-                        name="api-key"
-                        prepend-icon="vpn_key"
-                        type="text"
-                        clearable
-                        @click:clear="apiKeyService.submitForm('')"
-                    ></v-text-field>
                     <v-radio-group v-model="localeSelected" :row="true">
                         <v-radio
                             v-for="locale in localesInfos"
@@ -39,7 +30,6 @@
                 <v-spacer></v-spacer>
                 <v-btn
                     color="primary"
-                    :disabled="!apiKey"
                     type="submit"
                     @click.prevent="submitForm"
                     >{{$__("Settings.save")}}</v-btn
@@ -52,11 +42,9 @@
 <script lang="ts">
 import { Component, Inject, Vue } from "vue-property-decorator";
 import {
-    API_KEY_SERVICE,
     DOWNLOAD_FOLDER_SERVICE,
     YOUTUBE_SERVICE,
 } from "@/config/litterals";
-import { IApiKeyService } from "@/services/apiKeyService";
 import { IYoutubeService } from "@/services/youtubeService";
 import { IDownloadFolderService } from "@/services/downloadFolderService";
 import Alert from "@/components/Alert.vue";
@@ -68,14 +56,11 @@ import { localesInfos } from "@/config/litterals/i18n"
     },
 })
 export default class SettingsForm extends Vue {
-    @Inject(API_KEY_SERVICE)
-    apiKeyService!: IApiKeyService;
     @Inject(DOWNLOAD_FOLDER_SERVICE)
     downloadFolderService!: IDownloadFolderService;
     @Inject(YOUTUBE_SERVICE)
     youtubeService!: IYoutubeService;
     folderPath: string | null = this.downloadFolderService.getDownloadFolder();
-    apiKey: string | null = this.apiKeyService.getApiKey();
     alert: { type: string; message: string } | null = null;
     localeSelected: string = window.i18n.getCurrentLocale();
 
@@ -95,31 +80,9 @@ export default class SettingsForm extends Vue {
     async submitForm() {
         // Set locale
         window.i18n.setLocale(this.localeSelected);
-
-        // Test if Youtube Api key is valid
-        try {
-            const response = await this.youtubeService.testApiKey(this.apiKey);
-            if (this.apiKeyService.setApiKey(this.apiKey)) {
-                this.alert = {
-                    type: "success",
-                    message: this.$__("Settings.formSuccess"),
-                };
-            } else {
-                this.alert = {
-                    type: "error",
-                    message: this.$__("Settings.formError"),
-                };
-            }
-        } catch (err) {
-            this.alert = {
-                type: "error",
-                message: this.$__("Settings.formError"),
-            };
-        }
     }
 
     mounted() {
-        console.log(window.i18n.translate('Home.savedTips'));
         window.myIpcRenderer.receive(
             "selected-folder",
             (data: string[] | undefined) => {

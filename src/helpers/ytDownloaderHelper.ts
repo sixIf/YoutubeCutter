@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import ytdl from 'ytdl-core';
+import ytpl from 'ytpl';
 import ffmpeg from 'fluent-ffmpeg';
 import pathToFfmpeg from 'ffmpeg-static';
 import { ItemStruct, ItemDownloading, DownloadRequest } from '@/config/litterals/index'
@@ -43,7 +44,11 @@ export async function downloadItems(args: DownloadRequest, output: string, win: 
 }
 
 export async function getVideoInfo(videoId: string){
-    return ytdl.getInfo(`https://www.youtube.com/watch?v=${videoId}`)
+    return ytdl.getInfo(`https://www.youtube.com/watch?v=${videoId}`);
+}
+
+export async function getPlaylistInfo(playlistId: string, options?: ytpl.Options){
+    return ytpl(playlistId);
 }
 
 function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, output: string, win: BrowserWindow | null) {
