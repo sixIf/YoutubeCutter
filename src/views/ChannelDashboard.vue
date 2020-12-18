@@ -2,55 +2,72 @@
     <div>
         <v-main>
             <v-container class="channel-container" fluid>
-                <v-row align="start" justify="start" no-gutters>
-                    <v-col cols="12">
-                        <v-container fluide dense>
-                            <v-row class="sticky-toolbar">
-                                <v-col cols="12">
-                                    <v-card>
-                                        <v-row align="center">
-                                            <v-col cols="3" md="2">
-                                                <v-avatar size="100">
-                                                    <img
-                                                        :src="channelThumbnail"
-                                                        :alt="channelTitle"
-                                                    >    
-                                                </v-avatar>
-                                            </v-col>
-                                            <v-col cols="4">
-                                                <h1>{{channelTitle}}</h1>
-                                            </v-col>
-                                            <v-col cols="5">
-                                                <h2>
-                                                    {{ isMainPlaylist ? "Uploaded videos" : `Playlist : ${playlistTitle}`   }}  
-                                                </h2>
-                                            </v-col>
-                                        </v-row>
-                                    </v-card>
-                                    <v-row justify="end">
-                                        <download-videos-modal
-                                            :videosSelected="listVideoSelected"
-                                            :disabled="listVideoSelected.length == 0"
-                                            :channelTitle="channelTitle"
-                                            :playlistTitle="isMainPlaylist ? '' : playlistTitle"
-                                        ></download-videos-modal>
+                <v-row align="start" class="sticky-toolbar mb-5" justify="start" no-gutters style="height: 100%">
+                    <v-col cols="8" lg="5">
+                        <v-card elevation="3" height="150px">
+                            <v-row>
+                                <v-col cols="4" lg="2" style="height: 100%">
+                                    <v-row style="height: 100%">
+                                        <v-col>
+                                            <v-avatar size="100" class="ml-2">
+                                                <img
+                                                    :src="channelThumbnail"
+                                                    :alt="channelTitle"
+                                                >    
+                                            </v-avatar>
+                                        </v-col>
                                     </v-row>
                                 </v-col>
+                                <v-divider vertical/>
+                                <v-col cols="7" lg="9">
+                                    <h3 style="padding-top: 5px;">
+                                        {{limitChar(channelTitle, 30)}}
+                                    </h3>
+                                    <v-card flat>
+                                        <v-card-title>
+                                            {{ isMainPlaylist ? ($__("Channel.uploaded")) : limitChar(`Playlist : ${playlistTitle}`, 20)   }}  
+                                        </v-card-title>
+                                        <v-card-subtitle>
+                                            {{ `${itemCount} ${$__("Channel.videos")}` }}
+                                        </v-card-subtitle>
+                                    </v-card>
+                                </v-col>                                
                             </v-row>
-                            <v-row>
-                                <v-checkbox v-model="selectAll"></v-checkbox>
-                            </v-row>
-                            <list-items
-                                style="position: relative; z-index: 3"
-                                @update-list="updateSelectedList"
-                                @more-items="fetchVideos(false)"
-                                :itemType="itemType"
-                                :itemList="videoList"
-                                :selectAll="selectAll"
-                            />
-                        </v-container>
+                        </v-card>
+                    </v-col>
+                    <v-col cols="4" lg="6">
+                        <v-row>
+                            <v-col>
+                                <v-btn 
+                                    color="secondary" 
+                                    class="mb-2" 
+                                    @click="selectAll=!selectAll">
+                                        {{$__(`Channel.${selectAll ? 'unSelectAll' : 'selectAll'}`)}}
+                                    </v-btn>
+                            </v-col>
+                            <v-col>
+                                <download-videos-modal
+                                    :videosSelected="listVideoSelected"
+                                    :disabled="listVideoSelected.length == 0"
+                                    :channelTitle="channelTitle"
+                                    :playlistTitle="isMainPlaylist ? '' : playlistTitle"
+                                ></download-videos-modal>
+                            </v-col>
+                        </v-row>
                     </v-col>
                 </v-row>
+                <v-container class="channel-container" fluid>
+                <v-row>
+                    <list-items
+                        style="position: relative; z-index: 3"
+                        @update-list="updateSelectedList"
+                        @more-items="fetchVideos(false)"
+                        :itemType="itemType"
+                        :itemList="videoList"
+                        :selectAll="selectAll"
+                    />
+                </v-row>
+            </v-container>
             </v-container>
         </v-main>
     </div>
@@ -103,6 +120,12 @@ export default class ChannelDashboard extends Vue {
 
     get isMainPlaylist(): boolean {
         return this.playlistId ? false : true;
+    }
+
+    limitChar(phrase: string, maxChar: number){
+        return phrase.length > maxChar ? 
+            phrase.slice(0, maxChar) + '...' :
+            phrase;
     }
 
 

@@ -27,5 +27,17 @@
     },
     "ListItems": {
         "explore": "Explorer"
+    },
+    "Channel": {
+        "uploaded": "Vidéos mises en ligne",
+        "selectAll": "Sélectionner tout",
+        "unSelectAll": "Déselectionner tout",
+        "videos": "vidéos",
+        "save": "Sauvegarder"
+    },
+    "Download": {
+        "button": "Télécharger",
+        "cancel": "Annuler",
+        "options": "Options de téléchargement"
     }    
 }

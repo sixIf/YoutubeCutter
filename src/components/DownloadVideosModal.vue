@@ -6,12 +6,12 @@
                 :disabled="disabled"
                 color="primary"
                 style="margin: 5px"
-                >Download</v-btn
+                >{{$__("Download.button")}}</v-btn
             >
         </template>
         <slot></slot>
         <v-card>
-            <v-card-title class="headline">Download options</v-card-title>
+            <v-card-title class="headline">{{$__("Download.options")}}</v-card-title>
             <v-card-text>
                 <v-container>
                     <v-row>
@@ -27,10 +27,10 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="primary darken-1" text @click="dialog = false"
-                    >Cancel</v-btn
+                    >{{$__("Download.cancel")}}</v-btn
                 >
                 <v-btn color="green darken-1" text @click="downloadItems"
-                    >Download</v-btn
+                    >{{$__("Download.button")}}</v-btn
                 >
             </v-card-actions>
         </v-card>
@@ -71,18 +71,6 @@ export default class DownloadVideosModal extends Vue {
     @Prop({ default: ""}) playlistTitle !: string;
     dialog = false;
     audioOnly = false;
-
-    // get channelTitle(): string {
-    //     return this.$route.params.hasOwnProperty("channelTitle")
-    //         ? this.$route.params.channelTitle
-    //         : "Vrac";
-    // }
-
-    // get playlistTitle(): string {
-    //     return this.$route.params.playlistTitle
-    //         ? this.$route.params.playlistTitle
-    //         : "";
-    // }
 
     downloadItems(): void {
         const downloadRequest: DownloadRequest = {

@@ -27,5 +27,17 @@
     },
     "ListItems": {
         "explore": "Explore"
+    },
+    "Channel": {
+        "uploaded": "Uploaded videos",
+        "selectAll": "Select all",
+        "unSelectAll": "Unselect all",
+        "videos": "videos",
+        "save": "Save"
+    },
+    "Download": {
+        "button": "Download",
+        "cancel": "Cancel",
+        "options": "Download options"
     }
 }

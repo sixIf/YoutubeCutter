@@ -48,7 +48,7 @@ export async function getVideoInfo(videoId: string){
 }
 
 export async function getPlaylistInfo(playlistId: string, options?: ytpl.Options){
-    return ytpl(playlistId);
+    return ytpl(playlistId, options);
 }
 
 function download(videoToFetch: ItemStruct | undefined, audioOnly: boolean, output: string, win: BrowserWindow | null) {

@@ -92,6 +92,7 @@ function createWindow() {
     win = new BrowserWindow({
         width: 855,
         height: 655,
+        minWidth: 800,
         x: 0,
         y: 0,
         title: "Youtube Downloader",
@@ -143,8 +144,7 @@ function createWindow() {
           Object.assign(options, {
             modal: false,
             title: "Youtube",
-            frame: false,
-            parent: win,
+            frame: true,
             width: 855,
             height: 655,
             webPreferences: {

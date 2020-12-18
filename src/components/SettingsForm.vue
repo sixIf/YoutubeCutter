@@ -49,6 +49,7 @@ import { IYoutubeService } from "@/services/youtubeService";
 import { IDownloadFolderService } from "@/services/downloadFolderService";
 import Alert from "@/components/Alert.vue";
 import { localesInfos } from "@/config/litterals/i18n"
+const { i18n } = window;
 
 @Component({
     components: {
@@ -62,14 +63,14 @@ export default class SettingsForm extends Vue {
     youtubeService!: IYoutubeService;
     folderPath: string | null = this.downloadFolderService.getDownloadFolder();
     alert: { type: string; message: string } | null = null;
-    localeSelected: string = window.i18n.getCurrentLocale();
+    localeSelected: string = i18n.getCurrentLocale();
 
     get localesInfos(): typeof localesInfos {
         return localesInfos;
     }
 
     __(phrase: string, args: any) {
-        return window.i18n.translate(phrase, args)
+        return this.$__(phrase, args)
     }
 
     selectDirectory() {
@@ -79,7 +80,7 @@ export default class SettingsForm extends Vue {
 
     async submitForm() {
         // Set locale
-        window.i18n.setLocale(this.localeSelected);
+        i18n.setLocale(this.localeSelected);
     }
 
     mounted() {
