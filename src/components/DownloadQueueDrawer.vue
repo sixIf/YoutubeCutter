@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-btn
-            :class="isDownloading ? 'bounce' : ''"
+            :class="`success ${isDownloading ? 'bounce' : ''}`"
             color="white"
             dark
             icon
@@ -12,6 +12,7 @@
         </v-btn>
         <v-navigation-drawer
             v-model="drawer"
+            class="card"
             absolute
             right
             temporary
@@ -32,7 +33,7 @@
             </v-list-item>
 
             <v-divider></v-divider>
-            <v-tabs-items v-model="tab">
+            <v-tabs-items v-model="tab" class="card">
                 <v-tab-item>
                     <v-list
                         v-for="infos in videoDownloading"

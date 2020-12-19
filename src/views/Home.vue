@@ -1,145 +1,48 @@
 <template>
-    <v-main>
-        <v-container class="home-container fill-height" fluid>
-            <v-row align="center" justify="center" no-gutters>
-                <v-col cols="12" md="8">
-                    <v-card flat tile>
-                        <v-window v-model="onboarding">
-                            <v-window-item
-                                v-for="(item, index) in items"
-                                :key="`card-${index}`"
-                            >
-                                <v-card
-                                    @click="handleCardClick(item)"
-                                    class="clickable"
-                                    :color="computeCardColor(item)"
-                                    height="300"
-                                >
-                                    <v-row
-                                        class="fill-height"
-                                        align="center"
-                                        justify="center"
-                                        style="text-align: center;"
-                                    >   
-                                        <v-col cols="12">
-
-                                            <h1
-                                                style="font-size: 3rem"
-                                                class="white--text"
-                                            >
-                                                {{ item.name }}
-                                            </h1>
-                                        </v-col>
-                                        <v-col cols="12" v-if="!isDependencyFulfilled(item)">
-                                            <br/>
-                                            <p style="color: white">{{item.hint}}</p>
-                                        </v-col>
-                                    </v-row>
-                                </v-card>
-                            </v-window-item>
-                        </v-window>
-
-                        <v-card-actions class="justify-space-between">
-                            <v-btn text @click="prev">
-                                <v-icon>mdi-chevron-left</v-icon>
-                            </v-btn>
-                            <v-item-group
-                                v-model="onboarding"
-                                class="text-center"
-                                mandatory
-                            >
-                                <v-item
-                                    v-for="item in items.length"
-                                    :key="`btn-${item}`"
-                                    v-slot:default="{ active, toggle }"
-                                >
-                                    <v-btn
-                                        :input-value="active"
-                                        icon
-                                        @click="toggle"
-                                    >
-                                        <v-icon>mdi-record</v-icon>
-                                    </v-btn>
-                                </v-item>
-                            </v-item-group>
-                            <v-btn text @click="next">
-                                <v-icon>mdi-chevron-right</v-icon>
-                            </v-btn>
-                        </v-card-actions>
+        <v-container class="fill-height" fluid>
+            <v-row no-gutters justify="center">
+                <v-col cols="6" lg="5">
+                    <v-card 
+                        flat
+                        shaped
+                        class="card"
+                        elevation="10"
+                        height="150"
+                        min-height="150"
+                        min-width="200"
+                    >
+                        <v-container class="fill-height">
+                            <v-row no-gutters justify="center">
+                                <v-text-field 
+                                    class="pl-4 pr-4"
+                                    v-model="ytLink"
+                                    label="Search for video, playlist or channel"
+                                    hint="https://www.youtube.com/watch?v=jNQXAC9IVRw"
+                                    required
+                                    append-outer-icon="mdi-send"
+                                    @click:append-outer="searchItem" 
+                                ></v-text-field>
+                            </v-row>
+                        </v-container>
                     </v-card>
                 </v-col>
             </v-row>
         </v-container>
-    </v-main>
 </template>
 
 <script lang="ts">
 // @ is an alias to /src
-import { API_KEY_SERVICE, MenuDependency, MenuItems } from '@/config/litterals';
-import { IApiKeyService } from '@/services/apiKeyService';
+import { MenuDependency, MenuItems } from '@/config/litterals';
 import _ from 'lodash';
-import { Component, Inject, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 
 // Define the component in class-style
 @Component
 export default class Home extends Vue {
-    @Inject(API_KEY_SERVICE)
-    apiKeyService!: IApiKeyService;    
-    onboarding = 0;
-    items: Array<MenuItems> = [
-        {
-            dependency: MenuDependency.API,
-            name: this.$__("Home.exploreChannel"),
-            route: "search-channel",
-            hint: this.$__("Home.channelHint")
-        },
-        {
-            dependency: MenuDependency.NONE,
-            name: this.$__("Home.searchVideos"),
-            route: "search-videos",
-        },
-        {
-            dependency: MenuDependency.CHANNEL,
-            name: this.$__("Home.savedChannels"),
-            route: "search-videos",
-            hint: this.$__("Home.savedTips"),
-        }
-    ];
+    ytLink = "";
 
-    isApiKeySet = this.apiKeyService.getApiKey();
-
-    computeCardColor(item: MenuItems): string {
-        return this.isDependencyFulfilled(item) ? "#d32f2f" : "#483D3F";
-    }
-
-    handleCardClick(item: MenuItems) {
-        return this.isDependencyFulfilled(item) ? this.$router.push(item.route) : this.$router.push('/settings'); // Maybe pop up settings
-    }
-    
-    isDependencyFulfilled(item: MenuItems): boolean {
-        switch(item.dependency) {
-            case MenuDependency.API:
-                if (this.isApiKeySet) return true;
-                else return false;
-            case MenuDependency.CHANNEL:
-                // Mieux : avoir une possibilité de sauvegarder une chaîne lorsque l'on est dessus
-                // if (this.channelFound) return true;
-                // else return false;
-                return false;
-            default:
-                return true;
-        }
-    }
-
-    next() {
-        this.onboarding =
-            this.onboarding + 1 === this.items.length ? 0 : this.onboarding + 1;
-    }
-    prev() {
-        this.onboarding =
-            this.onboarding - 1 < 0
-                ? this.items.length - 1
-                : this.onboarding - 1;
+    searchItem(){
+        console.log(this.ytLink)
     }
 }
 </script>

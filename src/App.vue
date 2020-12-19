@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-app class="primary">
         <div>
             <v-snackbar v-model="snackbar" top color="info">
                 {{ snackbarMessage }}
@@ -9,10 +9,10 @@
                     >
                 </template>
             </v-snackbar>
-            <v-app-bar color="primary" style="z-index: 50" app dense dark>
+            <v-app-bar color="secondary card--text" style="z-index: 50" app dense dark>
                 <router-link to="/">
                     <v-btn icon>
-                        <v-icon>mdi-home</v-icon>
+                        <v-icon class="card--text">mdi-home</v-icon>
                     </v-btn>
                 </router-link>
                 <v-toolbar-title @click="$router.push('/')" style="cursor: pointer">Youtube Downloader</v-toolbar-title>
@@ -22,18 +22,21 @@
                 </v-btn>
                 <router-link to="/help">
                     <v-btn icon>
-                        <v-icon>mdi-help-circle</v-icon>
+                        <v-icon class="card--text">mdi-help-circle</v-icon>
                     </v-btn>
                 </router-link>
                 <router-link to="/settings">
                     <v-btn icon>
-                        <v-icon>mdi-cog</v-icon>
+                        <v-icon class="card--text">mdi-cog</v-icon>
                     </v-btn>
                 </router-link>
             </v-app-bar>
             <download-queue-drawer />
         </div>
+        <v-main class="primary">
+
         <router-view />
+        </v-main>
     </v-app>
 </template>
 
@@ -58,7 +61,6 @@ export default class App extends Vue {
     snackbarMessage = "";
 
     mounted() {
-        window.open("https://youtube.com");
         myIpcRenderer.receive(
             "download-error",
             (data: DownloadRequest) => {
@@ -66,36 +68,6 @@ export default class App extends Vue {
                 this.snackbarMessage = `Download error : ${data.itemSelected[0].title}`;
             }
         );
-
-        myIpcRenderer.receive(
-            "add-single-video",
-            (videoID: string) => {
-                if(this.$route.name != 'search-videos'){
-                    this.$router.push({
-                        name: "search-videos",
-                        params: {
-                            videoID: videoID
-                        }
-                    })
-                }
-            }
-        )
-
-        myIpcRenderer.receive(
-            "explore-channel",
-            (infos: clickInfo) => {
-                if(this.$route.params.channelID != infos.channelID){
-                    window.log.info(`voila les params: channel ${infos.channelID} playlist ${infos.playlistID} et channel params ${this.$route.params.channelID}`)
-                    const routeParams = {};
-                    if (infos.channelID) Object.assign(routeParams, { id: infos.channelID})
-                    if (infos.playlistID) Object.assign(routeParams, { id: infos.playlistID})
-                    this.$router.replace({
-                        name: "channel-view",
-                        params: routeParams
-                    })
-                }
-            }
-        )
     }
 }
 </script>

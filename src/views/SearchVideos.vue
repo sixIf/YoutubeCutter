@@ -1,37 +1,35 @@
 <template>
-    <v-main>
-        <v-container fluid>
-            <v-row>
-                <v-col cols="7" sm="5" lg="3">
-                    <search-videos-toolbar
-                        @update-video-list="updateVideoList"
-                        :emptyToolbar="emptyToolbar"
-                    ></search-videos-toolbar>
-                </v-col>
-                <v-col
-                    cols="5"
-                    sm="7"
-                    lg="9"
-                    style="height: 80vh; overflow-y: scroll"
-                >
-                    <v-row class="download-button" justify="end">
-                        <download-videos-modal
-                            @download-started="emptyToolbar = !emptyToolbar"
-                            :videosSelected="videoList"
-                            :disabled="videoList.length == 0"
-                        ></download-videos-modal>
-                    </v-row>
-                    <list-items
-                        style="position: relative; z-index: 3"
-                        :clickEnabled="false"
-                        :itemType="itemType"
-                        :itemList="videoList"
-                        :rowHeight="70"
-                    />
-                </v-col>
-            </v-row>
-        </v-container>
-    </v-main>
+    <v-container fluid>
+        <v-row>
+            <v-col cols="7" sm="5" lg="3">
+                <search-videos-toolbar
+                    @update-video-list="updateVideoList"
+                    :emptyToolbar="emptyToolbar"
+                ></search-videos-toolbar>
+            </v-col>
+            <v-col
+                cols="5"
+                sm="7"
+                lg="9"
+                style="height: 80vh; overflow-y: scroll"
+            >
+                <v-row class="download-button" justify="end">
+                    <download-videos-modal
+                        @download-started="emptyToolbar = !emptyToolbar"
+                        :videosSelected="videoList"
+                        :disabled="videoList.length == 0"
+                    ></download-videos-modal>
+                </v-row>
+                <list-items
+                    style="position: relative; z-index: 3"
+                    :clickEnabled="false"
+                    :itemType="itemType"
+                    :itemList="videoList"
+                    :rowHeight="70"
+                />
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script lang="ts">
