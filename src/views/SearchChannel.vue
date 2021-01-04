@@ -68,35 +68,35 @@ export default class SearchChannel extends Vue {
         else return false;
     }
     async getChannel(): Promise<void> {
-        this.alert = null;
-        try {
-            const response = await this.youtubeService.findChannelByVideo(
-                this.videoId()
-            );
-            // Display channel not found since YT's api respond with 200
-            if (response.totalResults == 0) {
-                this.alert = {
-                    type: "error",
-                    message: "Channel not found. Please verify your link.",
-                };
-            } else {
-                this.$router.push({
-                    name: "channel-uploaded-videos",
-                    params: {
-                        id: response.id,
-                        playlistId: response.mainPlaylistId,
-                        channelTitle: response.channelTitle,
-                    },
-                });
-            }
-        } catch (err) {
-            window.log.info("err: " + err);
-            const status = err.response ? err.response.status : "404";
-            this.alert = {
-                type: "error",
-                message: this.$__(`Errors.${ERROR_TYPES[status]}`),
-            };
-        }
+        // this.alert = null;
+        // try {
+        //     const response = await this.youtubeService.findChannelByVideo(
+        //         this.videoId()
+        //     );
+        //     // Display channel not found since YT's api respond with 200
+        //     if (response.totalResults == 0) {
+        //         this.alert = {
+        //             type: "error",
+        //             message: "Channel not found. Please verify your link.",
+        //         };
+        //     } else {
+        //         this.$router.push({
+        //             name: "channel-uploaded-videos",
+        //             params: {
+        //                 id: response.id,
+        //                 playlistId: response.mainPlaylistId,
+        //                 channelTitle: response.channelTitle,
+        //             },
+        //         });
+        //     }
+        // } catch (err) {
+        //     window.log.info("err: " + err);
+        //     const status = err.response ? err.response.status : "404";
+        //     this.alert = {
+        //         type: "error",
+        //         message: this.$__(`Errors.${ERROR_TYPES[status]}`),
+        //     };
+        // }
     }
 }
 </script>

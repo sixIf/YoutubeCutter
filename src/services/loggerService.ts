@@ -22,7 +22,7 @@ export class LoggerService implements ILoggerService {
               format.splat(),
               format.json()
             ),
-            defaultMeta: { service: 'cadavre-exquis' },
+            defaultMeta: { service: 'youtubeDL' },
             transports: [
               //
               // - Write to all logs with level `info` and below to `app-combined.log`.

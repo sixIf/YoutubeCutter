@@ -61,9 +61,17 @@ export interface ItemStruct {
     readonly id: string;
     readonly title: string;
     readonly thumbnail: string;
+    readonly sliceList?: Array<SlicedYoutube>;
+    readonly keepFullItem?: boolean;
     folderPath?: string;
     filePath?: string;
     downloadTry?: number;
+}
+
+export interface SlicedYoutube {
+    readonly startTime: string;
+    readonly duration: string;
+    readonly name: string;
 }
 
 export interface ChannelInfos {

@@ -15,6 +15,7 @@ import { DownloadRequest, ItemStruct } from '@/config/litterals/index'
 import fs from 'fs'
 import { availableLocales } from "./config/litterals/i18n";
 import { clickInfo } from "./config/litterals/youtube";
+import { DownloadService } from "./services/downloadService";
 const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -218,7 +219,11 @@ app.on('ready', async () => {
 
 
 ipcMain.on("open-shell", (event, args: string) => {
-    shell.openPath(args);
+    try {
+        shell.openPath(args);
+    } catch (err) {
+        loggerService.error(err);
+    }
 });
 
 ipcMain.handle("getVideoInfo", async (event, args: string) => {
@@ -263,8 +268,9 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
             fs.mkdirSync(path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle), { recursive: true });
         }
         const output = path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle);
-        for (let i = 0; i < WORKER_NUMBER; i++)
-            downloadItems(args, output, win);
+        new DownloadService(args, output, win);
+        // for (let i = 0; i < WORKER_NUMBER; i++)
+        //     downloadItems(args, output, win);
     } else {
         loggerService.info('There is no download folder set, wow..')
     }

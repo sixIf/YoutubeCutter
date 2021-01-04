@@ -23,6 +23,8 @@
     "@types/lodash": "^4.14.157",
     "@types/node": "12.12.6",
     "@types/winston": "^2.4.4",
+    "@types/youtube": "^0.0.41",
+    "@types/youtube-player": "^5.5.3",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "ffmpeg-static": "^4.2.5",
@@ -39,6 +41,7 @@
     "vue-router": "^3.2.0",
     "vuetify": "^2.3.4",
     "winston": "^3.3.3",
+    "youtube-player": "^5.5.2",
     "ytdl-core": "^4.1.7",
     "ytpl": "^2.0.3"
   },

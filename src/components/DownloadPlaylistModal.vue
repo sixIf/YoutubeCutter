@@ -193,30 +193,30 @@ export default class DownloadPlaylistModal extends Vue {
     }
     async fetchVideosInPlaylist(firstRun: boolean) {
         this.isFetching = true;
-        if (this.currentMaxItemLimit <= this.videoList.length)
-            this.currentMaxItemLimit += 1000;
-        try {
-            const response = await this.youtubeService.getVideoList(
-                this.playlistId,
-                this.nextPageToken
-            );
-            this.itemsInPlaylist = response.itemCount;
-            this.nextPageToken = response.nextPageToken;
-            this.previousVideoListLength = this.videoList.length;
-            if (this.videoList.length < this.itemsInPlaylist)
-                this.videoList = _.concat(this.videoList, response.itemList);
-            if (this.checkVideoList && this.dialog)
-                this.fetchVideosInPlaylist(false);
-            else this.isFetching = false;
-        } catch (error) {
-            this.isFetching = false;
-            const status = error.response ? error.response.status : "404";
-            this.alert = {
-                type: "error",
-                message: this.$__(`Errors.${ERROR_TYPES[status]}`),
-            };
-            throw new Error("fetchVideosInPLaylistError: " + error);
-        }
+        // if (this.currentMaxItemLimit <= this.videoList.length)
+        //     this.currentMaxItemLimit += 1000;
+        // try {
+        //     const response = await this.youtubeService.getVideoList(
+        //         this.playlistId,
+        //         this.nextPageToken
+        //     );
+        //     this.itemsInPlaylist = response.itemCount;
+        //     this.nextPageToken = response.nextPageToken;
+        //     this.previousVideoListLength = this.videoList.length;
+        //     if (this.videoList.length < this.itemsInPlaylist)
+        //         this.videoList = _.concat(this.videoList, response.itemList);
+        //     if (this.checkVideoList && this.dialog)
+        //         this.fetchVideosInPlaylist(false);
+        //     else this.isFetching = false;
+        // } catch (error) {
+        //     this.isFetching = false;
+        //     const status = error.response ? error.response.status : "404";
+        //     this.alert = {
+        //         type: "error",
+        //         message: this.$__(`Errors.${ERROR_TYPES[status]}`),
+        //     };
+        //     throw new Error("fetchVideosInPLaylistError: " + error);
+        // }
     }
 
     @Watch("parentVideoList")

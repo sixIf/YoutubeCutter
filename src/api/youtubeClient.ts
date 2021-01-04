@@ -4,101 +4,26 @@ import { injectable, inject } from "tsyringe";
 import { ApiChannelInfos, ApiVideoById, TestApiKey, ApiChannelMainPlaylist, ApiVideoInPlaylist, ApiChannelPlaylists } from '@/config/litterals/index'
 
 export interface IYoutubeClient {
+  findVideo(videoUrl: string): Promise<any>;
+  findPlaylist(playlistUrl: string): Promise<any>;
+  findChannel(channelUrl: string): Promise<any>;
 
-  findChannelById(channelId: string): Promise<ApiChannelInfos>;
-  findVideoById(videoId: string): Promise<ApiVideoById>;
-  findChannelPlaylists(channelId: string, pageToken: string): Promise<ApiChannelPlaylists>;
-  findChannelMainPlaylist(channelId: string): Promise<ApiChannelMainPlaylist>;
-  fetchVideoInPlaylist(playlistId: string, pageToken: string): Promise<ApiVideoInPlaylist>;
-  testApiKey(apiKeyToTest: string | null): Promise<TestApiKey>;
 }
 
 @injectable()
 export class YoutubeClient implements IYoutubeClient {
 
   constructor(@inject("IApiKeyService") private apiKeyAccessor: IApiKeyService) { }
-
-
-  findVideoById(videoId: string): Promise<ApiVideoById> {
-    return axios
-      .get(
-        "https://www.googleapis.com/youtube/v3/videos?part=snippet&order=date&maxResults=50",
-        {
-          params: {
-            id: videoId,
-            key: this.apiKey,
-          }
-        }
-      )
-  }
-  findChannelPlaylists(channelId: string, pageToken: string): Promise<ApiChannelPlaylists> {
-    return axios
-      .get(
-        "https://www.googleapis.com/youtube/v3/playlists?part=snippet&order=date&maxResults=50",
-        {
-          params: {
-            channelId: channelId,
-            key: this.apiKey,
-            pageToken: pageToken
-          }
-        }
-      )
-  }
-  testApiKey(apiKeyToTest: string | null): Promise<TestApiKey> {
-    return axios
-      .get(
-        "https://www.googleapis.com/youtube/v3/videos?part=id&id=jNQXAC9IVRw&id=YXGXESqHkAI",
-        {
-          params: {
-            key: apiKeyToTest
-          }
-        }
-      )
+  async findVideo(videoUrl: string): Promise<any> {
+    return window.myIpcRenderer.invoke("getVideoInfo", videoUrl);
   }
 
-  get apiKey(): string | null {
-    return this.apiKeyAccessor.getApiKey()
+  findPlaylist(playlistUrl: string): Promise<any> {
+    return window.myIpcRenderer.invoke("getPlaylist", playlistUrl);
   }
 
-  // Don't return promise but return video formatted
-  fetchVideoInPlaylist(playlistId: string, pageToken: string): Promise<ApiVideoInPlaylist> {
-    return axios
-      .get(
-        "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&order=date&maxResults=50",
-        {
-          params: {
-            playlistId: playlistId,
-            key: this.apiKey,
-            pageToken: pageToken
-          }
-        }
-      )
+  findChannel(channelUrl: string): Promise<any> {
+    throw window.myIpcRenderer.invoke("getPlaylist", channelUrl);
   }
 
-
-  findChannelById(channelId: string): Promise<ApiChannelInfos> {
-    return axios
-      .get(
-        "https://www.googleapis.com/youtube/v3/channels?part=snippet&part=contentDetails&maxResults=1",
-        {
-          params: {
-            id: channelId,
-            key: this.apiKey
-          }
-        }
-      )
-  }
-
-  findChannelMainPlaylist(channelId: string): Promise<ApiChannelMainPlaylist> {
-    return axios
-      .get(
-        "https://www.googleapis.com/youtube/v3/channels?part=contentDetails&part=snippet&maxResults=1",
-        {
-          params: {
-            id: channelId,
-            key: this.apiKey
-          }
-        }
-      )
-  }
 }

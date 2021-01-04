@@ -120,33 +120,33 @@ export default class SearchVideosToolbar extends Vue {
 
     async findVideoApi() {
         this.alert = null;
-        if (this.videosFetched.findIndex((x) => x.id == this.videoId) == -1) {
-            try {
-                const response = await this.youtubeService.findVideoById(
-                    this.videoId
-                );
-                if (response.totalResults == 0) {
-                    this.alert = {
-                        type: "error",
-                        message: this.$__("Toolbar.notFound"),
-                    };
-                } else {
-                    this.videosFetched.push(response.videoInfos);
-                    this.videoUrl = "";
-                }
-            } catch (error) {
-                window.log.info("Catch error " + error.message);
-                this.alert = {
-                    type: "error",
-                    message: this.$__(`Errors.${ERROR_TYPES[error.response.status]}`),
-                };
-            }
-        } else {
-            this.alert = {
-                type: "error",
-                message: this.$__("Toolbar.duplicateVideo"),
-            };
-        }
+        // if (this.videosFetched.findIndex((x) => x.id == this.videoId) == -1) {
+        //     try {
+        //         const response = await this.youtubeService.findVideoById(
+        //             this.videoId
+        //         );
+        //         if (response.totalResults == 0) {
+        //             this.alert = {
+        //                 type: "error",
+        //                 message: this.$__("Toolbar.notFound"),
+        //             };
+        //         } else {
+        //             this.videosFetched.push(response.videoInfos);
+        //             this.videoUrl = "";
+        //         }
+        //     } catch (error) {
+        //         window.log.info("Catch error " + error.message);
+        //         this.alert = {
+        //             type: "error",
+        //             message: this.$__(`Errors.${ERROR_TYPES[error.response.status]}`),
+        //         };
+        //     }
+        // } else {
+        //     this.alert = {
+        //         type: "error",
+        //         message: this.$__("Toolbar.duplicateVideo"),
+        //     };
+        // }
     }
 
     mounted(){

@@ -15,7 +15,8 @@
     "types": [
       "webpack-env",
       "jest",
-      "vuetify"
+      "vuetify",
+      "youtube"
     ],
     "typeRoots": [
       "./node_modules/@types",

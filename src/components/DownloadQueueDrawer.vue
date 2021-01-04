@@ -184,6 +184,7 @@ export default class DownloadQueueDrawer extends Vue {
         );
 
         myIpcRenderer.receive("item-downloaded", (data: ItemStruct) => {
+            window.log.info(`Behold, video ${data} downloaded`);
             this.isDownloading = false;
             const indexToDelete = _.findIndex(this.videoDownloading, function (
                 x

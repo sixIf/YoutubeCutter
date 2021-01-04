@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '@/views/Home.vue'
 import ChannelDashboard from '@/views/ChannelDashboard.vue'
+import VideoEditor from '@/views/VideoEditor.vue'
 import SearchChannel from '@/views/SearchChannel.vue'
 import SearchVideos from '@/views/SearchVideos.vue'
 import Help from '@/views/Help.vue'
@@ -22,6 +23,11 @@ const routes: Array<RouteConfig> = [
         path: '/',
         name: 'home',
         component: Home
+    },
+    {
+        path: '/edit-video/:id',
+        name: 'edit-video',
+        component: VideoEditor
     },
     {
         path: '/search-channel',
