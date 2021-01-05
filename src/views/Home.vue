@@ -12,31 +12,32 @@
                         min-width="200"
                     >
                         <v-container class="fill-height">
-                            <v-row no-gutters justify="center" class="pl-4 pr-4">
-                                <v-col cols="12" align-self="center">
-                                    <v-radio-group v-model="radioGroup" row>
-                                        <v-radio
-                                            v-for="item in itemTypes"
-                                            :key="item"
-                                            :label="`${item}`"
-                                            :value="item"
-                                        ></v-radio>
-                                    </v-radio-group>
-                                    
-                                </v-col>
-                                <v-col cols="12">
-                                    <v-text-field 
-                                        class="pl-4 pr-4"
-                                        v-model="ytLink"
-                                        :label="textLabel"
-                                        :hint="hint"
-                                        required
-                                        append-outer-icon="mdi-send"
-                                        @click:append-outer="searchItem" 
-                                    ></v-text-field>
-
-                                </v-col>
-                            </v-row>
+                            <v-form @submit.prevent="searchItem">
+                                <v-row no-gutters justify="center" class="pl-4 pr-4">
+                                    <v-col cols="12" align-self="center">
+                                        <v-radio-group v-model="radioGroup" row>
+                                            <v-radio
+                                                v-for="item in itemTypes"
+                                                :key="item"
+                                                :label="`${item}`"
+                                                :value="item"
+                                            ></v-radio>
+                                        </v-radio-group>
+                                        
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field 
+                                            class="pl-4 pr-4"
+                                            v-model="ytLink"
+                                            :label="textLabel"
+                                            :hint="hint"
+                                            required
+                                            append-outer-icon="mdi-send"
+                                            @click:append-outer="searchItem" 
+                                        ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                            </v-form>
                         </v-container>
                     </v-card>
                 </v-col>
@@ -46,10 +47,10 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import { MenuDependency, MenuItems, YOUTUBE_SERVICE } from '@/config/litterals';
+import { YOUTUBE_SERVICE } from '@/config/litterals';
 import { IYoutubeService } from '@/services/youtubeService';
-import _ from 'lodash';
 import { Component, Inject, Vue } from "vue-property-decorator";
+const { log } = window;
 
 // Define the component in class-style
 @Component
@@ -75,8 +76,13 @@ export default class Home extends Vue {
         }
     }
 
-    searchItem(){
-        this.$router.push({name: 'edit-video', params: { id: this.youtubeService.extractVideoIdFromUrl(this.ytLink) }})
+    async searchItem(){
+        try {
+            const videoId = await this.youtubeService.getVideoIdFromUrl(this.ytLink);
+            this.$router.push({name: 'edit-video', params: { id: videoId }})
+        } catch (err) {
+            log.error(err);
+        }
     }
 }
 </script>

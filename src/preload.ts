@@ -13,7 +13,7 @@ contextBridge.exposeInMainWorld(
     {
         invoke: (channel: string, data: any) => {
             // whitelist channels
-            let validChannels = ["getVideoInfo", "getCurrentWindow", "getPlaylistVideos"];
+            let validChannels = ["getVideoInfo", "getPlaylistVideos", "getVideoIdFromUrl"];
             if (validChannels.includes(channel)) {
                 return ipcRenderer.invoke(channel, data);
             }

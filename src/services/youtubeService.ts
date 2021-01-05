@@ -1,16 +1,12 @@
 import { IYoutubeClient } from "@/api/youtubeClient";
 import { injectable, inject } from "tsyringe";
-import { ChannelInfos, ApiVideoById, ApiChannelInfos, TestApiKey, ApiChannelMainPlaylist, ApiChannelPlaylists, ChannelMainPlaylist, ApiVideoInPlaylist, ItemStruct, ItemFetched, VideoFetched, ApiYoutubeThumbnail } from '@/config/litterals/index'
+import ytdl from "ytdl-core";
 
 export interface IYoutubeService {
-    findVideo(videoUrl: string): Promise<any>;
+    findVideo(videoId: string): Promise<ytdl.videoInfo>;
     findPlaylist(playlistUrl: string): Promise<any>;
     findChannel(channelUrl: string): Promise<any>;
-    extractVideoIdFromUrl(videoUrl: string): string;
-    
-    // formatVideo(apiResponse: ApiVideoById): VideoFetched;
-    // formatVideoList(apiResponse: ApiVideoInPlaylist): ItemFetched;
-    // formatChannelInfos(apiResponse: ApiChannelInfos): ChannelInfos;
+    getVideoIdFromUrl(videoUrl: string): Promise<string>;
 }
 
 @injectable()
@@ -18,9 +14,16 @@ export class YoutubeService implements IYoutubeService {
 
 
     constructor(@inject("IYoutubeClient") private youtubeClient: IYoutubeClient) { }
-    findVideo(videoUrl: string): Promise<any> {
-        throw new Error("Method not implemented.");
+    async getVideoIdFromUrl(videoUrl: string): Promise<string> {
+        const response = await this.youtubeClient.getVideoIdFromUrl(videoUrl);
+        return response;
     }
+
+    async findVideo(videoId: string): Promise<ytdl.videoInfo> {
+        const response = await this.youtubeClient.findVideo(videoId);
+        return response;
+    }
+
     findPlaylist(playlistUrl: string): Promise<any> {
         throw new Error("Method not implemented.");
     }

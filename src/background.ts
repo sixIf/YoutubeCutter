@@ -10,17 +10,17 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
 // import { appMainPath } from '@/helpers/pathHelper'
-import {downloadItems, getPlaylistInfo, getVideoInfo} from '@/helpers/ytDownloaderHelper'
-import { DownloadRequest, ItemStruct } from '@/config/litterals/index'
+import { DownloadRequest } from '@/config/litterals/index'
 import fs from 'fs'
 import { availableLocales } from "./config/litterals/i18n";
-import { clickInfo } from "./config/litterals/youtube";
 import { DownloadService } from "./services/downloadService";
+import ytdl from "ytdl-core";
+import { youtubeVideoUrl } from "./config/litterals/youtube";
+import ytpl from "ytpl";
 const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: BrowserWindow | null
-let youtubeWin: BrowserWindow | null
 const loggerService = ApplicationContainer.resolve(LoggerService);
 
 
@@ -139,30 +139,10 @@ function createWindow() {
         win = null
     })
 
+    // Disable opening a new window
     win.webContents.on('new-window', async (event, url, frameName, disposition, options, additionalFeatures) => {
         event.preventDefault()
-        if (!youtubeWin) {
-          Object.assign(options, {
-            modal: false,
-            title: "Youtube",
-            frame: true,
-            width: 855,
-            height: 655,
-            webPreferences: {
-                preload: path.join(__dirname, "preloadYoutube.js"),
-            },
-            x: 855,
-            y: 0,
-            show: false
-          })
-          event.newGuest = new BrowserWindow(options);
-          youtubeWin = event.newGuest;
-          await youtubeWin.loadURL(url, {})
-          youtubeWin.show();
-        } else {
-            loggerService.error("Window already exists !")
-        }
-      })
+    })
 }
 
 // Quit when all windows are closed.
@@ -226,22 +206,35 @@ ipcMain.on("open-shell", (event, args: string) => {
     }
 });
 
-ipcMain.handle("getVideoInfo", async (event, args: string) => {
-    try {
-        const returnValue = await getVideoInfo(args);
-        return returnValue;
-    } catch (err) {
-        loggerService.error(err)
-        return {
-            type: "error",
-            error: err
-        }
-    }
+ipcMain.handle("getVideoInfo", async (event, videoId: string) => {
+    return ytdl.getInfo(`${youtubeVideoUrl}${videoId}`);
+    // try {
+    //     const returnValue = await ytdl.getInfo(`${youtubeVideoUrl}${videoId}`);
+    //     return returnValue;
+    // } catch (err) {
+    //     loggerService.error(err)
+    //     return {
+    //         type: "error",
+    //         error: err
+    //     }
+    // }
 });
 
-ipcMain.handle("getPlaylistVideos", async (event, args: string) => {
+ipcMain.handle("getVideoIdFromUrl", (event, url: string) => {
+    return new Promise( (resolve, reject) => {
+        try {
+            const returnValue = ytdl.getURLVideoID(url);
+            resolve(returnValue);
+        } catch (err) {
+            loggerService.error(err)
+            reject(err);
+        }
+    })
+});
+
+ipcMain.handle("getPlaylistVideos", async (event, playlistId: string) => {
     try {
-        const returnValue = await getPlaylistInfo(args, { limit: Infinity });
+        const returnValue = await ytpl(playlistId, { limit: Infinity });
         return returnValue;
     } catch (err) {
         loggerService.error(err)
@@ -269,8 +262,6 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
         }
         const output = path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle);
         new DownloadService(args, output, win);
-        // for (let i = 0; i < WORKER_NUMBER; i++)
-        //     downloadItems(args, output, win);
     } else {
         loggerService.info('There is no download folder set, wow..')
     }
@@ -307,43 +298,11 @@ function goChannelPlaylist (menuItem: MenuItem) {
         });
 }
 
-
-ipcMain.on("open-context-menu", async (event, args: clickInfo) => {
+// Todo handle right click to paste
+ipcMain.on("open-context-menu", async (event, args: any) => {
     let {videoID, channelID, playlistID} = args;
     const menu = new Menu()
     const currentBrowserWindow = BrowserWindow.getFocusedWindow()!;
-
-    // Get the channelID if we clicked on playlist or video
-    if (videoID){ 
-        menu.append(new MenuItem({ id: videoID, label: 'Add video', click(menuItem) { addVideo(menuItem) } }))
-        menu.append(new MenuItem({ type: 'separator' }))
-        try {
-            const videoInfos = await getVideoInfo(videoID);
-            channelID = videoInfos.videoDetails.channelId;
-        } catch (err) {
-            loggerService.error(err);
-        }
-        menu.popup({ window: currentBrowserWindow })
-    }
-    else if (playlistID) {
-        try {
-            const playlistInfo = await getPlaylistInfo(playlistID);
-            channelID = playlistInfo.author.channelID;
-        } catch (err) {
-            loggerService.error(err);
-        }
-        menu.append(new MenuItem({ id: playlistID.concat(`/${channelID}`), label: 'Open playlist in app', click(menuItem) { goChannelPlaylist(menuItem) } }))
-        menu.append(new MenuItem({ type: 'separator' }))
-        menu.popup({ window: currentBrowserWindow })
-    }
-    
-    // Display pop up and append Open channel menu
-    if (channelID) {
-        menu.append(new MenuItem({ id: channelID, label: 'Open channel in app', click(menuItem) { goChannelUploads(menuItem) } }))
-        menu.popup({ window: currentBrowserWindow })
-    }
-
-    loggerService.info(`${args.videoID} ${args.channelID} ${args.playlistID}`)
 });
 
 

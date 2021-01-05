@@ -1,21 +1,22 @@
-import axios from 'axios'
-import { IApiKeyService } from '@/services/apiKeyService'
-import { injectable, inject } from "tsyringe";
-import { ApiChannelInfos, ApiVideoById, TestApiKey, ApiChannelMainPlaylist, ApiVideoInPlaylist, ApiChannelPlaylists } from '@/config/litterals/index'
+import { injectable } from "tsyringe";
+import ytdl from 'ytdl-core';
 
 export interface IYoutubeClient {
-  findVideo(videoUrl: string): Promise<any>;
+  findVideo(videoId: string): Promise<ytdl.videoInfo>;
   findPlaylist(playlistUrl: string): Promise<any>;
   findChannel(channelUrl: string): Promise<any>;
-
+  getVideoIdFromUrl(videoUrl: string): Promise<string>;
 }
 
 @injectable()
 export class YoutubeClient implements IYoutubeClient {
 
-  constructor(@inject("IApiKeyService") private apiKeyAccessor: IApiKeyService) { }
-  async findVideo(videoUrl: string): Promise<any> {
-    return window.myIpcRenderer.invoke("getVideoInfo", videoUrl);
+  getVideoIdFromUrl(videoUrl: string): Promise<string> {
+    return window.myIpcRenderer.invoke("getVideoIdFromUrl", videoUrl);
+  }
+
+  async findVideo(videoId: string): Promise<ytdl.videoInfo> {
+    return window.myIpcRenderer.invoke("getVideoInfo", videoId);
   }
 
   findPlaylist(playlistUrl: string): Promise<any> {

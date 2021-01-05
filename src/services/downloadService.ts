@@ -5,15 +5,14 @@
 import path from 'path';
 import fs from 'fs';
 import ytdl from 'ytdl-core';
-import ytpl from 'ytpl';
 import { ItemStruct, ItemDownloading, DownloadRequest, SlicedYoutube } from '@/config/litterals/index'
 import sanitize from 'sanitize-filename'
 import { BrowserWindow } from 'electron';
 import _ from 'lodash';
-import { generateUniqueId } from '../helpers/stringHelper';
 import { ApplicationContainer } from '../di';
 import { LoggerService } from "../services/loggerService"
 import { FfmpegService } from './ffmpegService';
+import { youtubeVideoUrl } from '@/config/litterals/youtube';
 
 export interface IDownloadService {
     downloadAudio(item: ItemStruct, output: string): Promise<string>;
@@ -102,7 +101,7 @@ export class DownloadService implements IDownloadService {
 
     downloadAudio(item: ItemStruct, output: string): Promise<string> {
         return new Promise( (resolve, reject) => {
-            const url = `https://www.youtube.com/watch?v=${item.id}`;
+            const url = `${youtubeVideoUrl}${item.id}`;
             const audio = ytdl(url, { quality: 'highestaudio' });
 
             audio.on('error', (err) => reject(err))
@@ -116,7 +115,7 @@ export class DownloadService implements IDownloadService {
 
     downloadVideo(item: ItemStruct, output: string): Promise<string> {
         return new Promise( (resolve, reject) => {
-            const url = `https://www.youtube.com/watch?v=${item.id}`;
+            const url = `${youtubeVideoUrl}${item.id}`;
             const video = ytdl(url, { quality: 'highestvideo' });
             
             video.on('error', (err) => reject(err))

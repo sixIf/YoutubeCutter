@@ -54,16 +54,21 @@ export default class YoutubePlayer extends Vue {
     }
 
     onPlayerReady(event: any) {
-        this.player.playVideo();
+        // this.player.playVideo();
         console.log(this.player.getDuration())
         console.log(formatTime(this.player.getDuration()));
     }
 
     onPlayerStateChange(event: any) {
-        if (event.data == YT.PlayerState.PLAYING && !this.done) {
+        console.log(`current time ${this.player.getCurrentTime()}`)
+        if (event.data == YT.PlayerState.PAUSED) {
+            this.$emit("player-paused", this.player.getCurrentTime())
+        }
+
+        // if (event.data == YT.PlayerState.PLAYING && !this.done) {
             // setTimeout(this.stopVideo, 6000);
             // this.done = true;
-        }
+        // }
     }
 
     stopVideo() {
