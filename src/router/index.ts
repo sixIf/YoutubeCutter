@@ -1,13 +1,9 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '@/views/Home.vue'
-import ChannelDashboard from '@/views/ChannelDashboard.vue'
 import VideoEditor from '@/views/VideoEditor.vue'
-import SearchChannel from '@/views/SearchChannel.vue'
-import SearchVideos from '@/views/SearchVideos.vue'
 import Help from '@/views/Help.vue'
 import Settings from '@/views/Settings.vue'
-import { ApiKeyService } from "@/services/apiKeyService"
 import { DownloadFolderService } from "@/services/downloadFolderService"
 import { ApplicationContainer } from "@/di/index"
 
@@ -30,16 +26,6 @@ const routes: Array<RouteConfig> = [
         component: VideoEditor
     },
     {
-        path: '/search-channel',
-        name: 'search-channel',
-        component: SearchChannel
-    },
-    {
-        path: '/search-videos',
-        name: 'search-videos',
-        component: SearchVideos
-    },
-    {
         path: '/help',
         name: 'help',
         component: Help
@@ -48,12 +34,7 @@ const routes: Array<RouteConfig> = [
         path: '/settings',
         name: 'settings',
         component: Settings
-    },
-    {
-        path: '/channel/:id/:playlistId?',
-        name: 'channel-view',
-        component: ChannelDashboard,
-    },
+    }
 ]
 
 const router = new VueRouter({

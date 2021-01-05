@@ -46,7 +46,6 @@
 import { Component, Vue } from "vue-property-decorator";
 import DownloadQueueDrawer from "@/components/DownloadQueueDrawer.vue";
 import { DownloadRequest } from "./config/litterals";
-import { clickInfo } from "./config/litterals/youtube";
 const { myIpcRenderer } = window;
 
 // Define the component in class-style
