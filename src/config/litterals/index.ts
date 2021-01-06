@@ -59,15 +59,3 @@ export interface SlicedYoutube {
     readonly duration: string;
     readonly name: string;
 }
-
-export interface MenuItems {
-    readonly dependency: number;
-    readonly name: string;
-    readonly route: string;
-    readonly hint?: string;
-}
-export enum MenuDependency {
-    NONE = 0,
-    API,
-    CHANNEL,
-}

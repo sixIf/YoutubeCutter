@@ -5,7 +5,7 @@ declare const __static: string;
 import "reflect-metadata"
 import { ApplicationContainer } from './di';
 import { LoggerService } from "./services/loggerService"
-import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, autoUpdater, MenuItem } from 'electron'
+import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, autoUpdater, MenuItem, globalShortcut } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -91,8 +91,8 @@ function createWindow() {
     let tray: Tray | null = null;
 
     win = new BrowserWindow({
-        width: 855,
-        height: 655,
+        width: 1155,
+        height: 955,
         minWidth: 800,
         x: 0,
         y: 0,
@@ -103,7 +103,8 @@ function createWindow() {
             nodeIntegration: (process.env
                 .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
             preload: path.join(__dirname, "preload.js"),
-            contextIsolation: true
+            contextIsolation: true,
+            devTools: isDevelopment
         },
         show: false,
         /* global __static */
@@ -192,8 +193,20 @@ app.on('ready', async () => {
 
         // Create win, load the rest of the app, etc...
         app.whenReady().then(() => {
+            const ret = globalShortcut.register('CommandOrControl+R', () => {
+                loggerService.info('CommandOrControl+R is disabled')
+            })    
+            
+            if (!ret) {
+                loggerService.error('globalShortcut.register(CommandOrControl+R) failed')
+            }            
             createWindow()
         })
+
+        app.on('will-quit', () => {
+            // Supprime tous les raccourcis.
+            globalShortcut.unregisterAll()
+        })        
     }
 })
 

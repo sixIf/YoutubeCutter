@@ -1,7 +1,7 @@
 <template>
     <div>
-        <v-card class="elevation-12">
-            <v-toolbar color="primary" dark flat>
+        <v-card class="elevation-12 card">
+            <v-toolbar color="secondary" dark flat>
                 <v-toolbar-title>{{__("Settings.title")}}</v-toolbar-title>
                 <v-spacer></v-spacer>
             </v-toolbar>
