@@ -11,11 +11,16 @@ import { YoutubeService } from '@/services/youtubeService'
 import { DownloadFolderService } from '@/services/downloadFolderService'
 import { YOUTUBE_SERVICE, DOWNLOAD_FOLDER_SERVICE } from '@/config/litterals'
 import { ApplicationContainer } from '@/di/index'
+import Vuex from 'vuex'
+import store from './store/store'
+
+Vue.use(Vuex);
 
 Vue.config.productionTip = false;
 Vue.prototype.$__ = window.i18n.translate;
 
 new Vue({
+    store: store,
     router,
     vuetify,
     provide: {

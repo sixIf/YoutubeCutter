@@ -58,4 +58,5 @@ export interface SlicedYoutube {
     readonly startTime: string;
     readonly duration: string;
     readonly name: string;
+    readonly isFullContent: boolean;
 }

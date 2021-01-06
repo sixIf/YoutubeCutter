@@ -31,7 +31,7 @@ const { log } = window;
 export default class VideoEditor extends Vue {
     @Inject(YOUTUBE_SERVICE)
     youtubeService!: YoutubeService;
-    videoInfo: ytdl.videoInfo | null = null;
+    // videoInfo: ytdl.videoInfo | null = null;
     currentTime = 0;
 
     updateCurrentTime(currentTime: number) {
@@ -41,7 +41,7 @@ export default class VideoEditor extends Vue {
     async getVideoInfo(){
         try {
             const videoInfo = await this.youtubeService.findVideo(this.videoId);
-            this.videoInfo = videoInfo;
+            this.$store.commit('fetchedVideosState/setSelectedVideo', videoInfo)
         } catch (err) {
             log.error(err);
         }
