@@ -5,7 +5,7 @@
 import path from 'path';
 import fs from 'fs';
 import ytdl from 'ytdl-core';
-import { ItemStruct, ItemDownloading, DownloadRequest, SlicedYoutube } from '@/config/litterals/index'
+import { VideoDetail, ItemDownloading, DownloadRequest, SlicedYoutube } from '@/config/litterals/index'
 import sanitize from 'sanitize-filename'
 import { BrowserWindow } from 'electron';
 import _ from 'lodash';
@@ -15,9 +15,9 @@ import { FfmpegService } from './ffmpegService';
 import { youtubeVideoUrl } from '@/config/litterals/youtube';
 
 export interface IDownloadService {
-    downloadAudio(item: ItemStruct, output: string): Promise<string>;
-    downloadVideo(item: ItemStruct, output: string): Promise<string>;
-    handleItem(item: ItemStruct): void;
+    downloadAudio(item: VideoDetail, output: string): Promise<string>;
+    downloadVideo(item: VideoDetail, output: string): Promise<string>;
+    handleItem(item: VideoDetail): void;
     deleteTempFiles(files: string[]): void;
     initDownload(): void;
     pause(): void;
@@ -68,7 +68,7 @@ export class DownloadService implements IDownloadService {
      * Handle item's download lifecycle
      * @param item what we want to download
      */
-    async handleItem(item: ItemStruct) {
+    async handleItem(item: VideoDetail) {
         const audioPath = path.resolve(this.output, sanitize(`TEMP_audio_${item.downloadTry}_${item.title}.mp4`));
         const videoPath = path.resolve(this.output, sanitize(`TEMP_video_${item.downloadTry}_${item.title}.mp4`));
         const mergedOutputPath = path.resolve(this.output, `${item.title}.mp4`);
@@ -99,7 +99,7 @@ export class DownloadService implements IDownloadService {
         DownloadService.activeWorkers--;
     }
 
-    downloadAudio(item: ItemStruct, output: string): Promise<string> {
+    downloadAudio(item: VideoDetail, output: string): Promise<string> {
         return new Promise( (resolve, reject) => {
             const url = `${youtubeVideoUrl}${item.id}`;
             const audio = ytdl(url, { quality: 'highestaudio' });
@@ -113,7 +113,7 @@ export class DownloadService implements IDownloadService {
         })  
     }
 
-    downloadVideo(item: ItemStruct, output: string): Promise<string> {
+    downloadVideo(item: VideoDetail, output: string): Promise<string> {
         return new Promise( (resolve, reject) => {
             const url = `${youtubeVideoUrl}${item.id}`;
             const video = ytdl(url, { quality: 'highestvideo' });
@@ -152,7 +152,7 @@ export class DownloadService implements IDownloadService {
         return this.downloadRequest.itemSelected.length;
     }
 
-    private onItemProgress(chunkLength: number, downloaded: number, total: number, type: string, videoDownloading: ItemStruct){
+    private onItemProgress(chunkLength: number, downloaded: number, total: number, type: string, videoDownloading: VideoDetail){
         const percent = downloaded / total;
         let objectToSend: ItemDownloading = {
             progressAudio: type == 'audio' ? `${(percent * 100).toFixed(2)}` : '100',

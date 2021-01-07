@@ -193,13 +193,15 @@ app.on('ready', async () => {
 
         // Create win, load the rest of the app, etc...
         app.whenReady().then(() => {
-            const ret = globalShortcut.register('CommandOrControl+R', () => {
-                loggerService.info('CommandOrControl+R is disabled')
-            })    
-            
-            if (!ret) {
-                loggerService.error('globalShortcut.register(CommandOrControl+R) failed')
-            }            
+            if(!isDevelopment){
+                const ret = globalShortcut.register('CommandOrControl+R', () => {
+                    loggerService.info('CommandOrControl+R is disabled')
+                })    
+                
+                if (!ret) {
+                    loggerService.error('globalShortcut.register(CommandOrControl+R) failed')
+                }            
+            }
             createWindow()
         })
 
@@ -221,16 +223,6 @@ ipcMain.on("open-shell", (event, args: string) => {
 
 ipcMain.handle("getVideoInfo", async (event, videoId: string) => {
     return ytdl.getInfo(`${youtubeVideoUrl}${videoId}`);
-    // try {
-    //     const returnValue = await ytdl.getInfo(`${youtubeVideoUrl}${videoId}`);
-    //     return returnValue;
-    // } catch (err) {
-    //     loggerService.error(err)
-    //     return {
-    //         type: "error",
-    //         error: err
-    //     }
-    // }
 });
 
 ipcMain.handle("getVideoIdFromUrl", (event, url: string) => {
@@ -245,17 +237,13 @@ ipcMain.handle("getVideoIdFromUrl", (event, url: string) => {
     })
 });
 
+ipcMain.handle("getPlaylistIdFromUrl", (event, url: string) => {
+    loggerService.info('Aloja')
+    return ytpl.getPlaylistID(url);
+});
+
 ipcMain.handle("getPlaylistVideos", async (event, playlistId: string) => {
-    try {
-        const returnValue = await ytpl(playlistId, { limit: Infinity });
-        return returnValue;
-    } catch (err) {
-        loggerService.error(err)
-        return {
-            type: "error",
-            error: err
-        }
-    }
+    return ytpl(playlistId, { limit: Infinity });
 });
 
 ipcMain.on("select-folder", (event, args: string) => {

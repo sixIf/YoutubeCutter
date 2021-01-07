@@ -1,6 +1,6 @@
-import { ItemStruct } from "@/config/litterals";
+import { VideoDetail } from "@/config/litterals";
 
 export interface FetchedVideosState {
-    selectedVideo: ItemStruct;
-    fetchedVideos: ItemStruct[];
+    selectedVideo: VideoDetail;
+    fetchedVideos: VideoDetail[];
 } 

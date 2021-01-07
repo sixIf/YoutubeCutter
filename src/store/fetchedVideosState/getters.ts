@@ -1,13 +1,13 @@
 import { GetterTree } from 'vuex';
 import { FetchedVideosState } from './types';
 import { RootState } from '../types';
-import { ItemStruct } from '@/config/litterals';
+import { VideoDetail } from '@/config/litterals';
 
 export const getters: GetterTree<FetchedVideosState, RootState> = {
-    getSelectedVideo(state): ItemStruct{
+    getSelectedVideo(state): VideoDetail{
         return state.selectedVideo;
     },
-    getFetchedVideos(state): ItemStruct[]{
+    getFetchedVideos(state): VideoDetail[]{
         return state.fetchedVideos;
     }
 };

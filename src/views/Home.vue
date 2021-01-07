@@ -1,45 +1,75 @@
 <template>
-        <v-container class="fill-height" fluid>
-            <v-row no-gutters justify="center">
-                <v-col cols="6" lg="5">
-                    <v-card 
-                        flat
-                        shaped
-                        class="card"
-                        elevation="10"
-                        height="180"
-                        min-height="150"
-                        min-width="200"
-                    >
-                        <v-container class="fill-height">
-                            <v-form @submit.prevent="searchItem">
-                                <v-row no-gutters justify="center" class="pl-4 pr-4">
-                                    <v-col cols="12" align-self="center">
-                                        <v-radio-group v-model="radioGroup" row>
-                                            <v-radio
-                                                v-for="item in itemTypes"
-                                                :key="item"
-                                                :label="`${item}`"
-                                                :value="item"
-                                            ></v-radio>
-                                        </v-radio-group>
-                                        
-                                    </v-col>
-                                    <v-col cols="12">
+        <v-container fluid>
+            <v-row no-gutters fill-height align="start" justify="start">
+                <v-col cols="6">
+                    <v-card class="card">
+                        <v-container>
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-form @submit.prevent="searchItem">
                                         <v-text-field 
-                                            class="pl-4 pr-4"
                                             v-model="ytLink"
                                             :label="textLabel"
                                             :hint="hint"
+                                            filled
+                                            rounded
+                                            dense
+                                            class="card"
                                             required
                                             append-outer-icon="mdi-send"
                                             @click:append-outer="searchItem" 
                                         ></v-text-field>
-                                    </v-col>
-                                </v-row>
-                            </v-form>
+                                    </v-form>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12">
+                                    <videos-list :videoList="videoList"></videos-list>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="4">
+                                    <v-text-field
+                                        v-model="downloadFolder"
+                                        :label="selectFolderLabel"
+                                        :hint="selectFolderHint"
+                                        persistent-hint
+                                        @click="selectDownloadFolder"    
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="4">
+                                    <v-select
+                                        v-model="selectedFormat"
+                                        :items="availableFormats"
+                                        item-text="text"
+                                        :hint="selectFormatHint"
+                                        :label="selectFormatLabel"
+                                        return-object
+                                        persistent-hint
+                                    ></v-select>
+                                </v-col>
+                                <v-col cols="4" align-self="center">
+                                    <v-btn
+                                        color="primary"
+                                        @click="downloadItems"
+                                    >{{ downloadButtonLabel }}</v-btn>
+                                </v-col>
+                            </v-row>
                         </v-container>
                     </v-card>
+                </v-col>
+                <v-col cols="6">
+                    <v-container no-gutters fluid style="padding-top: 0px">
+                        <v-row justify="center">
+                            <youtube-player 
+                                :videoId="currentVideoId"
+                                @player-paused="updateCurrentTime"
+                            ></youtube-player>
+                            <v-col cols="12">
+                                <!-- Slice manager -->
+                            </v-col>
+                        </v-row>
+                    </v-container>
                 </v-col>
             </v-row>
         </v-container>
@@ -47,43 +77,135 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import { YOUTUBE_SERVICE } from '@/config/litterals';
-import { IYoutubeService } from '@/services/youtubeService';
 import { Component, Inject, Vue } from "vue-property-decorator";
-const { log } = window;
+import { Getter } from 'vuex-class';
+import { DOWNLOAD_FORMATS, VideoDetail, YOUTUBE_SERVICE } from '@/config/litterals';
+import { IYoutubeService } from '@/services/youtubeService';
+import YoutubePlayer from '@/components/YoutubePlayer.vue'
+import VideosList from '@/components/VideosList.vue'
+
+import _ from 'lodash';
+const { log, i18n } = window;
 
 // Define the component in class-style
-@Component
+@Component({
+    components: {
+        YoutubePlayer,
+        VideosList
+    }
+})
 export default class Home extends Vue {
     @Inject(YOUTUBE_SERVICE)
     youtubeService!: IYoutubeService;
+    @Getter('fetchedVideosState/getFetchedVideos') videoList!: VideoDetail[];
+    @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
     ytLink = "";
-    itemTypes = ["Video", "Playlist", "Channel"]
-    radioGroup = "Video";
-    
-    get textLabel(){
-        return `${this.radioGroup}`
+    downloadFolder = "";
+    selectedFormat = this.availableFormats[0];
+    currentTime = 0;
+
+    updateCurrentTime(currentTime: number) {
+        this.currentTime = currentTime;
     }
 
-    get hint(){
-        switch(this.radioGroup) {
-            case "Playlist":
-                return 'https://www.youtube.com/playlist?list=PLRBp0Fe2GpgmbpTy0fNGpoEtEzcDJ1IgQ';
-            case "Channel":
-                return 'https://www.youtube.com/user/NoCopyrightSounds';
-            default:
-                return "https://www.youtube.com/watch?v=jNQXAC9IVRw";
+    downloadItems(){
+        log.info('Start download');
+    }
+
+    selectDownloadFolder() {
+        window.myIpcRenderer.send("select-folder", {});
+    }
+
+    addVideoToList(video: VideoDetail){
+        const videoIndexInList = _.findIndex(this.videoList, (value) => {
+            return value.id == video.id
+        })
+
+        if (videoIndexInList == -1) {
+            this.$store.commit('fetchedVideosState/setSingleFetchedVideo', video);
         }
     }
 
+    /**
+     * search order : Video - Playlist / Channel
+     */
     async searchItem(){
         try {
             const videoId = await this.youtubeService.getVideoIdFromUrl(this.ytLink);
-            this.$router.push({name: 'edit-video', params: { id: videoId }})
+            const videoFound = await this.youtubeService.findVideo(videoId);
+            this.addVideoToList(videoFound);
+            this.ytLink = "";
         } catch (err) {
+            try {
+                log.info('On cherche playlist')
+                const playlistId = await this.youtubeService.getPlaylistIdFromUrl(this.ytLink);
+                log.info(`playlistID: ${playlistId}`)
+                const videoInPlaylist = await this.youtubeService.findPlaylistVideos(playlistId);
+                videoInPlaylist.forEach((video) => this.addVideoToList(video));
+            } catch (err) {
+                log.error(err);
+            }
             log.error(err);
+        } finally {
+            this.ytLink = "";
         }
     }
+
+    mounted() {
+        console.log(this.videoList)
+        window.myIpcRenderer.receive(
+            "selected-folder",
+            (data: string[] | undefined) => {
+                if (data) {
+                    this.downloadFolder = data[0];
+                }
+            }
+        );
+    }
+    
+    /**
+     * Getters
+     */
+    get availableFormats(){
+        return DOWNLOAD_FORMATS.map((format) => {
+            return {
+                text: `${i18n.translate(format.type).concat(` (${format.value})`)}`,
+                value: format.value
+            }
+        });
+    }
+
+    get currentVideoId(){
+        return this.selectedVideo.id;
+    }
+    
+    get textLabel(){
+        return `${i18n.translate("Video, Playlist or channel URL")}`
+    }
+
+    get hint(){
+        return "https://www.youtube.com/watch?v=jNQXAC9IVRw";
+    }
+
+    get selectFormatHint(){
+        return `Choose the format for the download`;
+    }
+
+    get selectFormatLabel(){
+        return i18n.translate('Format');
+    }
+
+    get selectFolderHint(){
+        return `Choose where to save the download`;
+    }
+
+    get selectFolderLabel(){
+        return i18n.translate('Download Folder');
+    }
+
+    get downloadButtonLabel(){
+        return i18n.translate('Download.button');
+    }    
 }
 </script>
 <style>

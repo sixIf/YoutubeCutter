@@ -1,16 +1,13 @@
 <template>
-    <div>
-        <div id="player"></div>
-        <v-btn @click="startDl">Download</v-btn>
-    </div>
+    <div id="player"></div>
 </template>
     
 
 <script lang="ts">
 /* eslint-disable no-undef */
-import { Component, Vue, Prop, Inject } from "vue-property-decorator";
+import { Component, Vue, Prop, Inject, Watch } from "vue-property-decorator";
 import { formatTime } from "@/utils/time"
-import { DownloadRequest, DOWNLOAD_FOLDER_SERVICE, ItemStruct } from "@/config/litterals";
+import { DownloadRequest, DOWNLOAD_FOLDER_SERVICE, VideoDetail } from "@/config/litterals";
 import { generateUniqueId } from "@/helpers/stringHelper";
 import { IDownloadFolderService } from "@/services/downloadFolderService";
 const { myIpcRenderer } = window;
@@ -22,6 +19,13 @@ export default class YoutubePlayer extends Vue {
     @Prop({ default: "" }) videoId!: string;
     player!: YT.Player;
     done = false;
+
+    @Watch('videoId')
+    onVideoIdChanged(newId: string){
+        if (newId && this.player) {
+            this.player.loadVideoById(newId)
+        }
+    }
 
     initPlayer() {
         this.player = new YT.Player("player", {
@@ -36,7 +40,7 @@ export default class YoutubePlayer extends Vue {
     }
 
     startDl(){
-        const videoSelected: ItemStruct = {
+        const videoSelected: VideoDetail = {
             id: this.videoId,
             title: 'Test',
             thumbnail: 'balec',

@@ -132,7 +132,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import * as _ from "lodash";
 import {
-    ItemStruct,
+    VideoDetail,
     ItemDownloading,
     DownloadRequest,
 } from "@/config/litterals";
@@ -183,7 +183,7 @@ export default class DownloadQueueDrawer extends Vue {
             }
         );
 
-        myIpcRenderer.receive("item-downloaded", (data: ItemStruct) => {
+        myIpcRenderer.receive("item-downloaded", (data: VideoDetail) => {
             window.log.info(`Behold, video ${data} downloaded`);
             this.isDownloading = false;
             const indexToDelete = _.findIndex(this.videoDownloading, function (

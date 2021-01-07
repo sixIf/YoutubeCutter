@@ -26,7 +26,7 @@ export interface DownloadRequest {
     readonly audioOnly: boolean;
     readonly channelTitle: string;
     readonly playlistTitle: string;
-    readonly itemSelected: Array<ItemStruct>;
+    readonly itemSelected: Array<VideoDetail>;
     readonly downloadFolder: string | null;
 }
 
@@ -40,10 +40,10 @@ export interface ItemDownloading {
     progressVideo: string;
     readonly type: string;
     readonly audioOnly: boolean;
-    readonly video: ItemStruct;
+    readonly video: VideoDetail;
 }
 
-export interface ItemStruct {
+export interface VideoDetail {
     readonly id: string;
     readonly title: string;
     readonly thumbnail: string;
@@ -60,3 +60,19 @@ export interface SlicedYoutube {
     readonly name: string;
     readonly isFullContent: boolean;
 }
+
+export interface AvailableFormats {
+    type: "video" | "audio";
+    value: string;
+}
+
+export const DOWNLOAD_FORMATS: AvailableFormats[] = [
+    {
+        type: 'video',
+        value: 'mp4'
+    },
+    {
+        type: 'audio',
+        value: 'mp3'
+    },
+]

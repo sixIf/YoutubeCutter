@@ -41,7 +41,7 @@
 import { Component, Inject, Prop, Vue } from "vue-property-decorator";
 import {
     YOUTUBE_SERVICE,
-    ItemStruct,
+    VideoDetail,
     ERROR_TYPES,
     DownloadRequest,
     DOWNLOAD_FOLDER_SERVICE,
@@ -66,7 +66,7 @@ export default class DownloadVideosModal extends Vue {
             return [];
         },
     })
-    videosSelected!: ItemStruct[];
+    videosSelected!: VideoDetail[];
     @Prop({ default: "Vrac"}) channelTitle !: string;
     @Prop({ default: ""}) playlistTitle !: string;
     dialog = false;

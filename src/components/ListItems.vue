@@ -88,19 +88,19 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from "vue-property-decorator";
-import { ItemStruct } from "@/config/litterals";
+import { VideoDetail } from "@/config/litterals";
 import _ from "lodash";
 
 @Component
 export default class ListItems extends Vue {
     @Prop({ default: "video" }) itemType!: string;
-    @Prop({ default: [] }) itemList!: ItemStruct[];
+    @Prop({ default: [] }) itemList!: VideoDetail[];
     @Prop({ default: true }) clickEnabled!: boolean;
     @Prop({ default: 80 }) rowHeight!: number;
     @Prop({default: false}) selectAll!: boolean;
 
     itemsIdSelected: Array<string> | string = [];
-    itemsSelected: Array<ItemStruct> = [];
+    itemsSelected: Array<VideoDetail> = [];
 
     /**
      * C'est pas ouf, a chaque fois qu'on change un item on recalcule le tout...
