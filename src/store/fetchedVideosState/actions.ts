@@ -3,4 +3,7 @@ import { FetchedVideosState } from './types';
 import { RootState } from '../types';
 
 export const actions: ActionTree<FetchedVideosState, RootState> = {
+    resetVideosState({ commit }){
+        commit('resetState');
+    }
 };

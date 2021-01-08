@@ -1,4 +1,4 @@
-export const HelpItems: Array<IHelpItems> = [
+export const HelpItems: IHelpItems[] = [
     {
         title: 'What can I do with this app ?',
         message: 'Download videos/playlists from a Youtube channel.'

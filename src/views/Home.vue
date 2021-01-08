@@ -34,6 +34,7 @@
                                         :label="selectFolderLabel"
                                         :hint="selectFolderHint"
                                         persistent-hint
+                                        
                                         @click="selectDownloadFolder"    
                                     ></v-text-field>
                                 </v-col>
@@ -58,8 +59,8 @@
                         </v-container>
                     </v-card>
                 </v-col>
-                <v-col cols="6">
-                    <v-container no-gutters fluid style="padding-top: 0px">
+                <v-col cols="6" v-if="selectedVideo.id">
+                    <v-container no-gutters fluid>
                         <v-row justify="center">
                             <youtube-player 
                                 :videoId="currentVideoId"
@@ -79,13 +80,13 @@
 // @ is an alias to /src
 import { Component, Inject, Vue } from "vue-property-decorator";
 import { Getter } from 'vuex-class';
-import { DOWNLOAD_FORMATS, VideoDetail, YOUTUBE_SERVICE } from '@/config/litterals';
+import { DownloadRequest, DOWNLOAD_FORMATS, VideoDetail, YOUTUBE_SERVICE } from '@/config/litterals';
 import { IYoutubeService } from '@/services/youtubeService';
 import YoutubePlayer from '@/components/YoutubePlayer.vue'
 import VideosList from '@/components/VideosList.vue'
-
 import _ from 'lodash';
-const { log, i18n } = window;
+import { generateUniqueId } from "@/helpers/stringHelper";
+const { log, i18n, myIpcRenderer } = window;
 
 // Define the component in class-style
 @Component({
@@ -109,7 +110,16 @@ export default class Home extends Vue {
     }
 
     downloadItems(){
-        log.info('Start download');
+        const downloadRequest: DownloadRequest = {
+            requestId: generateUniqueId(),
+            audioOnly: false,
+            itemSelected: this.videosToDownload,
+            downloadFolder: this.downloadFolder,
+        };
+
+        myIpcRenderer.send("download-videos", downloadRequest);  
+
+        this.$store.dispatch('fetchedVideosState/resetVideosState');
     }
 
     selectDownloadFolder() {
@@ -136,6 +146,7 @@ export default class Home extends Vue {
             this.addVideoToList(videoFound);
             this.ytLink = "";
         } catch (err) {
+            log.error(err);
             try {
                 log.info('On cherche playlist')
                 const playlistId = await this.youtubeService.getPlaylistIdFromUrl(this.ytLink);
@@ -145,14 +156,13 @@ export default class Home extends Vue {
             } catch (err) {
                 log.error(err);
             }
-            log.error(err);
+            
         } finally {
             this.ytLink = "";
         }
     }
 
     mounted() {
-        console.log(this.videoList)
         window.myIpcRenderer.receive(
             "selected-folder",
             (data: string[] | undefined) => {
@@ -166,6 +176,11 @@ export default class Home extends Vue {
     /**
      * Getters
      */
+
+    get videosToDownload(): VideoDetail[] {
+        return _.filter(this.videoList, (video) => video.toDownload)
+    }
+
     get availableFormats(){
         return DOWNLOAD_FORMATS.map((format) => {
             return {

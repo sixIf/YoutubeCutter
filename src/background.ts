@@ -238,7 +238,6 @@ ipcMain.handle("getVideoIdFromUrl", (event, url: string) => {
 });
 
 ipcMain.handle("getPlaylistIdFromUrl", (event, url: string) => {
-    loggerService.info('Aloja')
     return ytpl.getPlaylistID(url);
 });
 
@@ -253,51 +252,8 @@ ipcMain.on("select-folder", (event, args: string) => {
 
 
 ipcMain.on("download-videos", (event, args: DownloadRequest) => {
-    // Loop over args to download each videos selected
-    const appMainPath = args.downloadFolder;
-    const WORKER_NUMBER = 3;
-    if (appMainPath) {
-        const subDirectory = args.audioOnly ? "Audios" : "Videos";
-        if (!fs.existsSync(path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle))) {
-            fs.mkdirSync(path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle), { recursive: true });
-        }
-        const output = path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle);
-        new DownloadService(args, output, win);
-    } else {
-        loggerService.info('There is no download folder set, wow..')
-    }
+    new DownloadService(args, win);
 });
-
-
-// Create context menu for Youtube Browser window
-
-async function addVideo (menuItem: MenuItem) {
-    const videoID = menuItem.id;
-    loggerService.info(`Voila add  ${videoID}`);
-    if (win)
-        win.webContents.send('add-single-video', videoID);
-}
-
-function goChannelUploads (menuItem: MenuItem) {
-    const channelID = menuItem.id;
-    loggerService.info(`Voila channelID ${channelID}`);
-    if (win)
-        win.webContents.send('explore-channel', {
-            playlistID: undefined,
-            channelID: channelID
-        });
-}
-
-function goChannelPlaylist (menuItem: MenuItem) {
-    const playlistID = menuItem.id.slice(0, menuItem.id.indexOf(`/`));
-    const channelID = menuItem.id.slice(menuItem.id.indexOf(`/`)+1);
-    loggerService.info(`Voila playlistID ${playlistID}`);
-    if (win)
-        win.webContents.send('explore-channel', {
-            playlistID: playlistID,
-            channelID: channelID
-        });
-}
 
 // Todo handle right click to paste
 ipcMain.on("open-context-menu", async (event, args: any) => {

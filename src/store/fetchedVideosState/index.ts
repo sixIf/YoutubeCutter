@@ -5,14 +5,20 @@ import { mutations } from './mutations';
 import { FetchedVideosState } from './types';
 import { RootState } from '../types';
 
-export const state: FetchedVideosState = {
-      selectedVideo: {
-        id: '',
-        thumbnail: '',
-        title: ''
-      },
-      fetchedVideos: []
+export const getDefaultState = (): FetchedVideosState => {
+  return {
+    selectedVideo: {
+      id: '',
+      thumbnail: '',
+      title: '',
+      toDownload: false,
+      sliceList: []
+    },
+    fetchedVideos: []
 };
+}
+
+export const state = getDefaultState();
 
 const namespaced = true;
 

@@ -9,7 +9,7 @@ import { availableLocales } from '@/config/litterals/i18n';
   
 export interface ILocaleService {
   getCurrentLocale(): string;
-  getLocales(): Array<string>;
+  getLocales(): string[];
   setLocale(locale: string): void;
   translate(phrase: string, args?: any): string;
 }
@@ -53,7 +53,7 @@ export class LocaleService implements ILocaleService {
      *
      * @returns string[] The list of available locale codes
      */
-    getLocales(): Array<string> {
+    getLocales(): string[] {
         return this.i18nProvider.getLocales();
     }
     /**
@@ -77,7 +77,6 @@ export class LocaleService implements ILocaleService {
      * @returns {string} Translated string
      */
     translate(phrase: string, args = {}): string {
-    //   console.log(`phrase: ${phrase} et locale ${locale}`)
         return this.i18nProvider.__(phrase, args)
     }
   }

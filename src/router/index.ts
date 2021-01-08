@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '@/views/Home.vue'
-import VideoEditor from '@/views/VideoEditor.vue'
 import Help from '@/views/Help.vue'
 import Settings from '@/views/Settings.vue'
 import { DownloadFolderService } from "@/services/downloadFolderService"
@@ -9,7 +8,7 @@ import { ApplicationContainer } from "@/di/index"
 
 Vue.use(VueRouter)
 
-const routes: Array<RouteConfig> = [
+const routes: RouteConfig[] = [
     {
         path: '/exit',
         name: 'exit',
@@ -19,11 +18,6 @@ const routes: Array<RouteConfig> = [
         path: '/',
         name: 'home',
         component: Home
-    },
-    {
-        path: '/edit-video/:id',
-        name: 'edit-video',
-        component: VideoEditor
     },
     {
         path: '/help',

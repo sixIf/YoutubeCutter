@@ -24,10 +24,8 @@ export const LOCAL_STORAGE_LOCALE = "CurrentLocale"
 export interface DownloadRequest {
     readonly requestId: string;
     readonly audioOnly: boolean;
-    readonly channelTitle: string;
-    readonly playlistTitle: string;
-    readonly itemSelected: Array<VideoDetail>;
-    readonly downloadFolder: string | null;
+    readonly itemSelected: VideoDetail[];
+    readonly downloadFolder: string;
 }
 
 export interface IAlert {
@@ -47,8 +45,12 @@ export interface VideoDetail {
     readonly id: string;
     readonly title: string;
     readonly thumbnail: string;
-    readonly sliceList?: Array<SlicedYoutube>;
+    readonly sliceList: SlicedYoutube[];
     readonly keepFullItem?: boolean;
+    bestAudioFormat?: string;
+    bestVideoFormat?: string;
+    videoHasAudio?: boolean;
+    toDownload: boolean;
     folderPath?: string;
     filePath?: string;
     downloadTry?: number;
@@ -56,6 +58,7 @@ export interface VideoDetail {
 
 export interface SlicedYoutube {
     readonly startTime: string;
+    format: AvailableFormats;
     readonly duration: string;
     readonly name: string;
     readonly isFullContent: boolean;

@@ -10,10 +10,23 @@ export interface IFfmpegService {
     sliceAudio(audioPath: string): void;
     sliceVideo(videoPath: string): void;
     mergeAudioVideo(audioPath: string, videoPath: string, outputPath: string): Promise<string>;
+    convertToMp3(audioPath: string, destAudio: string): Promise<string>;
 }
 
 export class FfmpegService implements IFfmpegService {
+    convertToMp3(sourceAudio: string, destAudio: string): Promise<string> {
+        return new Promise ( (resolve, reject) => {
+            ffmpeg()
+                .input(sourceAudio)
+                .audioCodec('libmp3lame')
+                .save(destAudio)
+                .on('error', (err) => reject(err))
+                .on('end', () => resolve(`\nFinished converting to mp3, saved to ${destAudio}`));
+        })
+    }
+
     mergeAudioVideo(audioPath: string, videoPath: string, outputPath: string): Promise<string> {
+        console.log(`Dans le merge audio : ${audioPath} \n video: ${videoPath}`)
         return new Promise ( (resolve, reject) => {
             ffmpeg()
                 .input(audioPath)
@@ -21,8 +34,10 @@ export class FfmpegService implements IFfmpegService {
                 .input(videoPath)
                 .videoCodec('copy')
                 .save(outputPath)
-                .on('error', (err) => reject(err))
-                .on('end', () => resolve(`\nFinished downloading, saved to ${outputPath}`));
+                .on('error', (err: Error) => {
+                    reject(err.message)
+                })
+                .on('end', () => resolve(`\nFinished merging audio and video, saved to ${outputPath}`));
         })
     }
     sliceAudio(audioPath: string): void {

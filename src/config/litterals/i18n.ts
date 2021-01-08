@@ -17,4 +17,4 @@ export const localesInfos = {
 }
   
 export type locales = keyof typeof localesInfos;
-export const availableLocales: Array<locales> = ["en", "fr", "pt"];
+export const availableLocales: locales[] = ["en", "fr", "pt"];

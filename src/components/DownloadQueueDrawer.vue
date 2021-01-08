@@ -144,9 +144,9 @@ export default class DownloadQueueDrawer extends Vue {
     drawer = null;
     tab = null;
     tabs = ["Downloading", "Finished"];
-    videoDownloading: Array<ItemDownloading> = [];
-    videoDownloaded: Array<ItemDownloading> = [];
-    errorDownloadRequest: Array<DownloadRequest> = [];
+    videoDownloading: ItemDownloading[] = [];
+    videoDownloaded: ItemDownloading[] = [];
+    errorDownloadRequest: DownloadRequest[] = [];
     isDownloading = false;
 
     redownloadFailed() {
@@ -184,7 +184,6 @@ export default class DownloadQueueDrawer extends Vue {
         );
 
         myIpcRenderer.receive("item-downloaded", (data: VideoDetail) => {
-            window.log.info(`Behold, video ${data} downloaded`);
             this.isDownloading = false;
             const indexToDelete = _.findIndex(this.videoDownloading, function (
                 x

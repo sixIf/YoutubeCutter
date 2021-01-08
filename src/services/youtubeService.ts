@@ -1,5 +1,5 @@
 import { IYoutubeClient } from "@/api/youtubeClient";
-import { VideoDetail } from "@/config/litterals";
+import { DOWNLOAD_FORMATS, VideoDetail } from "@/config/litterals";
 import { cpuUsage } from "process";
 import { injectable, inject } from "tsyringe";
 import ytdl from "ytdl-core";
@@ -29,6 +29,7 @@ export class YoutubeService implements IYoutubeService {
 
     async findVideo(videoId: string): Promise<VideoDetail> {
         const response = await this.youtubeClient.findVideo(videoId);
+        console.log(response);
         return this.formatVideo(response);
     }
 
@@ -38,17 +39,19 @@ export class YoutubeService implements IYoutubeService {
     }
 
     private formatVideo(videoInfo: ytdl.videoInfo): VideoDetail {
-        const thumbnail = videoInfo.videoDetails.thumbnail.thumbnails[0] ? videoInfo.videoDetails.thumbnail.thumbnails[0].url : ""
+        const thumbnail = videoInfo.videoDetails.thumbnails[0] ? videoInfo.videoDetails.thumbnails[0].url : ""
         return {
             id: videoInfo.videoDetails.videoId,
-            thumbnail: thumbnail,
             title: videoInfo.videoDetails.title,
+            thumbnail: thumbnail,
+            toDownload: true,
             sliceList: [
                 {
                     name: 'Full video',
                     startTime: '00:00',
                     duration: videoInfo.videoDetails.lengthSeconds,
-                    isFullContent: true
+                    isFullContent: true,
+                    format: DOWNLOAD_FORMATS[0]
                 }
             ]            
         }
@@ -60,7 +63,17 @@ export class YoutubeService implements IYoutubeService {
             videos.push({
                 id: video.id,
                 title: video.title,
-                thumbnail: video.bestThumbnail.url ? video.bestThumbnail.url : ""
+                thumbnail: video.bestThumbnail.url ? video.bestThumbnail.url : "",
+                toDownload: true,
+                sliceList: [
+                    {
+                        name: 'Full video',
+                        startTime: '00:00',
+                        duration: video.durationSec ? video.durationSec.toString() : "00:00",
+                        isFullContent: true,
+                        format: DOWNLOAD_FORMATS[0]
+                    }
+                ]     
             })
         });
         return videos;
