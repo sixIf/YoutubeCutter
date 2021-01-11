@@ -11,7 +11,6 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
 // import { appMainPath } from '@/helpers/pathHelper'
 import { DownloadRequest } from '@/config/litterals/index'
-import fs from 'fs'
 import { availableLocales } from "./config/litterals/i18n";
 import { DownloadService } from "./services/downloadService";
 import ytdl from "ytdl-core";

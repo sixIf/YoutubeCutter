@@ -42,17 +42,24 @@
                                     <v-select
                                         v-model="selectedFormat"
                                         :items="availableFormats"
-                                        item-text="text"
                                         :hint="selectFormatHint"
                                         :label="selectFormatLabel"
                                         return-object
                                         persistent-hint
-                                    ></v-select>
+                                    >
+                                        <template v-slot:selection="{item}">
+                                            {{ getSelectText(item) }}
+                                        </template>
+                                        <template v-slot:item="{item}">
+                                            {{ getSelectText(item) }}
+                                        </template>
+                                    </v-select>
                                 </v-col>
                                 <v-col cols="4" align-self="center">
                                     <v-btn
                                         color="primary"
                                         @click="downloadItems"
+                                        :disabled="isDownloadDisbled"
                                     >{{ downloadButtonLabel }}</v-btn>
                                 </v-col>
                             </v-row>
@@ -78,9 +85,9 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import { Component, Inject, Vue } from "vue-property-decorator";
+import { Component, Inject, Vue, Watch } from "vue-property-decorator";
 import { Getter } from 'vuex-class';
-import { DownloadRequest, DOWNLOAD_FORMATS, VideoDetail, YOUTUBE_SERVICE } from '@/config/litterals';
+import { AvailableFormats, DownloadRequest, DOWNLOAD_FORMATS, VideoDetail, YOUTUBE_SERVICE } from '@/config/litterals';
 import { IYoutubeService } from '@/services/youtubeService';
 import YoutubePlayer from '@/components/YoutubePlayer.vue'
 import VideosList from '@/components/VideosList.vue'
@@ -102,7 +109,7 @@ export default class Home extends Vue {
     @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
     ytLink = "";
     downloadFolder = "";
-    selectedFormat = this.availableFormats[0];
+    selectedFormat = DOWNLOAD_FORMATS[0];
     currentTime = 0;
 
     updateCurrentTime(currentTime: number) {
@@ -131,9 +138,15 @@ export default class Home extends Vue {
             return value.id == video.id
         })
 
+        video.sliceList[0].format = this.selectedFormat;
+
         if (videoIndexInList == -1) {
             this.$store.commit('fetchedVideosState/setSingleFetchedVideo', video);
         }
+    }
+
+    getSelectText(format: AvailableFormats){
+        return `${i18n.translate(format.type).concat(` (${format.value})`)}`
     }
 
     /**
@@ -172,7 +185,15 @@ export default class Home extends Vue {
             }
         );
     }
-    
+
+    /**
+     * Watchers
+     */
+    @Watch('selectedFormat')
+    onSelectedFormatChange(newFormat: AvailableFormats){
+        this.$store.commit('fetchedVideosState/setSelectedFormat', newFormat);
+    }
+
     /**
      * Getters
      */
@@ -181,13 +202,14 @@ export default class Home extends Vue {
         return _.filter(this.videoList, (video) => video.toDownload)
     }
 
+
     get availableFormats(){
-        return DOWNLOAD_FORMATS.map((format) => {
-            return {
-                text: `${i18n.translate(format.type).concat(` (${format.value})`)}`,
-                value: format.value
-            }
-        });
+        return DOWNLOAD_FORMATS;
+    }
+
+
+    get isDownloadDisbled(){
+        return this.downloadFolder && this.videosToDownload.length != 0 ? false : true;
     }
 
     get currentVideoId(){

@@ -4,6 +4,7 @@ import { actions } from './actions';
 import { mutations } from './mutations';
 import { FetchedVideosState } from './types';
 import { RootState } from '../types';
+import { DOWNLOAD_FORMATS } from '@/config/litterals';
 
 export const getDefaultState = (): FetchedVideosState => {
   return {
@@ -12,13 +13,15 @@ export const getDefaultState = (): FetchedVideosState => {
       thumbnail: '',
       title: '',
       toDownload: false,
-      sliceList: []
+      sliceList: [],
+      formats: []
     },
-    fetchedVideos: []
+    fetchedVideos: [],
+    currentFormat: DOWNLOAD_FORMATS[0]
 };
 }
 
-export const state = getDefaultState();
+const state = getDefaultState();
 
 const namespaced = true;
 

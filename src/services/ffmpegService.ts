@@ -1,4 +1,4 @@
-import ffmpeg from 'fluent-ffmpeg';
+import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import pathToFfmpeg, { slice } from 'ffmpeg-static';
 
 ffmpeg.setFfmpegPath(
@@ -20,19 +20,20 @@ export class FfmpegService implements IFfmpegService {
                 .input(sourceAudio)
                 .audioCodec('libmp3lame')
                 .save(destAudio)
-                .on('error', (err) => reject(err))
+                .on('error', (err: Error) => reject(err.message))
                 .on('end', () => resolve(`\nFinished converting to mp3, saved to ${destAudio}`));
         })
     }
 
     mergeAudioVideo(audioPath: string, videoPath: string, outputPath: string): Promise<string> {
         console.log(`Dans le merge audio : ${audioPath} \n video: ${videoPath}`)
+        
         return new Promise ( (resolve, reject) => {
             ffmpeg()
-                .input(audioPath)
-                .audioCodec('copy')
                 .input(videoPath)
                 .videoCodec('copy')
+                .input(audioPath)
+                .audioCodec('copy')
                 .save(outputPath)
                 .on('error', (err: Error) => {
                     reject(err.message)
@@ -40,9 +41,11 @@ export class FfmpegService implements IFfmpegService {
                 .on('end', () => resolve(`\nFinished merging audio and video, saved to ${outputPath}`));
         })
     }
+
     sliceAudio(audioPath: string): void {
         throw new Error("Method not implemented.");
     }
+    
     sliceVideo(videoPath: string): void {
         throw new Error("Method not implemented.");
     }

@@ -1,6 +1,7 @@
 /**
  * Constantes
  */
+import ytdl from 'ytdl-core';
 
 export const YOUTUBE_SERVICE = "youtubeService";
 export const DOWNLOAD_FOLDER_SERVICE = "downloadFolderService";
@@ -47,6 +48,7 @@ export interface VideoDetail {
     readonly thumbnail: string;
     readonly sliceList: SlicedYoutube[];
     readonly keepFullItem?: boolean;
+    formats: ytdl.videoFormat[];
     bestAudioFormat?: string;
     bestVideoFormat?: string;
     videoHasAudio?: boolean;
@@ -62,6 +64,7 @@ export interface SlicedYoutube {
     readonly duration: string;
     readonly name: string;
     readonly isFullContent: boolean;
+    isActive: boolean;
 }
 
 export interface AvailableFormats {

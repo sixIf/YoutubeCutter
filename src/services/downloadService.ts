@@ -31,12 +31,16 @@ export class DownloadService implements IDownloadService {
     loggerService = ApplicationContainer.resolve(LoggerService);
     ffmpegService!: FfmpegService;
     browserWin: BrowserWindow | null = null;
+    sucessDownloadList: VideoDetail[] = [];
+    errorDownloadList: VideoDetail[] = [];
     downloadRequest!: DownloadRequest;
+    nbToDownload = 0;
     output!: string;
 
     constructor(request: DownloadRequest, win: BrowserWindow | null){
         this.browserWin = win;
         this.downloadRequest = request;
+        this.nbToDownload = this.downloadRequest.itemSelected.length;
         this.output = this.downloadRequest.downloadFolder;
         this.ffmpegService = new FfmpegService;
         this.initDownload();    
@@ -57,8 +61,10 @@ export class DownloadService implements IDownloadService {
             }
         }
 
+        console.log(`remaining ${this.remainingDownload}\n downloaded ${this.sucessDownloadList.length}\n error ${this.errorDownloadList.length}`)
         if (this.remainingDownload > 0){
             setTimeout(() => {
+                console.log('Setting timeout')
                 this.initDownload();            
             }, 3000);
         }
@@ -74,19 +80,20 @@ export class DownloadService implements IDownloadService {
         item.folderPath = this.output;
 
         try {
+            if (item.formats.length == 0) ytdl.getInfo(item.id); // Get info then we have to choose a video format max 1080
             if (this.isThereVideoSlice(item.sliceList)) { // Download the whole video with audio
                 await this.downloadVideo(item, tempVideoPath);
-                item.filePath = path.resolve(this.output, `${item.title}.${item.bestVideoFormat}`);
+                item.filePath = path.resolve(this.output, `${sanitize(item.title)}.${item.bestVideoFormat}`);
                 if (item.videoHasAudio) fs.renameSync(tempVideoPath, item.filePath);
                 else {
                     await this.downloadAudio(item, tempAudioPath);
-                    console.log(await this.ffmpegService.mergeAudioVideo(tempAudioPath, tempVideoPath, item.filePath))
+                    const value = await this.ffmpegService.mergeAudioVideo(tempAudioPath, tempVideoPath, item.filePath);
+                    console.log(value)
                 }
             } else { // Download only audio
                 await this.downloadAudio(item, tempAudioPath);
-                item.filePath = path.resolve(this.output, `${item.title}.mp3`);
-                this.ffmpegService.convertToMp3(tempAudioPath, item.filePath)
-                fs.renameSync(tempAudioPath, item.filePath)
+                item.filePath = path.resolve(this.output, `${sanitize(item.title)}.mp3`);
+                await this.ffmpegService.convertToMp3(tempAudioPath, item.filePath)
             }
             
             // Slice videos next
@@ -95,12 +102,16 @@ export class DownloadService implements IDownloadService {
             }
 
             if (this.browserWin) this.browserWin.webContents.send('item-downloaded', item);
+            this.sucessDownloadList.push(item);
         } catch (err) {
             if (item.downloadTry! < 3) this.downloadRequest.itemSelected.push(item);
-            else if (this.browserWin) this.browserWin.webContents.send('download-error', item)
+            else {
+                this.errorDownloadList.push(item);
+                if (this.browserWin) this.browserWin.webContents.send('download-error', item);
+            }
             this.loggerService.error(err)
         }
-        // this.deleteTempFiles([audioPath, videoPath]);
+        this.deleteTempFiles([tempAudioPath, tempVideoPath]);
         DownloadService.activeWorkers--;
     }
 
@@ -125,7 +136,7 @@ export class DownloadService implements IDownloadService {
     downloadVideo(item: VideoDetail, tempOutput: string): Promise<string> {
         return new Promise( (resolve, reject) => {
             const url = `${youtubeVideoUrl}${item.id}`;
-            const video = ytdl(url, { quality: 'highestvideo' });
+            const video = ytdl(url, { filter: format => format.container === 'mp4' ,quality: 'highestvideo' });
 
             video.on('error', (err) => reject(err))
             .on('info', (info: ytdl.videoInfo, format: ytdl.videoFormat) => {
@@ -163,7 +174,7 @@ export class DownloadService implements IDownloadService {
     }    
 
     get remainingDownload(): number {
-        return this.downloadRequest.itemSelected.length;
+        return this.nbToDownload - (this.sucessDownloadList.length + this.errorDownloadList.length);
     }
 
     private onItemProgress(chunkLength: number, downloaded: number, total: number, type: string, videoDownloading: VideoDetail){

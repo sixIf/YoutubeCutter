@@ -1,6 +1,5 @@
 import { IYoutubeClient } from "@/api/youtubeClient";
 import { DOWNLOAD_FORMATS, VideoDetail } from "@/config/litterals";
-import { cpuUsage } from "process";
 import { injectable, inject } from "tsyringe";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
@@ -51,15 +50,18 @@ export class YoutubeService implements IYoutubeService {
                     startTime: '00:00',
                     duration: videoInfo.videoDetails.lengthSeconds,
                     isFullContent: true,
+                    isActive: true,
                     format: DOWNLOAD_FORMATS[0]
                 }
-            ]            
+            ],
+            formats: videoInfo.formats            
         }
     }
 
     private formatVideosInPlaylist(playlistDetails: ytpl.Result): VideoDetail[]{
         const videos: VideoDetail[] = [];
         playlistDetails.items.forEach((video) => {
+            console.log(video)
             videos.push({
                 id: video.id,
                 title: video.title,
@@ -71,9 +73,11 @@ export class YoutubeService implements IYoutubeService {
                         startTime: '00:00',
                         duration: video.durationSec ? video.durationSec.toString() : "00:00",
                         isFullContent: true,
+                        isActive: true,
                         format: DOWNLOAD_FORMATS[0]
                     }
-                ]     
+                ],
+                formats: []     
             })
         });
         return videos;

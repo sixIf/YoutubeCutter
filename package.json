@@ -44,7 +44,7 @@
     "vuex-class": "^0.3.2",
     "winston": "^3.3.3",
     "youtube-player": "^5.5.2",
-    "ytdl-core": "^4.4.1",
+    "ytdl-core": "^4.4.2",
     "ytpl": "^2.0.3"
   },
   "devDependencies": {
