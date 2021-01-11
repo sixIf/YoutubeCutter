@@ -1,39 +1,42 @@
 <template>
-    <v-card elevation="8" class="card" height="500">
+    <v-card elevation="8" class="card lightCard" height="500">
         <v-container no-gutters>
             <v-row>
                 <v-col cols="12">
-                    <v-list>
-                        <v-virtual-scroll
-                            :items="videoList"
-                            :item-height="120"
-                            :bench="benched"
-                            style="overflow-x: 0"
-                            height="450"
-                        >
-                            <template v-slot:default="{ item }">
-                                <v-list-item :key="item.id" :value="item.id">
-                                    <v-list-item-avatar :tile="true" width="150" height="100">
-                                        <v-img :src="item.thumbnail"/>
-                                    </v-list-item-avatar>
-                                    <v-list-item-title>{{item.title}}</v-list-item-title>
-                                    <v-list-item-action>
-                                        <v-row align="center">
-                                            <v-col cols="6">
-                                                <v-btn icon @click="selectVideo(item)">
-                                                    <v-icon :color="computeEyeColor(item)">mdi-eye</v-icon>
-                                                </v-btn>                                            
-                                            </v-col>
-                                            <v-col cols="6">
-                                                <v-checkbox v-model="item.toDownload" color="grey"></v-checkbox>
-                                            </v-col>
-                                        </v-row>
-                                    </v-list-item-action>
-                                </v-list-item>
-                                <v-divider></v-divider>
-                            </template>
-                        </v-virtual-scroll>
-                    </v-list>
+                    <v-virtual-scroll
+                        :items="videoList"
+                        :item-height="120"
+                        :bench="benched"
+                        class="no-x-scroll"
+                        height="450"
+                    >
+                        <template v-slot:default="{ item }">
+                            <v-list-item :key="item.id" :value="item.id" :class="computeItemClass(item)">
+                                <v-list-item-avatar :tile="true" width="150" height="100">
+                                    <v-img :src="item.thumbnail"/>
+                                </v-list-item-avatar>
+                                <v-list-item-title>{{item.title}}</v-list-item-title>
+                                <v-list-item-action>
+                                    <v-row align="center">
+                                        <v-col cols="6">
+                                            <v-btn icon @click="selectVideo(item)">
+                                                <v-icon :color="computeEyeColor(item)">mdi-eye</v-icon>
+                                            </v-btn>                                            
+                                        </v-col>
+                                        <v-col cols="6">
+                                            <v-icon 
+                                                class="theme--light grey--text"
+                                                @click="changeVideoToDownload(item)"
+                                            >
+                                                {{ item.toDownload ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline' }}
+                                            </v-icon>
+                                        </v-col>
+                                    </v-row>
+                                </v-list-item-action>
+                            </v-list-item>
+                            <v-divider></v-divider>
+                        </template>
+                    </v-virtual-scroll>
                 </v-col>
             </v-row>
         </v-container>
@@ -66,8 +69,31 @@ export default class VideosList extends Vue {
         this.$store.commit('fetchedVideosState/setSelectedVideo', video);
     }
 
+    changeVideoToDownload(video: VideoDetail){
+        this.$store.commit('fetchedVideosState/changeVideoToDownload', video.id);
+    }
+
     computeEyeColor(video: VideoDetail){
         return this.selectedVideo.id == video.id ? 'primary' : 'grey lighten-1';
     }
+
+    computeItemClass(video: VideoDetail){
+        if(!video.toDownload){
+            return "opacity: 0.5;"
+        } else if (video.id == this.selectedVideo.id) {
+            return ""
+        } else { // default style
+            return "";
+        }
+    }
 }
 </script>
+<style>
+.no-x-scroll {
+    overflow-x: hidden !important;
+}
+
+.item-ignored {
+    opacity: 0.5;
+}
+</style>
