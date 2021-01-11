@@ -12,11 +12,11 @@ import _ from 'lodash';
 import { ApplicationContainer } from '../di';
 import { LoggerService } from "../services/loggerService"
 import { FfmpegService } from './ffmpegService';
-import { youtubeVideoUrl } from '@/config/litterals/youtube';
+import { YOUTUBE_VIDEO_URL } from '@/config/litterals/youtube';
 
 export interface IDownloadService {
     downloadAudio(item: VideoDetail, output: string): Promise<string>;
-    downloadVideo(item: VideoDetail, output: string): Promise<string>;
+    downloadVideo(item: VideoDetail, output: string, bestQuality: string): Promise<string>;
     handleItem(item: VideoDetail): void;
     deleteTempFiles(files: string[]): void;
     initDownload(): void;
@@ -61,10 +61,8 @@ export class DownloadService implements IDownloadService {
             }
         }
 
-        console.log(`remaining ${this.remainingDownload}\n downloaded ${this.sucessDownloadList.length}\n error ${this.errorDownloadList.length}`)
         if (this.remainingDownload > 0){
             setTimeout(() => {
-                console.log('Setting timeout')
                 this.initDownload();            
             }, 3000);
         }
@@ -80,15 +78,14 @@ export class DownloadService implements IDownloadService {
         item.folderPath = this.output;
 
         try {
-            if (item.formats.length == 0) ytdl.getInfo(item.id); // Get info then we have to choose a video format max 1080
+            const bestFormat = await this.chooseBestVideoQuality(item);
             if (this.isThereVideoSlice(item.sliceList)) { // Download the whole video with audio
-                await this.downloadVideo(item, tempVideoPath);
+                await this.downloadVideo(item, tempVideoPath, bestFormat);
                 item.filePath = path.resolve(this.output, `${sanitize(item.title)}.${item.bestVideoFormat}`);
                 if (item.videoHasAudio) fs.renameSync(tempVideoPath, item.filePath);
                 else {
                     await this.downloadAudio(item, tempAudioPath);
-                    const value = await this.ffmpegService.mergeAudioVideo(tempAudioPath, tempVideoPath, item.filePath);
-                    console.log(value)
+                    await this.ffmpegService.mergeAudioVideo(tempAudioPath, tempVideoPath, item.filePath);
                 }
             } else { // Download only audio
                 await this.downloadAudio(item, tempAudioPath);
@@ -110,21 +107,19 @@ export class DownloadService implements IDownloadService {
                 if (this.browserWin) this.browserWin.webContents.send('download-error', item);
             }
             this.loggerService.error(err)
+        } finally {
+            this.deleteTempFiles([tempAudioPath, tempVideoPath]);
+            DownloadService.activeWorkers--;
         }
-        this.deleteTempFiles([tempAudioPath, tempVideoPath]);
-        DownloadService.activeWorkers--;
     }
 
     downloadAudio(item: VideoDetail, tempOutput: string): Promise<string> {
         return new Promise( (resolve, reject) => {
-            const url = `${youtubeVideoUrl}${item.id}`;
+            const url = `${YOUTUBE_VIDEO_URL}${item.id}`;
             const audio = ytdl(url, { quality: 'highestaudio' });
             
             audio.on('error', (err) => reject(err))
-            .on('info', (info: ytdl.videoInfo, format: ytdl.videoFormat) => {
-                item.bestAudioFormat = format.container;
-                console.log(`Chosen Format ${item.bestAudioFormat} ${format.itag}`);
-            })
+            .on('info', (info: ytdl.videoInfo, format: ytdl.videoFormat) => item.bestAudioFormat = format.container)
             .on('progress', (chunkLength: number, downloaded: number, total: number) => {
                 this.onItemProgress(chunkLength, downloaded, total, 'audio', item)
             })
@@ -133,16 +128,15 @@ export class DownloadService implements IDownloadService {
         })  
     }
 
-    downloadVideo(item: VideoDetail, tempOutput: string): Promise<string> {
+    downloadVideo(item: VideoDetail, tempOutput: string, bestQuality: string): Promise<string> {
         return new Promise( (resolve, reject) => {
-            const url = `${youtubeVideoUrl}${item.id}`;
-            const video = ytdl(url, { filter: format => format.container === 'mp4' ,quality: 'highestvideo' });
+            const url = `${YOUTUBE_VIDEO_URL}${item.id}`;
+            const video = ytdl(url, { filter: format => format.container === 'mp4' ,quality: bestQuality });
 
             video.on('error', (err) => reject(err))
             .on('info', (info: ytdl.videoInfo, format: ytdl.videoFormat) => {
                 item.bestVideoFormat = format.container;
                 item.videoHasAudio = format.hasAudio;
-                console.log(`Chosen video Format ${item.bestVideoFormat} ${format.itag}`);
             })
             .on('progress', (chunkLength: number, downloaded: number, total: number) => {
                 this.onItemProgress(chunkLength, downloaded, total, 'video', item)
@@ -191,6 +185,34 @@ export class DownloadService implements IDownloadService {
 
     private isThereVideoSlice(sliceList: SlicedYoutube[]): boolean{
         return _.findIndex(sliceList, (slice) => { return slice.format.type == 'video' ? true : false}) != -1
+    }
+
+    /**
+     * 
+     * @param item video for which we search the format
+     * Downloading a UltraHD seems to be broken for some videos
+     * hence the limitation we enforce with 1080 max
+     */
+    private chooseBestVideoQuality(item: VideoDetail): Promise<string> {
+        return new Promise ( async (resolve, reject) => {
+            if (item.formats.length == 0) {
+                try {
+                    const videoInfo = await ytdl.getInfo(YOUTUBE_VIDEO_URL.concat(item.id));
+                    item.formats = videoInfo.formats
+                } catch (err) {
+                    reject(err)
+                }
+            }
+
+            const sortedFormats = _.orderBy(item.formats, (format) => format.height, 'desc')
+            const chosenFormat = _.find(sortedFormats, (format) => {
+                if (format.height) return format.container == 'mp4' && format.height! <= 1080
+                else return false
+            });
+
+            if (chosenFormat) resolve(chosenFormat.itag.toString());
+            else (resolve('highestvideo'));
+        })
     }
 
 }

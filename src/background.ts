@@ -14,7 +14,7 @@ import { DownloadRequest } from '@/config/litterals/index'
 import { availableLocales } from "./config/litterals/i18n";
 import { DownloadService } from "./services/downloadService";
 import ytdl from "ytdl-core";
-import { youtubeVideoUrl } from "./config/litterals/youtube";
+import { YOUTUBE_VIDEO_URL } from "./config/litterals/youtube";
 import ytpl from "ytpl";
 const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
@@ -221,7 +221,7 @@ ipcMain.on("open-shell", (event, args: string) => {
 });
 
 ipcMain.handle("getVideoInfo", async (event, videoId: string) => {
-    return ytdl.getInfo(`${youtubeVideoUrl}${videoId}`);
+    return ytdl.getInfo(`${YOUTUBE_VIDEO_URL}${videoId}`);
 });
 
 ipcMain.handle("getVideoIdFromUrl", (event, url: string) => {

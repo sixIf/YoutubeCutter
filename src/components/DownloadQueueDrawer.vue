@@ -185,31 +185,29 @@ export default class DownloadQueueDrawer extends Vue {
 
         myIpcRenderer.receive("item-downloaded", (data: VideoDetail) => {
             this.isDownloading = false;
+            window.log.info(`Behold, video ${data.title} downloaded`);
+
             const indexToDelete = _.findIndex(this.videoDownloading, function (
                 x
             ) {
                 return x.video.id === data.id;
             });
             if (indexToDelete != -1) {
-                this.videoDownloaded.push(
-                    _.cloneDeep(this.videoDownloading[indexToDelete])
-                );
                 _.remove(this.videoDownloading, function (
                     value: ItemDownloading,
                     index: number
                 ) {
                     return index == indexToDelete;
                 });
-                window.log.info(`Behold, video ${data.title} downloaded`);
-            } else {
-                this.videoDownloaded.push({
-                    video: data,
-                    progressAudio: "100",
-                    progressVideo: "100",
-                    type: "video",
-                    audioOnly: false,
-                });
             }
+            
+            this.videoDownloaded.push({
+                video: data,
+                progressAudio: "100",
+                progressVideo: "100",
+                type: "video",
+                audioOnly: false,
+            });
         });
 
         myIpcRenderer.receive(
