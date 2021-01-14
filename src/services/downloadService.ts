@@ -36,6 +36,7 @@ export class DownloadService implements IDownloadService {
     downloadRequest!: DownloadRequest;
     nbToDownload = 0;
     output!: string;
+    intervalId: NodeJS.Timeout;
 
     constructor(request: DownloadRequest, win: BrowserWindow | null){
         this.browserWin = win;
@@ -43,7 +44,9 @@ export class DownloadService implements IDownloadService {
         this.nbToDownload = this.downloadRequest.itemSelected.length;
         this.output = this.downloadRequest.downloadFolder;
         this.ffmpegService = new FfmpegService;
-        this.initDownload();    
+        this.intervalId = setInterval(() => {
+            this.initDownload();    
+        }, 1000)
     }
 
     /**
@@ -61,11 +64,7 @@ export class DownloadService implements IDownloadService {
             }
         }
 
-        if (this.remainingDownload > 0){
-            setTimeout(() => {
-                this.initDownload();            
-            }, 3000);
-        }
+        if (this.remainingDownload == 0) clearInterval(this.intervalId)
     }
 
     /**
@@ -73,42 +72,75 @@ export class DownloadService implements IDownloadService {
      * @param item what we want to download
      */
     async handleItem(item: VideoDetail) {
-        const tempAudioPath = path.resolve(this.output, sanitize(`TEMP_audio_${item.downloadTry}_${item.title}`));
-        const tempVideoPath = path.resolve(this.output, sanitize(`TEMP_video_${item.downloadTry}_${item.title}`));
+        const tempAudioPath = path.resolve(this.output, sanitize(`TEMP_audio_${item.downloadTry}_${item.title}.mp3`));
+        const tempVideoPath = path.resolve(this.output, sanitize(`TEMP_video_${item.downloadTry}_${item.title}.mp4`));
+        const audioPath = path.resolve(this.output, sanitize(`${item.title}.mp3`));
+        const videoPath = path.resolve(this.output, sanitize(`${item.title}.mp4`));
+        const tempMergedPath = path.resolve(this.output, sanitize(`TEMP_merged_${item.downloadTry}_${item.title}`));
+        const tempFiles = [tempAudioPath, tempVideoPath];
+        const fullVideoSlice = item.sliceList.shift();
         item.folderPath = this.output;
 
         try {
-            const bestFormat = await this.chooseBestVideoQuality(item);
+            
             if (this.isThereVideoSlice(item.sliceList)) { // Download the whole video with audio
+                const bestFormat = await this.chooseBestVideoQuality(item);
                 await this.downloadVideo(item, tempVideoPath, bestFormat);
-                item.filePath = path.resolve(this.output, `${sanitize(item.title)}.${item.bestVideoFormat}`);
-                if (item.videoHasAudio) fs.renameSync(tempVideoPath, item.filePath);
-                else {
+                item.filePath = videoPath;
+
+                if (!item.videoHasAudio){
                     await this.downloadAudio(item, tempAudioPath);
-                    await this.ffmpegService.mergeAudioVideo(tempAudioPath, tempVideoPath, item.filePath);
-                }
+                    await this.ffmpegService.convertToMp3(tempAudioPath, audioPath);
+                    await this.ffmpegService.mergeAudioVideo(tempAudioPath, tempVideoPath, videoPath);
+                } else fs.renameSync(tempVideoPath, videoPath)
             } else { // Download only audio
                 await this.downloadAudio(item, tempAudioPath);
-                item.filePath = path.resolve(this.output, `${sanitize(item.title)}.mp3`);
-                await this.ffmpegService.convertToMp3(tempAudioPath, item.filePath)
+                await this.ffmpegService.convertToMp3(tempAudioPath, audioPath);
+                item.filePath = audioPath;
             }
             
             // Slice videos next
-            if (item.sliceList) {
-                console.log("do the slicing here")
-            }
+            item.sliceList.forEach(async slice => {
+                let outputPath = '';
+                switch (slice.format.type) {
+                    case 'video':
+                        outputPath = path.resolve(this.output, sanitize(`${slice.name}.mp4`));
+                        this.loggerService.info(`before slice video ${videoPath}`)
+                        try {
+                            await this.ffmpegService.sliceInput(videoPath, outputPath, slice.startTime, slice.endTime);
+                        } catch (err) {
+                            this.loggerService.error(err);
+                        }
+                        break;
+                    case 'audio':
+                        outputPath = path.resolve(this.output, sanitize(`${slice.name}.mp3`));
+                        this.loggerService.info(`before slice audio ${audioPath}`)
+                        try {
+                            await this.ffmpegService.sliceInput(audioPath, outputPath, slice.startTime, slice.endTime);
+                        } catch (err) {
+                            this.loggerService.error(err);
+                        }
+                        break;
+                }
+            });
+
+            if (!fullVideoSlice!.isActive){
+                tempFiles.push(audioPath, videoPath);
+            };            
+            
 
             if (this.browserWin) this.browserWin.webContents.send('item-downloaded', item);
+
             this.sucessDownloadList.push(item);
         } catch (err) {
-            if (item.downloadTry! < 3) this.downloadRequest.itemSelected.push(item);
-            else {
-                this.errorDownloadList.push(item);
-                if (this.browserWin) this.browserWin.webContents.send('download-error', item);
-            }
+            // if (item.downloadTry! < 3 && !downloadSucceeded) this.downloadRequest.itemSelected.push(item);
+            // else {
+            //     this.errorDownloadList.push(item);
+            //     if (this.browserWin) this.browserWin.webContents.send('download-error', item);
+            // }
             this.loggerService.error(err)
         } finally {
-            this.deleteTempFiles([tempAudioPath, tempVideoPath]);
+            this.deleteTempFiles(tempFiles);
             DownloadService.activeWorkers--;
         }
     }

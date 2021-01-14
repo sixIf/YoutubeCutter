@@ -11,7 +11,8 @@
                             <v-row align="center" justify="start">
                                 <v-col cols="8">
                                     <v-text-field :value="slice.name" @input="debouncedSetName($event, slice, index)" :label="nameLabel"></v-text-field>
-                                                                <v-select :value="slice.format"
+                                    <v-select :value="slice.format"
+                                        @change="setFormat($event, slice, index)"
                                         :items="availableFormats"
                                         :label="selectFormatLabel"
                                         return-object
@@ -141,6 +142,12 @@ export default class SliceManager extends Vue {
     setName(name: string, slice: SlicedYoutube, index: number){
         const updatedSlice = Object.assign({}, slice);
         updatedSlice.name = name;
+        this.updateSlice({index: index, updatedSlice: updatedSlice});
+    }
+
+    setFormat(format: AvailableFormats, slice: SlicedYoutube, index: number){
+        const updatedSlice = Object.assign({}, slice);
+        updatedSlice.format = Object.assign({}, format);
         this.updateSlice({index: index, updatedSlice: updatedSlice});
     }
 

@@ -8,7 +8,7 @@ ffmpeg.setFfmpegPath(
 
 export interface IFfmpegService {
     sliceAudio(audioPath: string): void;
-    sliceVideo(videoPath: string): void;
+    sliceInput(inputPath: string, outputPath: string, start: number, end: number): Promise<string>;
     mergeAudioVideo(audioPath: string, videoPath: string, outputPath: string): Promise<string>;
     convertToMp3(audioPath: string, destAudio: string): Promise<string>;
 }
@@ -26,6 +26,7 @@ export class FfmpegService implements IFfmpegService {
     }
 
     mergeAudioVideo(audioPath: string, videoPath: string, outputPath: string): Promise<string> {
+        console.log(`mergeAudioVideo ${audioPath} ${videoPath} ${outputPath}}`)
         return new Promise ( (resolve, reject) => {
             ffmpeg()
                 .input(videoPath)
@@ -44,8 +45,21 @@ export class FfmpegService implements IFfmpegService {
         throw new Error("Method not implemented.");
     }
     
-    sliceVideo(videoPath: string): void {
-        throw new Error("Method not implemented.");
+    sliceInput(inputPath: string, outputPath: string, start: number, end: number): Promise<string> {
+        return new Promise ( (resolve, reject) => {
+            const duration = end - start;
+            ffmpeg()
+            .input(inputPath)
+                .inputOption(`-ss ${start}`)
+                .videoCodec('copy')
+                .audioCodec('copy')
+                .outputOption(`-t ${duration}`)
+                .save(outputPath)
+                .on('error', (err: Error) => {
+                    reject(err.message)
+                })
+                .on('end', () => resolve(`\nFinished slicing, saved to ${outputPath}`));
+        })
     }
 
 }
