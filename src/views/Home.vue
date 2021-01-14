@@ -93,7 +93,7 @@ import { IYoutubeService } from '@/services/youtubeService';
 import YoutubePlayer from '@/components/YoutubePlayer.vue'
 import VideosList from '@/components/VideosList.vue'
 import SliceManager from '@/components/SliceManager.vue'
-import _ from 'lodash';
+import _, { concat } from 'lodash';
 import { generateUniqueId } from "@/helpers/stringHelper";
 const { log, i18n, myIpcRenderer } = window;
 
@@ -160,6 +160,14 @@ export default class Home extends Vue {
         return `${i18n.translate(format.type).concat(` (${format.value})`)}`
     }
 
+    // Ytpl struggle to decode channel url sometimes
+    getFormattedUrl(url: string): string {
+        let formattedYtLink = this.ytLink.charAt(0) == 'y' ? 'https://www.'.concat(this.ytLink) : this.ytLink;
+        const slashOccurrence = formattedYtLink.match(/\//g);
+        if (slashOccurrence && slashOccurrence!.length > 4) formattedYtLink = formattedYtLink.slice(0, formattedYtLink.lastIndexOf('/'));
+        return formattedYtLink;
+    }
+
     /**
      * search order : Video - Playlist / Channel
      */
@@ -172,9 +180,8 @@ export default class Home extends Vue {
         } catch (err) {
             log.error(err);
             try {
-                log.info('On cherche playlist')
-                const playlistId = await this.youtubeService.getPlaylistIdFromUrl(this.ytLink);
-                log.info(`playlistID: ${playlistId}`)
+                const formattedYtLink = this.getFormattedUrl(this.ytLink);
+                const playlistId = await this.youtubeService.getPlaylistIdFromUrl(formattedYtLink);
                 const videoInPlaylist = await this.youtubeService.findPlaylistVideos(playlistId);
                 videoInPlaylist.forEach((video) => this.addVideoToList(video));
             } catch (err) {

@@ -1,7 +1,16 @@
 <template>
     <v-card elevation="8" class="card lightCard" height="600">
         <v-container no-gutters>
-            <v-row>
+            <v-row justify="end">
+                <v-col v-if="videoList.length != 0" cols="2">
+                    <v-btn
+                        fab
+                        small
+                        @click="clearList()"
+                    >
+                        <v-icon class="theme--light">mdi-delete</v-icon>
+                    </v-btn>
+                </v-col>
                 <v-col cols="12">
                     <v-virtual-scroll
                         :items="videoList"
@@ -20,7 +29,7 @@
                                     <v-row align="center">
                                         <v-col cols="6">
                                             <v-btn icon @click="selectVideo(item)">
-                                                <v-icon :color="computeEyeColor(item)">mdi-eye</v-icon>
+                                                <v-icon :color="computeCutColor(item)">mdi-content-cut</v-icon>
                                             </v-btn>                                            
                                         </v-col>
                                         <v-col cols="6">
@@ -73,7 +82,11 @@ export default class VideosList extends Vue {
         this.$store.commit('fetchedVideosState/changeVideoToDownload', video.id);
     }
 
-    computeEyeColor(video: VideoDetail){
+    clearList(){
+        this.$store.dispatch(`fetchedVideosState/resetVideosState`);
+    }
+
+    computeCutColor(video: VideoDetail){
         return this.selectedVideo.id == video.id ? 'primary' : 'grey lighten-1';
     }
 
