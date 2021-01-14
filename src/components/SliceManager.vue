@@ -1,15 +1,197 @@
 <template>
-    <v-card>
-
+    <v-card class="lightCard" height="488">
+        <v-list id="slice-list" class="lightCard" height="438" style="overflow-y: scroll; overflow-x: hidden">
+            <v-list-item v-for="(slice, index) in selectedVideo.sliceList" :key="slice.id">
+                <v-container>
+                    <v-row align="center" :class="index == 0 ? activeClass(slice) : ''">
+                        <v-col cols="2">
+                            <v-icon size="40px">{{`mdi-numeric-${index}-box`}}</v-icon>
+                        </v-col>
+                        <v-col cols="10">
+                            <v-row align="center" justify="start">
+                                <v-col cols="8">
+                                    <v-text-field :value="slice.name" @input="debouncedSetName($event, slice, index)" :label="nameLabel"></v-text-field>
+                                                                <v-select :value="slice.format"
+                                        :items="availableFormats"
+                                        :label="selectFormatLabel"
+                                        return-object
+                                        persistent-hint                          
+                                    >
+                                        <template v-slot:selection="{item}">
+                                            {{ getSelectText(item) }}
+                                        </template>
+                                        <template v-slot:item="{item}">
+                                            {{ getSelectText(item) }}
+                                        </template>                            
+                                    </v-select>
+                                    <v-row v-if="index != 0">
+                                        <v-col cols="6">
+                                            <v-text-field :value="slice.startTime"
+                                                :label="startLabel"
+                                                @click="setStartTime(slice, index)"
+                                            ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="6">
+                                            <v-text-field :value="slice.endTime"
+                                                :label="endLabel"
+                                                @click="setEndTime(slice, index)"
+                                            ></v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                                <v-col v-if="index == 0" cols="2">
+                                    <v-icon class="theme--light" @click="changeIsActive(slice, index)">
+                                        {{ slice.isActive ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'}}
+                                    </v-icon>
+                                </v-col>       
+                                <v-col v-else cols="2">
+                                    <v-btn
+                                        fab
+                                        small
+                                        @click="playSlice(slice)"
+                                    >
+                                        <v-icon class="theme--light">mdi-play</v-icon>
+                                    </v-btn>
+                                    <v-btn
+                                        fab
+                                        small
+                                        @click="deleteSlice(index)"
+                                    >
+                                        <v-icon class="theme--light">mdi-delete</v-icon>
+                                    </v-btn>
+                                </v-col>       
+                            </v-row>
+                        </v-col>
+                    </v-row>
+                    <v-divider ></v-divider> 
+                </v-container>
+            </v-list-item>
+        </v-list>
+        <v-container>
+            <v-row justify="end">
+                <v-col cols="2" style="padding: 0; padding-right: 5px">
+                    <v-btn
+                        color="primary"
+                        fab
+                        small
+                        dark
+                        @click="createSlice"
+                    >
+                        <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                </v-col>
+            </v-row>
+        </v-container>
     </v-card>
 </template>
 
 <script lang="ts">
+import { AvailableFormats, DOWNLOAD_FORMATS, PlayRequest, SlicedYoutube, SliceToUpdate, VideoDetail } from "@/config/litterals";
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { Getter } from "vuex-class";
+import _ from "lodash"
+const { i18n } = window;
 
 @Component
 export default class SliceManager extends Vue {
     @Prop({ default: 0}) currentTime!: number;
+    @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
+    debouncedSetName = _.debounce((name, slice, index) => this.setName(name, slice, index), 3000);
+
+    scrollBottomList(){
+        const objDiv = document.getElementById("slice-list");
+        if(objDiv) objDiv.scrollTop = objDiv.scrollHeight;
+    }
+
+    createSlice(){
+        const newSlice = Object.assign({}, this.selectedVideo.sliceList[0]);
+        newSlice.name = newSlice.name.concat(` part-${this.selectedVideo.sliceList.length}`);
+        newSlice.startTime = this.currentTime;
+        this.$store.commit('fetchedVideosState/createSlice', newSlice);
+        // Let time to store in order to scroll to effective end of list
+        setTimeout(() => {
+            this.scrollBottomList();
+        }, 50)
+    }
+
+    deleteSlice(index: number){
+        this.$store.commit('fetchedVideosState/deleteSlice', index);
+    }
+
+    playSlice(slice: SlicedYoutube){
+        const playRequest: PlayRequest = {
+            start: slice.startTime,
+            end: slice.endTime
+        }; 
+        this.$emit('play-slice', playRequest);
+    }
+
+    setStartTime(slice: SlicedYoutube, index: number){
+        const updatedSlice = Object.assign({}, slice);
+        updatedSlice.startTime = this.currentTime;
+        this.updateSlice({index: index, updatedSlice: updatedSlice});
+    }
+
+    setEndTime(slice: SlicedYoutube, index: number){
+        const updatedSlice = Object.assign({}, slice);
+        updatedSlice.endTime = this.currentTime;
+        this.updateSlice({index: index, updatedSlice: updatedSlice});
+    }
+
+    setName(name: string, slice: SlicedYoutube, index: number){
+        const updatedSlice = Object.assign({}, slice);
+        updatedSlice.name = name;
+        this.updateSlice({index: index, updatedSlice: updatedSlice});
+    }
+
+    changeIsActive(slice: SlicedYoutube, index: number){
+        const updatedSlice = Object.assign({}, slice);
+        updatedSlice.isActive = !updatedSlice.isActive;
+        this.updateSlice({index: index, updatedSlice: updatedSlice})
+    }
+
+    updateSlice(sliceToUpdate: SliceToUpdate){
+        this.$store.commit('fetchedVideosState/setSlice', sliceToUpdate)
+    }
     
+    activeClass(slice: SlicedYoutube){
+        return slice.isActive ? '' : 'disabledSlice';
+    }
+
+    getSelectText(format: AvailableFormats){
+        return `${i18n.translate(format.type).concat(` (${format.value})`)}`
+    }
+    /**
+     * Getters
+     */
+
+    get startLabel(): string {
+        return i18n.translate('Start time');
+    }
+
+    get endLabel(): string {
+        return i18n.translate('End time');
+    }
+
+    get nameLabel(): string {
+        return i18n.translate('Slice name');
+    }
+
+    get activeLabel(): string {
+        return i18n.translate('Active');
+    }
+    
+    get availableFormats(){
+        return DOWNLOAD_FORMATS;
+    }
+
+    get selectFormatLabel(){
+        return i18n.translate('Format');
+    }    
 }
 </script>
+<style scoped>
+    .disabledSlice {
+        opacity: 0.5;
+    }
+</style>

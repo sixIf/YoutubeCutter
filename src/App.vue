@@ -87,12 +87,12 @@ html {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #d32f2f;
+    background: #612222;
     border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #e57373;
+    background: #612220;
 }
 </style>

@@ -92,7 +92,8 @@ function createWindow() {
     win = new BrowserWindow({
         width: 1155,
         height: 955,
-        minWidth: 800,
+        minWidth: 1180,
+        minHeight: 1000,
         x: 0,
         y: 0,
         title: "Youtube Downloader",

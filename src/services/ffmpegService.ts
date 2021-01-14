@@ -26,8 +26,6 @@ export class FfmpegService implements IFfmpegService {
     }
 
     mergeAudioVideo(audioPath: string, videoPath: string, outputPath: string): Promise<string> {
-        console.log(`Dans le merge audio : ${audioPath} \n video: ${videoPath}`)
-        
         return new Promise ( (resolve, reject) => {
             ffmpeg()
                 .input(videoPath)

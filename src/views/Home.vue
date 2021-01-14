@@ -2,7 +2,7 @@
         <v-container fluid>
             <v-row no-gutters fill-height align="start" justify="start">
                 <v-col cols="6">
-                    <v-card class="card">
+                    <v-card class="card" height="800">
                         <v-container>
                             <v-row>
                                 <v-col cols="12">
@@ -71,10 +71,11 @@
                         <v-row justify="center">
                             <youtube-player 
                                 :videoId="currentVideoId"
-                                @player-paused="updateCurrentTime"
+                                :playRequest="playRequest"
+                                @time-changed="updateCurrentTime"
                             ></youtube-player>
                             <v-col cols="12">
-                                <!-- Slice manager -->
+                                <slice-manager :currentTime="currentTime" @play-slice="updatePlayRequest"/>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -87,10 +88,11 @@
 // @ is an alias to /src
 import { Component, Inject, Vue, Watch } from "vue-property-decorator";
 import { Getter } from 'vuex-class';
-import { AvailableFormats, DownloadRequest, DOWNLOAD_FORMATS, VideoDetail, YOUTUBE_SERVICE } from '@/config/litterals';
+import { AvailableFormats, DownloadRequest, DOWNLOAD_FORMATS, PlayRequest, SliceToUpdate, VideoDetail, YOUTUBE_SERVICE } from '@/config/litterals';
 import { IYoutubeService } from '@/services/youtubeService';
 import YoutubePlayer from '@/components/YoutubePlayer.vue'
 import VideosList from '@/components/VideosList.vue'
+import SliceManager from '@/components/SliceManager.vue'
 import _ from 'lodash';
 import { generateUniqueId } from "@/helpers/stringHelper";
 const { log, i18n, myIpcRenderer } = window;
@@ -99,7 +101,8 @@ const { log, i18n, myIpcRenderer } = window;
 @Component({
     components: {
         YoutubePlayer,
-        VideosList
+        VideosList,
+        SliceManager
     }
 })
 export default class Home extends Vue {
@@ -111,9 +114,17 @@ export default class Home extends Vue {
     downloadFolder = "";
     selectedFormat = DOWNLOAD_FORMATS[0];
     currentTime = 0;
+    playRequest: PlayRequest = {
+        start: 0,
+        end: 0
+    };
 
     updateCurrentTime(currentTime: number) {
         this.currentTime = currentTime;
+    }
+
+    updatePlayRequest(playRequest: PlayRequest){
+        this.playRequest = Object.assign({}, playRequest);
     }
 
     downloadItems(){

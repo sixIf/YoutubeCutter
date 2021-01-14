@@ -1,5 +1,5 @@
 <template>
-    <v-card elevation="8" class="card lightCard" height="500">
+    <v-card elevation="8" class="card lightCard" height="600">
         <v-container no-gutters>
             <v-row>
                 <v-col cols="12">
@@ -8,7 +8,7 @@
                         :item-height="120"
                         :bench="benched"
                         class="no-x-scroll"
-                        height="450"
+                        height="550"
                     >
                         <template v-slot:default="{ item }">
                             <v-list-item :key="item.id" :value="item.id" :class="computeItemClass(item)">
@@ -79,7 +79,7 @@ export default class VideosList extends Vue {
 
     computeItemClass(video: VideoDetail){
         if(!video.toDownload){
-            return "opacity: 0.5;"
+            return "item-ignored"
         } else if (video.id == this.selectedVideo.id) {
             return ""
         } else { // default style

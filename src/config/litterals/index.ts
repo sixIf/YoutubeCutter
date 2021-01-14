@@ -46,8 +46,8 @@ export interface VideoDetail {
     readonly id: string;
     readonly title: string;
     readonly thumbnail: string;
-    readonly sliceList: SlicedYoutube[];
     readonly keepFullItem?: boolean;
+    sliceList: SlicedYoutube[];
     formats: ytdl.videoFormat[];
     bestAudioFormat?: string;
     bestVideoFormat?: string;
@@ -59,11 +59,10 @@ export interface VideoDetail {
 }
 
 export interface SlicedYoutube {
-    readonly startTime: string;
+    startTime: number;
     format: AvailableFormats;
-    readonly duration: string;
-    readonly name: string;
-    readonly isFullContent: boolean;
+    endTime: number;
+    name: string;
     isActive: boolean;
 }
 
@@ -82,3 +81,13 @@ export const DOWNLOAD_FORMATS: AvailableFormats[] = [
         value: 'mp3'
     },
 ]
+
+export interface SliceToUpdate {
+    index: number;
+    updatedSlice: SlicedYoutube;
+}
+
+export interface PlayRequest {
+    start: number;
+    end: number;
+}
