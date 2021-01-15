@@ -72,18 +72,24 @@ export class DownloadService implements IDownloadService {
      * @param item what we want to download
      */
     async handleItem(item: VideoDetail) {
-        const tempAudioPath = path.resolve(this.output, sanitize(`TEMP_audio_${item.downloadTry}_${item.title}.mp3`));
-        const tempVideoPath = path.resolve(this.output, sanitize(`TEMP_video_${item.downloadTry}_${item.title}.mp4`));
-        const audioPath = path.resolve(this.output, sanitize(`${item.title}.mp3`));
-        const videoPath = path.resolve(this.output, sanitize(`${item.title}.mp4`));
-        const tempMergedPath = path.resolve(this.output, sanitize(`TEMP_merged_${item.downloadTry}_${item.title}`));
+        const videoNeeded = this.isThereVideoSlice(item.sliceList);
+        // Set item output
+        if (item.sliceList.length > 1) {
+            const newDir = path.join(this.output, sanitize(item.title));
+            if(!fs.existsSync(newDir)) fs.mkdirSync(newDir)
+            item.folderPath = newDir;
+        } else item.folderPath = this.output;
+
+        const tempAudioPath = path.resolve(item.folderPath, sanitize(`TEMP_audio_${item.downloadTry}_${item.title}.mp3`));
+        const tempVideoPath = path.resolve(item.folderPath, sanitize(`TEMP_video_${item.downloadTry}_${item.title}.mp4`));
+        const audioPath = path.resolve(item.folderPath, sanitize(`${item.title}.mp3`));
+        const videoPath = path.resolve(item.folderPath, sanitize(`${item.title}.mp4`));
         const tempFiles = [tempAudioPath, tempVideoPath];
         const fullVideoSlice = item.sliceList.shift();
-        item.folderPath = this.output;
 
         try {
             
-            if (this.isThereVideoSlice(item.sliceList)) { // Download the whole video with audio
+            if (videoNeeded) { // Download the whole video with audio
                 const bestFormat = await this.chooseBestVideoQuality(item);
                 await this.downloadVideo(item, tempVideoPath, bestFormat);
                 item.filePath = videoPath;
@@ -99,37 +105,38 @@ export class DownloadService implements IDownloadService {
                 item.filePath = audioPath;
             }
             
-            // Slice videos next
-            item.sliceList.forEach(async slice => {
+            // Create requested slices
+            for (const slice of item.sliceList) {
                 let outputPath = '';
                 switch (slice.format.type) {
                     case 'video':
-                        outputPath = path.resolve(this.output, sanitize(`${slice.name}.mp4`));
-                        this.loggerService.info(`before slice video ${videoPath}`)
-                        try {
-                            await this.ffmpegService.sliceInput(videoPath, outputPath, slice.startTime, slice.endTime);
-                        } catch (err) {
-                            this.loggerService.error(err);
-                        }
+                        outputPath = path.resolve(item.folderPath!, sanitize(`${slice.name}.mp4`));
+                        await this.ffmpegService.sliceInput(videoPath, outputPath, slice.startTime, slice.endTime);
                         break;
                     case 'audio':
-                        outputPath = path.resolve(this.output, sanitize(`${slice.name}.mp3`));
-                        this.loggerService.info(`before slice audio ${audioPath}`)
-                        try {
-                            await this.ffmpegService.sliceInput(audioPath, outputPath, slice.startTime, slice.endTime);
-                        } catch (err) {
-                            this.loggerService.error(err);
-                        }
+                        outputPath = path.resolve(item.folderPath!, sanitize(`${slice.name}.mp3`));
+                        await this.ffmpegService.sliceInput(audioPath, outputPath, slice.startTime, slice.endTime);
                         break;
                 }
+
+            }
+            item.sliceList.forEach(async slice => {
             });
 
-            if (!fullVideoSlice!.isActive){
-                tempFiles.push(audioPath, videoPath);
-            };            
+            // Handle main slice
+            switch (fullVideoSlice!.format.type) {
+                case 'video':
+                    if (fullVideoSlice!.isActive) tempFiles.push(audioPath);
+                    else tempFiles.push(audioPath, videoPath);
+                    break;
+                case 'audio':
+                    if (fullVideoSlice!.isActive) tempFiles.push(videoPath);
+                    else tempFiles.push(audioPath, videoPath);
+                    break;
+            }
             
 
-            if (this.browserWin) this.browserWin.webContents.send('item-downloaded', item);
+            if (this.browserWin) this.browserWin.webContents.send('item-downloaded', item); // notify renderer
 
             this.sucessDownloadList.push(item);
         } catch (err) {
@@ -211,12 +218,12 @@ export class DownloadService implements IDownloadService {
             type: type, audioOnly: this.downloadRequest.audioOnly,
             video: videoDownloading
         }
-        if (this.browserWin)
-            this.browserWin.webContents.send('download-progress', objectToSend);
+        // if (this.browserWin)
+        //     this.browserWin.webContents.send('download-progress', objectToSend);
     }
 
     private isThereVideoSlice(sliceList: SlicedYoutube[]): boolean{
-        return _.findIndex(sliceList, (slice) => { return slice.format.type == 'video' ? true : false}) != -1
+        return _.findIndex(sliceList, (slice) => { return slice.format.type === "video" }) != -1;
     }
 
     /**

@@ -26,7 +26,6 @@ export class FfmpegService implements IFfmpegService {
     }
 
     mergeAudioVideo(audioPath: string, videoPath: string, outputPath: string): Promise<string> {
-        console.log(`mergeAudioVideo ${audioPath} ${videoPath} ${outputPath}}`)
         return new Promise ( (resolve, reject) => {
             ffmpeg()
                 .input(videoPath)
@@ -49,16 +48,15 @@ export class FfmpegService implements IFfmpegService {
         return new Promise ( (resolve, reject) => {
             const duration = end - start;
             ffmpeg()
-            .input(inputPath)
-                .inputOption(`-ss ${start}`)
-                .videoCodec('copy')
-                .audioCodec('copy')
-                .outputOption(`-t ${duration}`)
-                .save(outputPath)
+                .input(inputPath)
+                .seekInput(start)
+                .output(outputPath)
+                .duration(duration)
                 .on('error', (err: Error) => {
                     reject(err.message)
                 })
-                .on('end', () => resolve(`\nFinished slicing, saved to ${outputPath}`));
+                .on('end', () => resolve(`\nFinished slicing, saved to ${outputPath}`))
+                .run();
         })
     }
 
