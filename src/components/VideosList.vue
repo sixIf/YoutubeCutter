@@ -34,7 +34,7 @@
                                         </v-col>
                                         <v-col cols="6">
                                             <v-icon 
-                                                class="theme--light grey--text"
+                                                class="theme--light black--text"
                                                 @click="changeVideoToDownload(item)"
                                             >
                                                 {{ item.toDownload ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline' }}
@@ -94,7 +94,7 @@ export default class VideosList extends Vue {
         if(!video.toDownload){
             return "item-ignored"
         } else if (video.id == this.selectedVideo.id) {
-            return ""
+            return "item-selected"
         } else { // default style
             return "";
         }
@@ -108,5 +108,9 @@ export default class VideosList extends Vue {
 
 .item-ignored {
     opacity: 0.5;
+}
+
+.item-selected {
+    background: var(--v-lightPrimary-base);
 }
 </style>

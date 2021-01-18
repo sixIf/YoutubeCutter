@@ -73,7 +73,8 @@ export class DownloadService implements IDownloadService {
      */
     async handleItem(item: VideoDetail) {
         const videoNeeded = this.isThereVideoSlice(item.sliceList);
-        // Set item output
+        
+        // Set item download output
         if (item.sliceList.length > 1) {
             const newDir = path.join(this.output, sanitize(item.title));
             if(!fs.existsSync(newDir)) fs.mkdirSync(newDir)
@@ -92,17 +93,15 @@ export class DownloadService implements IDownloadService {
             if (videoNeeded) { // Download the whole video with audio
                 const bestFormat = await this.chooseBestVideoQuality(item);
                 await this.downloadVideo(item, tempVideoPath, bestFormat);
-                item.filePath = videoPath;
 
                 if (!item.videoHasAudio){
                     await this.downloadAudio(item, tempAudioPath);
                     await this.ffmpegService.convertToMp3(tempAudioPath, audioPath);
                     await this.ffmpegService.mergeAudioVideo(tempAudioPath, tempVideoPath, videoPath);
-                } else fs.renameSync(tempVideoPath, videoPath)
+                } else fs.renameSync(tempVideoPath, videoPath);
             } else { // Download only audio
                 await this.downloadAudio(item, tempAudioPath);
                 await this.ffmpegService.convertToMp3(tempAudioPath, audioPath);
-                item.filePath = audioPath;
             }
             
             // Create requested slices
@@ -118,20 +117,29 @@ export class DownloadService implements IDownloadService {
                         await this.ffmpegService.sliceInput(audioPath, outputPath, slice.startTime, slice.endTime);
                         break;
                 }
-
             }
-            item.sliceList.forEach(async slice => {
-            });
 
             // Handle main slice
             switch (fullVideoSlice!.format.type) {
                 case 'video':
-                    if (fullVideoSlice!.isActive) tempFiles.push(audioPath);
-                    else tempFiles.push(audioPath, videoPath);
+                    if (fullVideoSlice!.isActive) {
+                        tempFiles.push(audioPath);
+                        item.filePath = videoPath;
+                    }
+                    else {
+                        tempFiles.push(audioPath, videoPath);
+                        item.filePath = '';
+                    }
                     break;
                 case 'audio':
-                    if (fullVideoSlice!.isActive) tempFiles.push(videoPath);
-                    else tempFiles.push(audioPath, videoPath);
+                    if (fullVideoSlice!.isActive) {
+                        tempFiles.push(videoPath);
+                        item.filePath = audioPath;
+                    }
+                    else {
+                        tempFiles.push(audioPath, videoPath);
+                        item.filePath = '';
+                    }
                     break;
             }
             
@@ -145,6 +153,7 @@ export class DownloadService implements IDownloadService {
             //     this.errorDownloadList.push(item);
             //     if (this.browserWin) this.browserWin.webContents.send('download-error', item);
             // }
+            if (this.browserWin) this.browserWin.webContents.send('download-error', item);
             this.loggerService.error(err)
         } finally {
             this.deleteTempFiles(tempFiles);
