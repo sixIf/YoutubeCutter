@@ -18,6 +18,8 @@
                                             required
                                             append-outer-icon="mdi-send"
                                             @click:append-outer="searchItem" 
+                                            v-bind="attrs"
+                                            v-on="on"
                                         ></v-text-field>
                                     </v-form>
                                 </v-col>
@@ -160,14 +162,6 @@ export default class Home extends Vue {
         return `${i18n.translate(format.type).concat(` (${format.value})`)}`
     }
 
-    // Ytpl struggle to decode channel url sometimes
-    getFormattedUrl(url: string): string {
-        let formattedYtLink = this.ytLink.charAt(0) == 'y' ? 'https://www.'.concat(this.ytLink) : this.ytLink;
-        const slashOccurrence = formattedYtLink.match(/\//g);
-        if (slashOccurrence && slashOccurrence!.length > 4) formattedYtLink = formattedYtLink.slice(0, formattedYtLink.lastIndexOf('/'));
-        return formattedYtLink;
-    }
-
     /**
      * search order : Video - Playlist / Channel
      */
@@ -180,7 +174,7 @@ export default class Home extends Vue {
         } catch (err) {
             log.error(err);
             try {
-                const formattedYtLink = this.getFormattedUrl(this.ytLink);
+                const formattedYtLink = this.getFormattedUrl();
                 const playlistId = await this.youtubeService.getPlaylistIdFromUrl(formattedYtLink);
                 const videoInPlaylist = await this.youtubeService.findPlaylistVideos(playlistId);
                 videoInPlaylist.forEach((video) => this.addVideoToList(video));
@@ -215,6 +209,14 @@ export default class Home extends Vue {
     /**
      * Getters
      */
+
+    // Ytpl struggle to decode channel url sometimes
+    getFormattedUrl(): string {
+        let formattedYtLink = this.ytLink.charAt(0) == 'y' ? 'https://www.'.concat(this.ytLink) : this.ytLink;
+        const slashOccurrence = formattedYtLink.match(/\//g);
+        if (slashOccurrence && slashOccurrence!.length > 4) formattedYtLink = formattedYtLink.slice(0, formattedYtLink.lastIndexOf('/'));
+        return formattedYtLink;
+    }    
 
     get videosToDownload(): VideoDetail[] {
         return _.filter(this.videoList, (video) => video.toDownload)

@@ -25,46 +25,84 @@
                                             {{ getSelectText(item) }}
                                         </template>                            
                                     </v-select>
-                                    <v-row v-if="index != 0">
-                                        <v-col cols="6">
-                                            <v-text-field :value="slice.startTime"
-                                                :label="startLabel"
-                                                @click="setStartTime(slice, index)"
-                                            ></v-text-field>
-                                        </v-col>
-                                        <v-col cols="6">
-                                            <v-text-field :value="slice.endTime"
-                                                :label="endLabel"
-                                                @click="setEndTime(slice, index)"
-                                            ></v-text-field>
-                                        </v-col>
-                                    </v-row>
                                 </v-col>
                                 <v-col v-if="index == 0" cols="2">
-                                    <v-icon class="theme--light" @click="changeIsActive(slice, index)">
-                                        {{ slice.isActive ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'}}
-                                    </v-icon>
+                                    <v-tooltip bottom>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-icon class="theme--light" 
+                                                @click="changeIsActive(slice, index)"
+                                                v-bind="attrs"
+                                                v-on="on"
+                                            >
+                                                {{ slice.isActive ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'}}
+                                            </v-icon>
+                                        </template>
+                                        <span>{{ mainSliceStatus }}</span>
+                                    </v-tooltip>
                                 </v-col>       
                                 <v-col v-else cols="2">
-                                    <v-btn
-                                        fab
-                                        small
-                                        @click="playSlice(slice)"
-                                    >
-                                        <v-icon class="theme--light">mdi-play</v-icon>
-                                    </v-btn>
-                                    <v-btn
-                                        fab
-                                        small
-                                        @click="deleteSlice(index)"
-                                    >
-                                        <v-icon class="theme--light">mdi-delete</v-icon>
-                                    </v-btn>
+                                    <v-row>
+                                        <v-col cols="12">
+                                            <v-btn
+                                                fab
+                                                small
+                                                @click="playSlice(slice)"
+                                            >
+                                                <v-icon class="theme--light">mdi-play</v-icon>
+                                            </v-btn>
+                                        </v-col>
+                                        <v-col cols="12">
+                                            <v-btn
+                                                fab
+                                                small
+                                                @click="deleteSlice(index)"
+                                            >
+                                                <v-icon class="theme--light">mdi-delete</v-icon>
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
                                 </v-col>       
                             </v-row>
                         </v-col>
                     </v-row>
-                    <v-divider ></v-divider> 
+                    <v-row v-if="index != 0" justify="start"  style="padding-bottom: 5px;">
+                        <v-col cols="12">
+                            <span>
+                                {{ fromText }} 
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn
+                                            class="selectableTime"
+                                            color="secondary"
+                                            @click="setStartTime(slice, index)"
+                                            v-on="on"
+                                            v-bind="attrs" 
+                                        >
+                                            {{ getFormattedTime(slice.startTime)}}
+                                        </v-btn>
+                                    </template>
+                                    <span>{{ setTimeTooltip }}</span>
+                                </v-tooltip>
+                                {{ toText }} 
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn
+                                            class="selectableTime"
+                                            color="secondary"
+                                            @click="setEndTime(slice, index)"
+                                            v-on="on"
+                                            v-bind="attrs" 
+                                        >
+                                            {{ getFormattedTime(slice.endTime)}}
+                                        </v-btn>                                        
+                                    </template>
+                                    <span>{{ setTimeTooltip }}</span>
+                                </v-tooltip>
+                                <span>{{ getTimeRecap(slice) }}</span>
+                            </span>
+                        </v-col>
+                    </v-row>
+                    <v-divider></v-divider> 
                 </v-container>
             </v-list-item>
         </v-list>
@@ -91,6 +129,7 @@ import { AvailableFormats, DOWNLOAD_FORMATS, PlayRequest, SlicedYoutube, SliceTo
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 import _ from "lodash"
+import { formatTime } from "@/utils/time";
 const { i18n } = window;
 
 @Component
@@ -128,15 +167,19 @@ export default class SliceManager extends Vue {
     }
 
     setStartTime(slice: SlicedYoutube, index: number){
-        const updatedSlice = Object.assign({}, slice);
-        updatedSlice.startTime = this.currentTime;
-        this.updateSlice({index: index, updatedSlice: updatedSlice});
+        if (this.currentTime < slice.endTime) {
+            const updatedSlice = Object.assign({}, slice);
+            updatedSlice.startTime = this.currentTime;
+            this.updateSlice({index: index, updatedSlice: updatedSlice});
+        }
     }
 
     setEndTime(slice: SlicedYoutube, index: number){
-        const updatedSlice = Object.assign({}, slice);
-        updatedSlice.endTime = this.currentTime;
-        this.updateSlice({index: index, updatedSlice: updatedSlice});
+        if (this.currentTime > slice.startTime) {
+            const updatedSlice = Object.assign({}, slice);
+            updatedSlice.endTime = this.currentTime;
+            this.updateSlice({index: index, updatedSlice: updatedSlice});
+        }
     }
 
     setName(name: string, slice: SlicedYoutube, index: number){
@@ -172,6 +215,7 @@ export default class SliceManager extends Vue {
      * Getters
      */
 
+
     get startLabel(): string {
         return i18n.translate('Start time');
     }
@@ -195,10 +239,45 @@ export default class SliceManager extends Vue {
     get selectFormatLabel(){
         return i18n.translate('Format');
     }    
+
+    get mainSliceStatus(){
+        return i18n.translate("Keep the whole video");
+    }
+
+    get fromText(): string {
+        return i18n.translate("Cut from");
+    }
+
+    get toText(): string {
+        return i18n.translate("To");
+    }
+
+    get setTimeTooltip(): string {
+        return i18n.translate("Copy current youtube video time");
+    }
+
+    getTimeRecap(slice: SlicedYoutube): string {
+        const duration = formatTime(slice.endTime - slice.startTime);
+        return i18n.translate('for a duration of').concat(' ', duration);
+    }
+
+    /**
+     * time is in seconds
+     */
+    getFormattedTime(time: number): string {
+        return formatTime(time);
+    }
 }
 </script>
 <style scoped>
     .disabledSlice {
         opacity: 0.5;
+    }
+
+    .selectableTime {
+        cursor: pointer;
+        border: solid;
+        padding-left: 5px;
+        padding-right: 5px;
     }
 </style>

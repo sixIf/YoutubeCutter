@@ -3,13 +3,20 @@
         <v-container no-gutters>
             <v-row justify="end">
                 <v-col v-if="videoList.length != 0" cols="2">
-                    <v-btn
-                        fab
-                        small
-                        @click="clearList()"
-                    >
-                        <v-icon class="theme--light">mdi-delete</v-icon>
-                    </v-btn>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                fab
+                                small
+                                @click="clearList()"
+                                v-on="on"
+                                v-bind="attrs"
+                            >
+                                <v-icon class="theme--light">mdi-delete</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>{{ clearListTooltip }}</span> 
+                    </v-tooltip>
                 </v-col>
                 <v-col cols="12">
                     <v-virtual-scroll
@@ -28,17 +35,34 @@
                                 <v-list-item-action>
                                     <v-row align="center">
                                         <v-col cols="6">
-                                            <v-btn icon @click="selectVideo(item)">
-                                                <v-icon :color="computeCutColor(item)">mdi-content-cut</v-icon>
-                                            </v-btn>                                            
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-btn 
+                                                        icon 
+                                                        @click="selectVideo(item)"
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                    >
+                                                        <v-icon :color="computeCutColor(item)">mdi-content-cut</v-icon>
+                                                    </v-btn>       
+                                                    </template>
+                                                <span>{{ cutTooltip }}</span>
+                                            </v-tooltip>                                                                                         
                                         </v-col>
                                         <v-col cols="6">
-                                            <v-icon 
-                                                class="theme--light black--text"
-                                                @click="changeVideoToDownload(item)"
-                                            >
-                                                {{ item.toDownload ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline' }}
-                                            </v-icon>
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-icon 
+                                                        class="theme--light black--text"
+                                                        @click="changeVideoToDownload(item)"
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                    >
+                                                        {{ item.toDownload ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline' }}
+                                                    </v-icon>  
+                                                    </template>
+                                                <span>{{ getCheckboxTooltip(item) }}</span>
+                                            </v-tooltip>                                                
                                         </v-col>
                                     </v-row>
                                 </v-list-item-action>
@@ -57,6 +81,7 @@ import { VideoDetail } from "@/config/litterals";
 import _ from "lodash";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
+const { i18n } = window;
 
 @Component
 export default class VideosList extends Vue {
@@ -98,6 +123,23 @@ export default class VideosList extends Vue {
         } else { // default style
             return "";
         }
+    }
+
+    /**
+     * Getters
+     */
+
+    get clearListTooltip(): string {
+        return i18n.translate('Clear the video list');
+    }
+
+    get cutTooltip(): string {
+        return i18n.translate('Edit the video and select specific parts');
+    }
+
+    getCheckboxTooltip(item: VideoDetail): string {
+        return item.toDownload ? i18n.translate('Deselect the video')
+            : i18n.translate('Select the video to download')    ;
     }
 }
 </script>
