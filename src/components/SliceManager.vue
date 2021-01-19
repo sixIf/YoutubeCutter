@@ -65,9 +65,9 @@
                             </v-row>
                         </v-col>
                     </v-row>
-                    <v-row v-if="index != 0" justify="start"  style="padding-bottom: 5px;">
-                        <v-col cols="12">
-                            <span>
+                    <v-row v-if="index != 0" justify="center"  style="padding-bottom: 5px;">
+                        <v-col cols="12" md="12" lg="8">
+                            <span class="time-recap">
                                 {{ fromText }} 
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
@@ -128,7 +128,7 @@
 import { AvailableFormats, DOWNLOAD_FORMATS, PlayRequest, SlicedYoutube, SliceToUpdate, VideoDetail } from "@/config/litterals";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
-import _ from "lodash"
+import _, { toInteger } from "lodash"
 import { formatTime } from "@/utils/time";
 const { i18n } = window;
 
@@ -257,15 +257,15 @@ export default class SliceManager extends Vue {
     }
 
     getTimeRecap(slice: SlicedYoutube): string {
-        const duration = formatTime(slice.endTime - slice.startTime);
-        return i18n.translate('for a duration of').concat(' ', duration);
+        const duration = formatTime(toInteger((slice.endTime - slice.startTime).toFixed(0)));
+        return ` ${i18n.translate('for a duration of').concat(' ', duration,'.')}`;
     }
 
     /**
      * time is in seconds
      */
     getFormattedTime(time: number): string {
-        return formatTime(time);
+        return formatTime(toInteger(time.toFixed(0)));
     }
 }
 </script>
@@ -279,5 +279,9 @@ export default class SliceManager extends Vue {
         border: solid;
         padding-left: 5px;
         padding-right: 5px;
+    }
+
+    .time-recap {
+        font-weight: bold;
     }
 </style>

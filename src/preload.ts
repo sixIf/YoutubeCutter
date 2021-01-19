@@ -20,7 +20,7 @@ contextBridge.exposeInMainWorld(
         },
         send: (channel: string, data: any) => {
             // whitelist channels
-            let validChannels = ["download-videos", "download-progress", "item-downloaded", "open-external-url", "select-folder", "open-shell", "download-error", "add-single-video", "explore-channel"];
+            let validChannels = ["download-videos", "open-context-menu", "download-progress", "item-downloaded", "open-external-url", "select-folder", "open-shell", "download-error", "add-single-video", "explore-channel"];
             if (validChannels.includes(channel)) {
                 ipcRenderer.send(channel, data);
             }

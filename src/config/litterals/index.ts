@@ -91,3 +91,5 @@ export interface PlayRequest {
     start: number;
     end: number;
 }
+
+export type ContextType = 'text-field';

@@ -17,7 +17,8 @@
                                             class="card"
                                             required
                                             append-outer-icon="mdi-send"
-                                            @click:append-outer="searchItem" 
+                                            @click:append-outer="searchItem"
+                                            @contextmenu="openTextFieldMenu"
                                         ></v-text-field>
                                     </v-form>
                                 </v-col>
@@ -194,6 +195,10 @@ export default class Home extends Vue {
                 }
             }
         );
+    }
+
+    openTextFieldMenu(){
+        myIpcRenderer.send("open-context-menu", "text-field");
     }
 
     /**

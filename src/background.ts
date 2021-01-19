@@ -10,7 +10,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
 // import { appMainPath } from '@/helpers/pathHelper'
-import { DownloadRequest } from '@/config/litterals/index'
+import { DownloadRequest, ContextType } from '@/config/litterals/index'
 import { availableLocales } from "./config/litterals/i18n";
 import { DownloadService } from "./services/downloadService";
 import ytdl from "ytdl-core";
@@ -256,10 +256,17 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
 });
 
 // Todo handle right click to paste
-ipcMain.on("open-context-menu", async (event, args: any) => {
-    let {videoID, channelID, playlistID} = args;
-    const menu = new Menu()
-    const currentBrowserWindow = BrowserWindow.getFocusedWindow()!;
+ipcMain.on("open-context-menu", (event, type: ContextType) => {
+    const menu = new Menu();
+    switch (type) {
+        case 'text-field':
+            menu.append(new MenuItem({ id: 'right-click', label: 'Paste (CTRL+V)', role: 'paste'}));
+            break;
+    
+            default:
+                break;
+    }
+    if (win && menu.items.length > 0) menu.popup();
 });
 
 
