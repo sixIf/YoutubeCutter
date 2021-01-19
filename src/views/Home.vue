@@ -18,8 +18,6 @@
                                             required
                                             append-outer-icon="mdi-send"
                                             @click:append-outer="searchItem" 
-                                            v-bind="attrs"
-                                            v-on="on"
                                         ></v-text-field>
                                     </v-form>
                                 </v-col>
