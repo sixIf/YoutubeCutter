@@ -9,18 +9,28 @@ import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, autoU
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
-// import { appMainPath } from '@/helpers/pathHelper'
 import { DownloadRequest, ContextType } from '@/config/litterals/index'
-import { availableLocales } from "./config/litterals/i18n";
 import { DownloadService } from "./services/downloadService";
 import ytdl from "ytdl-core";
 import { YOUTUBE_VIDEO_URL } from "./config/litterals/youtube";
 import ytpl from "ytpl";
+import VueI18n from "vue-i18n";
 const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: BrowserWindow | null
 const loggerService = ApplicationContainer.resolve(LoggerService);
+let localesMessages: VueI18n.LocaleMessages;
+import ElectronStore from 'electron-store';
+
+const schema = {
+	locale: {
+		type: "string",
+		default: "en"
+	},
+} as const;
+
+const store = new ElectronStore({schema});
 
 
 // Set auto updater
@@ -221,11 +231,30 @@ ipcMain.on("open-shell", (event, args: string) => {
     }
 });
 
-ipcMain.handle("getVideoInfo", async (event, videoId: string) => {
+ipcMain.on("set-locale-messages", (event, args: VueI18n.LocaleMessages) => {
+    localesMessages = args;
+})
+
+ipcMain.handle("get-current-locale", (event, args) => {
+    return new Promise( (resolve, reject) => {
+        try {
+            const locale = store.get("locale");
+            resolve(locale);
+        } catch (err) {
+            reject(err);
+        }
+    })
+})
+
+ipcMain.on("set-current-locale", (event, locale: string) => {
+    store.set("locale", locale);
+})
+
+ipcMain.handle("get-video-infos", async (event, videoId: string) => {
     return ytdl.getInfo(`${YOUTUBE_VIDEO_URL}${videoId}`);
 });
 
-ipcMain.handle("getVideoIdFromUrl", (event, url: string) => {
+ipcMain.handle("get-video-id-from-url", (event, url: string) => {
     return new Promise( (resolve, reject) => {
         try {
             const returnValue = ytdl.getURLVideoID(url);
@@ -237,17 +266,28 @@ ipcMain.handle("getVideoIdFromUrl", (event, url: string) => {
     })
 });
 
-ipcMain.handle("getPlaylistIdFromUrl", (event, url: string) => {
+ipcMain.handle("get-playlist-id-from-url", (event, url: string) => {
     return ytpl.getPlaylistID(url);
 });
 
-ipcMain.handle("getPlaylistVideos", async (event, playlistId: string) => {
+ipcMain.handle("get-playlist-videos", async (event, playlistId: string) => {
     return ytpl(playlistId, { limit: Infinity });
 });
 
+ipcMain.handle("get-default-download-folder", (event, args) => {
+    return new Promise( (resolve, reject) => {
+        try {
+            const downloadPath = app.getPath('downloads');
+            resolve(downloadPath);
+        } catch (err) {
+            reject(err);
+        }
+    })
+})
+
 ipcMain.on("select-folder", (event, args: string) => {
     if (win)
-        win.webContents.send('selected-folder', dialog.showOpenDialogSync({ properties: ['openDirectory'] }));
+        win.webContents.send('selected-folder', dialog.showOpenDialogSync(win, { properties: ['openDirectory'] }));
 });
 
 
@@ -257,10 +297,13 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
 
 // Todo handle right click to paste
 ipcMain.on("open-context-menu", (event, type: ContextType) => {
+    const locale = store.get("locale") as string;
+    const contextMenu = localesMessages[locale]['contextMenu'] as VueI18n.LocaleMessageObject;
+    const pasteLabel = contextMenu['paste'] as string;
     const menu = new Menu();
     switch (type) {
         case 'text-field':
-            menu.append(new MenuItem({ id: 'right-click', label: 'Paste (CTRL+V)', role: 'paste'}));
+            menu.append(new MenuItem({ id: 'right-click', label: pasteLabel, role: 'paste', accelerator: 'CommandOrControl+V'}));
             break;
     
             default:

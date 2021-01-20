@@ -2,26 +2,26 @@
     <div>
         <v-card class="elevation-12 card">
             <v-toolbar color="secondary" dark flat>
-                <v-toolbar-title>{{__("Settings.title")}}</v-toolbar-title>
+                <v-toolbar-title>{{$t("Settings.title")}}</v-toolbar-title>
                 <v-spacer></v-spacer>
             </v-toolbar>
             <v-card-text>
-                <alert :alert="alert"></alert>
+                <!-- <alert :alert="alert"></alert> -->
                 <v-form @submit.prevent="submitForm">
-                    <v-text-field
+                    <!-- <v-text-field
                         v-model="folderPath"
-                        :label="$__('Settings.folder')"
-                        :placeholder="$__('Settings.folderTip')"
+                        :label="$t('Settings.folder')"
+                        :placeholder="$t('Settings.folderTip')"
                         prepend-icon="folder"
                         required
                         @click="selectDirectory()"
-                    ></v-text-field>
+                    ></v-text-field> -->
                     <v-radio-group v-model="localeSelected" :row="true">
                         <v-radio
-                            v-for="locale in localesInfos"
-                            :key="locale.code"
-                            :label="locale.name"
-                            :value="locale.code"
+                            v-for="locale in locales"
+                            :key="locale"
+                            :label="locale"
+                            :value="locale"
                         ></v-radio>
                     </v-radio-group>
                 </v-form>
@@ -32,7 +32,7 @@
                     color="primary"
                     type="submit"
                     @click.prevent="submitForm"
-                    >{{$__("Settings.save")}}</v-btn
+                    >{{$t("Settings.save")}}</v-btn
                 >
             </v-card-actions>
         </v-card>
@@ -41,15 +41,10 @@
 
 <script lang="ts">
 import { Component, Inject, Vue } from "vue-property-decorator";
-import {
-    DOWNLOAD_FOLDER_SERVICE,
-    YOUTUBE_SERVICE,
-} from "@/config/litterals";
+import { YOUTUBE_SERVICE } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
-import { IDownloadFolderService } from "@/services/downloadFolderService";
 import Alert from "@/components/Alert.vue";
-import { localesInfos } from "@/config/litterals/i18n"
-const { i18n } = window;
+const { myIpcRenderer } = window;
 
 @Component({
     components: {
@@ -57,20 +52,14 @@ const { i18n } = window;
     },
 })
 export default class SettingsForm extends Vue {
-    @Inject(DOWNLOAD_FOLDER_SERVICE)
-    downloadFolderService!: IDownloadFolderService;
     @Inject(YOUTUBE_SERVICE)
     youtubeService!: IYoutubeService;
-    folderPath: string | null = this.downloadFolderService.getDownloadFolder();
+    // folderPath: string | null = this.downloadFolderService.getDownloadFolder();
     alert: { type: string; message: string } | null = null;
-    localeSelected: string = i18n.getCurrentLocale();
+    localeSelected = "";
 
-    get localesInfos(): typeof localesInfos {
-        return localesInfos;
-    }
-
-    __(phrase: string, args: any) {
-        return this.$__(phrase, args)
+    get locales(): string[] {
+        return this.$i18n.availableLocales;
     }
 
     selectDirectory() {
@@ -80,26 +69,29 @@ export default class SettingsForm extends Vue {
 
     async submitForm() {
         // Set locale
-        i18n.setLocale(this.localeSelected);
+        this.$i18n.locale = this.localeSelected;
+        myIpcRenderer.send("set-current-locale", this.localeSelected)
     }
 
     mounted() {
-        window.myIpcRenderer.receive(
-            "selected-folder",
-            (data: string[] | undefined) => {
-                this.alert = null;
-                if (data) {
-                    this.folderPath = data[0];
-                    this.downloadFolderService.setDownloadFolder(
-                        this.folderPath
-                    );
-                    // this.alert = {
-                    //     type: "success",
-                    //     message: "The folder has been set. You can start downloading !",
-                    // };
-                }
-            }
-        );
+        this.localeSelected = this.$i18n.locale;
+        console.log(this.$i18n.locale)
+        // window.myIpcRenderer.receive(
+        //     "selected-folder",
+        //     (data: string[] | undefined) => {
+        //         this.alert = null;
+        //         if (data) {
+        //             this.folderPath = data[0];
+        //             this.downloadFolderService.setDownloadFolder(
+        //                 this.folderPath
+        //             );
+        //             // this.alert = {
+        //             //     type: "success",
+        //             //     message: "The folder has been set. You can start downloading !",
+        //             // };
+        //         }
+        //     }
+        // );
     }
 }
 </script>

@@ -10,11 +10,11 @@
                         <v-col cols="10">
                             <v-row align="center" justify="start">
                                 <v-col cols="8">
-                                    <v-text-field :value="slice.name" @input="debouncedSetName($event, slice, index)" :label="nameLabel"></v-text-field>
+                                    <v-text-field :value="slice.name" @input="debouncedSetName($event, slice, index)" :label="$t('slice.name')"></v-text-field>
                                     <v-select :value="slice.format"
                                         @change="setFormat($event, slice, index)"
                                         :items="availableFormats"
-                                        :label="selectFormatLabel"
+                                        :label="$t('format.format')"
                                         return-object
                                         persistent-hint                          
                                     >
@@ -37,7 +37,7 @@
                                                 {{ slice.isActive ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'}}
                                             </v-icon>
                                         </template>
-                                        <span>{{ mainSliceStatus }}</span>
+                                        <span>{{ $t("slice.keep") }}</span>
                                     </v-tooltip>
                                 </v-col>       
                                 <v-col v-else cols="2">
@@ -68,7 +68,7 @@
                     <v-row v-if="index != 0" justify="center"  style="padding-bottom: 5px;">
                         <v-col cols="12" md="12" lg="8">
                             <span class="time-recap">
-                                {{ fromText }} 
+                                {{ $t("slice.cutFrom") }} 
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-btn
@@ -81,9 +81,9 @@
                                             {{ getFormattedTime(slice.startTime)}}
                                         </v-btn>
                                     </template>
-                                    <span>{{ setTimeTooltip }}</span>
+                                    <span>{{ $t("slice.copyTime") }}</span>
                                 </v-tooltip>
-                                {{ toText }} 
+                                {{ $t("slice.toTime") }} 
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-btn
@@ -130,7 +130,6 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 import _, { toInteger } from "lodash"
 import { formatTime } from "@/utils/time";
-const { i18n } = window;
 
 @Component
 export default class SliceManager extends Vue {
@@ -209,56 +208,19 @@ export default class SliceManager extends Vue {
     }
 
     getSelectText(format: AvailableFormats){
-        return `${i18n.translate(format.type).concat(` (${format.value})`)}`
+        return `${this.$t('format.'.concat(format.type))}  (${format.value})`
     }
     /**
      * Getters
      */
 
-
-    get startLabel(): string {
-        return i18n.translate('Start time');
-    }
-
-    get endLabel(): string {
-        return i18n.translate('End time');
-    }
-
-    get nameLabel(): string {
-        return i18n.translate('Slice name');
-    }
-
-    get activeLabel(): string {
-        return i18n.translate('Active');
-    }
-    
     get availableFormats(){
         return DOWNLOAD_FORMATS;
     }
 
-    get selectFormatLabel(){
-        return i18n.translate('Format');
-    }    
-
-    get mainSliceStatus(){
-        return i18n.translate("Keep the whole video");
-    }
-
-    get fromText(): string {
-        return i18n.translate("Cut from");
-    }
-
-    get toText(): string {
-        return i18n.translate("To");
-    }
-
-    get setTimeTooltip(): string {
-        return i18n.translate("Copy current youtube video time");
-    }
-
     getTimeRecap(slice: SlicedYoutube): string {
         const duration = formatTime(toInteger((slice.endTime - slice.startTime).toFixed(0)));
-        return ` ${i18n.translate('for a duration of').concat(' ', duration,'.')}`;
+        return ` ${this.$t('slice.duration')} ${duration}.`;
     }
 
     /**

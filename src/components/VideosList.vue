@@ -15,7 +15,7 @@
                                 <v-icon class="theme--light">mdi-delete</v-icon>
                             </v-btn>
                         </template>
-                        <span>{{ clearListTooltip }}</span> 
+                        <span>{{ $t('videoList.clear') }}</span> 
                     </v-tooltip>
                 </v-col>
                 <v-col cols="12">
@@ -46,7 +46,7 @@
                                                         <v-icon :color="computeCutColor(item)">mdi-content-cut</v-icon>
                                                     </v-btn>       
                                                     </template>
-                                                <span>{{ cutTooltip }}</span>
+                                                <span>{{ $t('videoList.edit') }}</span>
                                             </v-tooltip>                                                                                         
                                         </v-col>
                                         <v-col cols="6">
@@ -81,7 +81,6 @@ import { VideoDetail } from "@/config/litterals";
 import _ from "lodash";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
-const { i18n } = window;
 
 @Component
 export default class VideosList extends Vue {
@@ -129,17 +128,9 @@ export default class VideosList extends Vue {
      * Getters
      */
 
-    get clearListTooltip(): string {
-        return i18n.translate('Clear the video list');
-    }
-
-    get cutTooltip(): string {
-        return i18n.translate('Edit the video and select specific parts');
-    }
-
-    getCheckboxTooltip(item: VideoDetail): string {
-        return item.toDownload ? i18n.translate('Deselect the video')
-            : i18n.translate('Select the video to download')    ;
+    getCheckboxTooltip(item: VideoDetail) {
+        return item.toDownload ? this.$t('videoList.deselect')
+            : this.$t('videoList.select');
     }
 }
 </script>

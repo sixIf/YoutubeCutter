@@ -1,6 +1,5 @@
 <template>
     <v-app class="primary">
-        <div>
             <v-snackbar v-model="snackbar" top color="info">
                 {{ snackbarMessage }}
                 <template v-slot:action="{ attrs }">
@@ -25,6 +24,22 @@
                         <v-icon class="card--text">mdi-help-circle</v-icon>
                     </v-btn>
                 </router-link>
+                <v-speed-dial v-if="currentLocale != ''" direction="bottom">
+                    <template v-slot:activator>
+                        <v-btn
+                            width="40"
+                            :class="`flag-icon-background flag-icon-${currentFlag}`"
+                        ></v-btn>
+                    </template>
+                    <div v-for="flag in flagList" :key="flag">
+                        <v-btn
+                            width="40"
+                            small
+                            @click="changeLocale(flag)"
+                            :class="`flag-icon-background flag-icon-${flag}`"
+                        ></v-btn>
+                    </div>
+                </v-speed-dial>
                 <router-link to="/settings">
                     <v-btn icon>
                         <v-icon class="card--text">mdi-cog</v-icon>
@@ -32,7 +47,6 @@
                 </router-link>
             </v-app-bar>
             <download-queue-drawer />
-        </div>
         <v-main class="primary">
 
         <router-view />
@@ -46,7 +60,10 @@
 import { Component, Vue } from "vue-property-decorator";
 import DownloadQueueDrawer from "@/components/DownloadQueueDrawer.vue";
 import { DownloadRequest } from "./config/litterals";
-const { myIpcRenderer } = window;
+import 'flag-icon-css/css/flag-icon.css'
+import _ from "lodash";
+import { localesToFlag, localeType } from "./i18n";
+const { myIpcRenderer, log } = window;
 
 // Define the component in class-style
 @Component({
@@ -58,8 +75,20 @@ export default class App extends Vue {
     isDownloading = false;
     snackbar = false;
     snackbarMessage = "";
+    currentLocale: localeType = "en";
 
-    mounted() {
+    changeLocale(flag: string) {
+        const locale  = _.findKey(localesToFlag, (value) => value == flag) as localeType;
+        this.$i18n.locale = locale;
+        this.currentLocale = locale;
+        myIpcRenderer.send("set-current-locale", locale)
+    }
+
+    created () {
+        this.currentLocale = this.$i18n.locale as localeType;
+    }
+
+    async mounted() {
         myIpcRenderer.receive(
             "download-error",
             (data: DownloadRequest) => {
@@ -67,7 +96,27 @@ export default class App extends Vue {
                 this.snackbarMessage = `Download error : ${data.itemSelected[0].title}`;
             }
         );
+
+        myIpcRenderer.send("set-locale-messages", this.$i18n.messages);
+
+        await myIpcRenderer.invoke("get-current-locale", {})
+            .then((locale) => {
+                this.$i18n.locale = locale;
+            })
+            .catch((err) => {
+                log.error(err);
+            })
     }
+
+    get currentFlag(): string {
+        return localesToFlag[this.currentLocale];
+    }
+
+    get flagList(): string[] {
+        const flags = _.filter(this.$i18n.availableLocales, (locale) => locale != this.currentLocale);
+        return _.map(flags, (flag) => localesToFlag[flag as localeType])
+    }
+    
 }
 </script>
 <style>

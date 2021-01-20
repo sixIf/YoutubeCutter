@@ -1,11 +1,9 @@
-import { ILocaleService } from './services/localeService'
 import { ILoggerService } from './services/loggerService'
 
 declare global {
   interface Window {
     myIpcRenderer: MyIpcRenderer,
     log: ILoggerService,
-    i18n: ILocaleService;
     youtube: Youtube;
     onYouTubeIframeAPIReady: Function;
   }
@@ -24,10 +22,4 @@ export interface MyLogger {
 
 interface Youtube{
   createPlayer(videoID: string, playerID: string): any;
-}
-
-declare module 'vue/types/vue' {
-  interface Vue {
-    $__: Function
-  }
 }

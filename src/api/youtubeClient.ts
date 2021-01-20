@@ -13,18 +13,18 @@ export interface IYoutubeClient {
 export class YoutubeClient implements IYoutubeClient {
   
   getVideoIdFromUrl(videoUrl: string): Promise<string> {
-    return window.myIpcRenderer.invoke("getVideoIdFromUrl", videoUrl);
+    return window.myIpcRenderer.invoke("get-video-id-from-url", videoUrl);
   }
   
   async getPlaylistIdFromUrl(playlistUrl: string): Promise<string> {
-    return window.myIpcRenderer.invoke("getPlaylistIdFromUrl", playlistUrl);
+    return window.myIpcRenderer.invoke("get-playlist-id-from-url", playlistUrl);
   }
 
   async findVideo(videoId: string): Promise<ytdl.videoInfo> {
-    return window.myIpcRenderer.invoke("getVideoInfo", videoId);
+    return window.myIpcRenderer.invoke("get-video-infos", videoId);
   }
 
   async findPlaylistVideos(playlistID: string): Promise<ytpl.Result> {
-    return window.myIpcRenderer.invoke("getPlaylistVideos", playlistID);
+    return window.myIpcRenderer.invoke("get-playlist-videos", playlistID);
   }
 }

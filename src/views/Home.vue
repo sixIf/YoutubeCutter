@@ -9,7 +9,7 @@
                                     <v-form @submit.prevent="searchItem">
                                         <v-text-field 
                                             v-model="ytLink"
-                                            :label="textLabel"
+                                            :label="$t('download.textInputLabel')"
                                             :hint="hint"
                                             filled
                                             rounded
@@ -32,10 +32,10 @@
                                 <v-col cols="4">
                                     <v-text-field
                                         v-model="downloadFolder"
-                                        :label="selectFolderLabel"
-                                        :hint="selectFolderHint"
+                                        :label="$t('download.folder')"
+                                        :hint="$t('download.folderHint')"
                                         persistent-hint
-                                        
+                                        readonly
                                         @click="selectDownloadFolder"    
                                     ></v-text-field>
                                 </v-col>
@@ -43,8 +43,8 @@
                                     <v-select
                                         v-model="selectedFormat"
                                         :items="availableFormats"
-                                        :hint="selectFormatHint"
-                                        :label="selectFormatLabel"
+                                        :hint="$t('format.selectHint')"
+                                        :label="$t('format.format')"
                                         return-object
                                         persistent-hint
                                     >
@@ -61,7 +61,7 @@
                                         color="primary"
                                         @click="downloadItems"
                                         :disabled="isDownloadDisbled"
-                                    >{{ downloadButtonLabel }}</v-btn>
+                                    >{{ $t('download.button') }}</v-btn>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -89,14 +89,14 @@
 // @ is an alias to /src
 import { Component, Inject, Vue, Watch } from "vue-property-decorator";
 import { Getter } from 'vuex-class';
-import { AvailableFormats, DownloadRequest, DOWNLOAD_FORMATS, PlayRequest, SliceToUpdate, VideoDetail, YOUTUBE_SERVICE } from '@/config/litterals';
+import { AvailableFormats, DownloadRequest, DOWNLOAD_FORMATS, PlayRequest, VideoDetail, YOUTUBE_SERVICE } from '@/config/litterals';
 import { IYoutubeService } from '@/services/youtubeService';
 import YoutubePlayer from '@/components/YoutubePlayer.vue'
 import VideosList from '@/components/VideosList.vue'
 import SliceManager from '@/components/SliceManager.vue'
-import _, { concat } from 'lodash';
+import _ from 'lodash';
 import { generateUniqueId } from "@/helpers/stringHelper";
-const { log, i18n, myIpcRenderer } = window;
+const { log, myIpcRenderer } = window;
 
 // Define the component in class-style
 @Component({
@@ -158,7 +158,7 @@ export default class Home extends Vue {
     }
 
     getSelectText(format: AvailableFormats){
-        return `${i18n.translate(format.type).concat(` (${format.value})`)}`
+        return `${this.$t('format.'.concat(format.type))} (${format.value})`
     }
 
     /**
@@ -195,6 +195,14 @@ export default class Home extends Vue {
                 }
             }
         );
+
+        window.myIpcRenderer.invoke("get-default-download-folder", {})
+            .then((folder) => {
+                this.downloadFolder = folder;
+            })
+            .catch((err) => {
+                log.error(err);
+            })
     }
 
     openTextFieldMenu(){
@@ -238,34 +246,10 @@ export default class Home extends Vue {
     get currentVideoId(){
         return this.selectedVideo.id;
     }
-    
-    get textLabel(){
-        return `${i18n.translate("Video, Playlist or channel URL")}`
-    }
 
     get hint(){
         return "https://www.youtube.com/watch?v=jNQXAC9IVRw";
-    }
-
-    get selectFormatHint(){
-        return `Choose the format for the download`;
-    }
-
-    get selectFormatLabel(){
-        return i18n.translate('Format');
-    }
-
-    get selectFolderHint(){
-        return `Choose where to save the download`;
-    }
-
-    get selectFolderLabel(){
-        return i18n.translate('Download Folder');
-    }
-
-    get downloadButtonLabel(){
-        return i18n.translate('Download.button');
-    }    
+    } 
 }
 </script>
 <style>
