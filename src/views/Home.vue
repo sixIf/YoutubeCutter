@@ -6,21 +6,7 @@
                         <v-container>
                             <v-row>
                                 <v-col cols="12">
-                                    <v-form @submit.prevent="searchItem">
-                                        <v-text-field 
-                                            v-model="ytLink"
-                                            :label="$t('download.textInputLabel')"
-                                            :hint="hint"
-                                            filled
-                                            rounded
-                                            dense
-                                            class="card"
-                                            required
-                                            append-outer-icon="mdi-send"
-                                            @click:append-outer="searchItem"
-                                            @contextmenu="openTextFieldMenu"
-                                        ></v-text-field>
-                                    </v-form>
+                                    <search-youtube-text-field :selectedFormat="selectedFormat"/>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -94,6 +80,7 @@ import { IYoutubeService } from '@/services/youtubeService';
 import YoutubePlayer from '@/components/YoutubePlayer.vue'
 import VideosList from '@/components/VideosList.vue'
 import SliceManager from '@/components/SliceManager.vue'
+import SearchYoutubeTextField from '@/components/SearchYoutubeTextField.vue'
 import _ from 'lodash';
 import { generateUniqueId } from "@/helpers/stringHelper";
 const { log, myIpcRenderer } = window;
@@ -103,7 +90,8 @@ const { log, myIpcRenderer } = window;
     components: {
         YoutubePlayer,
         VideosList,
-        SliceManager
+        SliceManager,
+        SearchYoutubeTextField
     }
 })
 export default class Home extends Vue {
@@ -111,7 +99,6 @@ export default class Home extends Vue {
     youtubeService!: IYoutubeService;
     @Getter('fetchedVideosState/getFetchedVideos') videoList!: VideoDetail[];
     @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
-    ytLink = "";
     downloadFolder = "";
     selectedFormat = DOWNLOAD_FORMATS[0];
     currentTime = 0;
@@ -145,45 +132,9 @@ export default class Home extends Vue {
         window.myIpcRenderer.send("select-folder", {});
     }
 
-    addVideoToList(video: VideoDetail){
-        const videoIndexInList = _.findIndex(this.videoList, (value) => {
-            return value.id == video.id
-        })
-
-        video.sliceList[0].format = this.selectedFormat;
-
-        if (videoIndexInList == -1) {
-            this.$store.commit('fetchedVideosState/setSingleFetchedVideo', video);
-        }
-    }
 
     getSelectText(format: AvailableFormats){
         return `${this.$t('format.'.concat(format.type))} (${format.value})`
-    }
-
-    /**
-     * search order : Video - Playlist / Channel
-     */
-    async searchItem(){
-        try {
-            const videoId = await this.youtubeService.getVideoIdFromUrl(this.ytLink);
-            const videoFound = await this.youtubeService.findVideo(videoId);
-            this.addVideoToList(videoFound);
-            this.ytLink = "";
-        } catch (err) {
-            log.error(err);
-            try {
-                const formattedYtLink = this.getFormattedUrl();
-                const playlistId = await this.youtubeService.getPlaylistIdFromUrl(formattedYtLink);
-                const videoInPlaylist = await this.youtubeService.findPlaylistVideos(playlistId);
-                videoInPlaylist.forEach((video) => this.addVideoToList(video));
-            } catch (err) {
-                log.error(err);
-            }
-            
-        } finally {
-            this.ytLink = "";
-        }
     }
 
     mounted() {
@@ -205,10 +156,6 @@ export default class Home extends Vue {
             })
     }
 
-    openTextFieldMenu(){
-        myIpcRenderer.send("open-context-menu", "text-field");
-    }
-
     /**
      * Watchers
      */
@@ -220,14 +167,6 @@ export default class Home extends Vue {
     /**
      * Getters
      */
-
-    // Ytpl struggle to decode channel url sometimes
-    getFormattedUrl(): string {
-        let formattedYtLink = this.ytLink.charAt(0) == 'y' ? 'https://www.'.concat(this.ytLink) : this.ytLink;
-        const slashOccurrence = formattedYtLink.match(/\//g);
-        if (slashOccurrence && slashOccurrence!.length > 4) formattedYtLink = formattedYtLink.slice(0, formattedYtLink.lastIndexOf('/'));
-        return formattedYtLink;
-    }    
 
     get videosToDownload(): VideoDetail[] {
         return _.filter(this.videoList, (video) => video.toDownload)
