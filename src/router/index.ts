@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Help from '@/views/Help.vue'
-import Settings from '@/views/Settings.vue'
 import { DownloadFolderService } from "@/services/downloadFolderService"
 import { ApplicationContainer } from "@/di/index"
 
@@ -23,11 +22,6 @@ const routes: RouteConfig[] = [
         path: '/help',
         name: 'help',
         component: Help
-    },
-    {
-        path: '/settings',
-        name: 'settings',
-        component: Settings
     }
 ]
 

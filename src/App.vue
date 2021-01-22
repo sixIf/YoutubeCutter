@@ -27,24 +27,21 @@
                 <v-speed-dial v-if="currentLocale != ''" direction="bottom">
                     <template v-slot:activator>
                         <v-btn
-                            width="40"
+                            height="25"
+                            min-width="40"
                             :class="`flag-icon-background flag-icon-${currentFlag}`"
                         ></v-btn>
                     </template>
                     <div v-for="flag in flagList" :key="flag">
                         <v-btn
-                            width="40"
+                            height="20"
+                            min-width="35"
                             small
                             @click="changeLocale(flag)"
                             :class="`flag-icon-background flag-icon-${flag}`"
                         ></v-btn>
                     </div>
                 </v-speed-dial>
-                <router-link to="/settings">
-                    <v-btn icon>
-                        <v-icon class="card--text">mdi-cog</v-icon>
-                    </v-btn>
-                </router-link>
             </v-app-bar>
             <download-queue-drawer />
         <v-main class="primary">
@@ -84,10 +81,6 @@ export default class App extends Vue {
         myIpcRenderer.send("set-current-locale", locale)
     }
 
-    created () {
-        this.currentLocale = this.$i18n.locale as localeType;
-    }
-
     async mounted() {
         myIpcRenderer.receive(
             "download-error",
@@ -102,6 +95,7 @@ export default class App extends Vue {
         await myIpcRenderer.invoke("get-current-locale", {})
             .then((locale) => {
                 this.$i18n.locale = locale;
+                this.currentLocale = this.$i18n.locale as localeType;
             })
             .catch((err) => {
                 log.error(err);
@@ -143,5 +137,9 @@ html {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #612220;
+}
+
+.flag-icon-background{
+    background-size: cover;
 }
 </style>
