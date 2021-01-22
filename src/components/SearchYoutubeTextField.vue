@@ -1,8 +1,5 @@
 <template>
-    <v-form @submit.prevent=""
-        ref="form"
-        v-model="valid"
-    >
+    <v-form @submit.prevent="">
         <v-text-field 
             v-model="ytLink"
             :label="$t('download.textInputLabel')"
@@ -12,16 +9,31 @@
             dense
             class="card"
             required
-            :rules="linkRules"
             @input="debouncedSearch"
             @contextmenu="openTextFieldMenu"
         >
             <template v-slot:append>
                 <v-progress-circular
-                    v-if="isFetching"
+                    v-show="isFetching"
                     indeterminate
                     color="primary"
                 ></v-progress-circular>
+                <v-tooltip v-model="show" bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            icon
+                            class="vibrate"
+                            v-bind="attrs"
+                            v-on="on"
+                            v-show="error.length != 0" 
+                        >
+                            <v-icon class="primary--text">
+                                mdi-alert-circle
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                    <span>{{ displayError }}</span>
+                </v-tooltip>
             </template>
         </v-text-field>  
     </v-form>  
@@ -31,6 +43,7 @@
 import { DOWNLOAD_FORMATS, VideoDetail, YOUTUBE_SERVICE, AvailableFormats } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 import _ from "lodash";
+import { LocaleMessage, LocaleMessages } from "vue-i18n";
 import { Component, Inject, Prop, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 const { log, myIpcRenderer } = window;
@@ -47,13 +60,9 @@ export default class SearchYoutubeTextField extends Vue {
     @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
     ytLink = "";
     isFetching = false;
-    valid = true;
-    linkRules = [
-        (link: string) => link && this.error !== 'id' || 'The id is required'
-    ];
     error = '';
+    show = false;
     debouncedSearch = _.debounce(this.searchItem, 900);
-
 
     addVideoToList(video: VideoDetail){
         const videoIndexInList = _.findIndex(this.videoList, (value) => {
@@ -74,6 +83,9 @@ export default class SearchYoutubeTextField extends Vue {
      * search order : Video - Playlist / Channel
      */
     async searchItem(){
+        let errorThrown = false;
+        this.error = '';
+        if (!this.ytLink) return;
         try {
             this.isFetching = true;
             const videoId = await this.youtubeService.getVideoIdFromUrl(this.ytLink);
@@ -90,13 +102,13 @@ export default class SearchYoutubeTextField extends Vue {
                 this.ytLink = "";
             } catch (err) {
                 this.$emit("nothing-found");
+                errorThrown = true;
                 log.error(err);
             }
             
         } finally {
             this.isFetching = false;
-            this.error = 'id';
-            this.form.validate();
+            this.error = errorThrown ? 'id' : '';
             this.$emit("videos-found")
         }
     }
@@ -111,14 +123,43 @@ export default class SearchYoutubeTextField extends Vue {
         const slashOccurrence = formattedYtLink.match(/\//g);
         if (slashOccurrence && slashOccurrence!.length > 4) formattedYtLink = formattedYtLink.slice(0, formattedYtLink.lastIndexOf('/'));
         return formattedYtLink;
-    }    
+    }
+
+    get displayError(): LocaleMessage {
+        switch (this.error) {
+            case 'id':
+                return this.$t('error.linkNotFound');
+        
+            default:
+                return this.$t('error.linkNotFound');
+        }
+    }
 
     get hint(){
         return "https://www.youtube.com/watch?v=jNQXAC9IVRw";
     }
-
-    get form(): Vue & { validate: () => boolean } {
-        return this.$refs.form as Vue & { validate: () => boolean };
-    }
 }
 </script>
+
+<style scoped>
+    .error {
+        background-color: var(--v-card-base);
+        color: var(--v-lightPrimary-base);
+    }
+
+    .vibrate {
+        animation: 0.5s linear 0s 2 normal cutombounce;
+    }
+
+    @keyframes cutombounce {
+    0% {
+        transform: translateX(0px);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
+    }    
+</style>

@@ -2,7 +2,7 @@
     <v-card elevation="8" class="card lightCard" height="600">
         <v-container no-gutters>
             <v-row justify="end">
-                <v-col v-if="videoList.length != 0" cols="2">
+                <v-col v-if="videoList.length != 0" cols="2" max-height="50px">
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -24,14 +24,19 @@
                         :item-height="120"
                         :bench="benched"
                         class="no-x-scroll"
-                        height="550"
+                        height="500"
                     >
                         <template v-slot:default="{ item }">
                             <v-list-item :key="item.id" :value="item.id" :class="computeItemClass(item)">
-                                <v-list-item-avatar :tile="true" width="150" height="100">
+                                <v-list-item-avatar :tile="true" width="150" height="100" @click="selectVideo(item)" style="cursor: pointer">
                                     <v-img :src="item.thumbnail"/>
                                 </v-list-item-avatar>
-                                <v-list-item-title>{{item.title}}</v-list-item-title>
+                                <v-list-item-title>
+                                    <v-row align="center" style="height: 100px; cursor: pointer" @click="selectVideo(item)">
+                                        <v-col cols="12">{{item.title}}</v-col>
+                                    </v-row>
+                                    
+                                </v-list-item-title>
                                 <v-list-item-action>
                                     <v-row align="center">
                                         <v-col cols="6">

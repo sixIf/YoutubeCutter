@@ -15,6 +15,9 @@ const messages = {
 			folderHint: 'Choose where to save the download',
 			button: 'Download'
 		},
+		error: {
+			linkNotFound: 'Link not found'
+		},
 		videoList: {
 			clear: 'Clear the video list',
 			edit: 'Edit the video and select specific parts',
@@ -46,6 +49,9 @@ const messages = {
 			folderHint: 'Choisir où sauvegarder les vidéos à télécharger',
 			button: 'Télécharger'
 		},
+		error: {
+			linkNotFound: 'Lien non trouvé'
+		},		
 		videoList: {
 			clear: 'Vider la liste',
 			edit: 'Editer la vidéo en sélectionnant des parties',
