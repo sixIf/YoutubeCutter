@@ -46,8 +46,8 @@
     "vuex-class": "^0.3.2",
     "winston": "^3.3.3",
     "youtube-player": "^5.5.2",
-    "ytdl-core": "^4.4.3",
-    "ytpl": "^2.0.3"
+    "ytdl-core": "^4.4.5",
+    "ytpl": "^2.0.4"
   },
   "devDependencies": {
     "@types/ffmpeg-static": "^3.0.0",
