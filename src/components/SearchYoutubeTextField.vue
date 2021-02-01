@@ -108,8 +108,7 @@ export default class SearchYoutubeTextField extends Vue {
             
         } finally {
             this.isFetching = false;
-            this.error = errorThrown ? 'id' : '';
-            this.$emit("videos-found")
+            if (!errorThrown) this.$emit("videos-found");
         }
     }
 
@@ -148,10 +147,10 @@ export default class SearchYoutubeTextField extends Vue {
     }
 
     .vibrate {
-        animation: 0.5s linear 0s 2 normal cutombounce;
+        animation: 0.5s linear 0s 2 normal custombounce;
     }
 
-    @keyframes cutombounce {
+    @keyframes custombounce {
     0% {
         transform: translateX(0px);
     }

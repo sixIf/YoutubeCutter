@@ -45,8 +45,7 @@
             </v-app-bar>
             <download-queue-drawer />
         <v-main class="primary">
-
-        <router-view />
+            <router-view />
         </v-main>
     </v-app>
 </template>

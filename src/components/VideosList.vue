@@ -97,6 +97,11 @@ export default class VideosList extends Vue {
     @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
     benched = 0;
 
+    mounted() {
+        if(this.videoList.length > 0 && !this.selectedVideo.id)
+            this.$store.commit('fetchedVideosState/setSelectedVideo', this.videoList[0]);
+    }
+
     @Watch('videoList')
     onVideoListChanged(newList: VideoDetail[]){
         if(newList.length > 0 && !this.selectedVideo.id)
@@ -113,6 +118,7 @@ export default class VideosList extends Vue {
 
     clearList(){
         this.$store.dispatch(`fetchedVideosState/resetVideosState`);
+        this.$router.push('/');
     }
 
     computeCutColor(video: VideoDetail){

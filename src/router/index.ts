@@ -2,8 +2,9 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Help from '@/views/Help.vue'
-import { DownloadFolderService } from "@/services/downloadFolderService"
-import { ApplicationContainer } from "@/di/index"
+import HomeSearchForm from '@/views/HomeSearchForm.vue'
+import VideosManager from '@/views/VideosManager.vue'
+import store from '@/store/store'
 
 Vue.use(VueRouter)
 
@@ -15,8 +16,19 @@ const routes: RouteConfig[] = [
     },
     {
         path: '/',
-        name: 'home',
-        component: Home
+        component: Home,
+        children: [
+            {            
+                name: 'home',
+                path: '',
+                component: HomeSearchForm
+            },
+            {            
+                name: 'manage-videos',
+                path: '/manage-videos',
+                component: VideosManager
+            }
+        ]
     },
     {
         path: '/help',
@@ -33,8 +45,9 @@ const router = new VueRouter({
 
 // Check if Download Folder is set
 router.beforeEach((to, from, next) => {
-    const downloadFolderService = ApplicationContainer.resolve(DownloadFolderService)
-    if (to.name !== 'settings' && (!downloadFolderService.getDownloadFolder())) next({ name: 'settings' })
+    console.log(store.state.fetchedVideosState!.fetchedVideos.length > 0)
+    if (to.name === 'home' && (store.state.fetchedVideosState!.fetchedVideos.length > 0)) next({ name: 'manage-videos' })
+    else if (to.name === 'manage-videos' && (store.state.fetchedVideosState!.fetchedVideos.length == 0)) next({ name: 'home' })
     else next()
 })
 

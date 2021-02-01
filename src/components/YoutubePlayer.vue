@@ -24,6 +24,7 @@ export default class YoutubePlayer extends Vue {
 
     @Watch('videoId')
     onVideoIdChanged(newId: string){
+        console.log(`video id changed ${this.player && newId}`)
         if (this.player && newId) {
             this.player.loadVideoById(newId);
             this.clearCurrentTimeout();
