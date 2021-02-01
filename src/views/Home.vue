@@ -16,7 +16,7 @@ import SearchYoutubeTextField from "@/components/SearchYoutubeTextField.vue"
         SearchYoutubeTextField
     }
 })
-export default class HomeSearchForm extends Vue {
+export default class Home extends Vue {
 
 }
 </script>

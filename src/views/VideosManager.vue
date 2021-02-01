@@ -126,6 +126,8 @@ export default class VideosManager extends Vue {
         myIpcRenderer.send("download-videos", downloadRequest);  
 
         this.$store.dispatch('fetchedVideosState/resetVideosState');
+        this.$router.push('/');
+        
     }
 
     selectDownloadFolder() {
