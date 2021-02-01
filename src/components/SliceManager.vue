@@ -43,22 +43,36 @@
                                 <v-col v-else cols="2">
                                     <v-row>
                                         <v-col cols="12">
-                                            <v-btn
-                                                fab
-                                                small
-                                                @click="playSlice(slice)"
-                                            >
-                                                <v-icon class="theme--light">mdi-play</v-icon>
-                                            </v-btn>
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-btn
+                                                        fab
+                                                        small
+                                                        @click="playSlice(slice)"
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                    >
+                                                        <v-icon class="theme--light">mdi-play</v-icon>
+                                                    </v-btn>
+                                                </template>
+                                                <span> {{ $t("slice.preview") }} </span>
+                                            </v-tooltip>
                                         </v-col>
                                         <v-col cols="12">
-                                            <v-btn
-                                                fab
-                                                small
-                                                @click="deleteSlice(index)"
-                                            >
-                                                <v-icon class="theme--light">mdi-delete</v-icon>
-                                            </v-btn>
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-btn
+                                                        fab
+                                                        small
+                                                        @click="deleteSlice(index)"
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                    >
+                                                        <v-icon class="theme--light">mdi-delete</v-icon>
+                                                    </v-btn>
+                                                </template>
+                                                <span> {{ $t("slice.delete") }} </span>
+                                            </v-tooltip>
                                         </v-col>
                                     </v-row>
                                 </v-col>       
@@ -96,7 +110,7 @@
                                             {{ getFormattedTime(slice.endTime)}}
                                         </v-btn>                                        
                                     </template>
-                                    <span>{{ setTimeTooltip }}</span>
+                                    <span>{{ $t("slice.copyTime") }}</span>
                                 </v-tooltip>
                                 <span>{{ getTimeRecap(slice) }}</span>
                             </span>
@@ -109,15 +123,22 @@
         <v-container>
             <v-row justify="end">
                 <v-col cols="2" style="padding: 0; padding-right: 5px">
-                    <v-btn
-                        color="primary"
-                        fab
-                        small
-                        dark
-                        @click="createSlice"
-                    >
-                        <v-icon>mdi-plus</v-icon>
-                    </v-btn>
+                    <v-tooltip left>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                color="primary"
+                                fab
+                                small
+                                dark
+                                @click="createSlice"
+                                v-bind="attrs"
+                                v-on="on"
+                            >
+                                <v-icon>mdi-plus</v-icon>
+                            </v-btn>                            
+                        </template>
+                        <span> {{ $t("slice.add") }} </span>
+                    </v-tooltip>                    
                 </v-col>
             </v-row>
         </v-container>

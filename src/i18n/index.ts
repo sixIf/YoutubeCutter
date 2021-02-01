@@ -25,12 +25,15 @@ const messages = {
 			select: 'Select the video to download'
 		},
 		slice: {
+			add: 'Add a slice',
 			name: 'Slice name',
 			keep: 'Keep the whole video',
 			cutFrom: 'Cut from',
 			copyTime: 'Copy current youtube video time',
 			toTime: 'To',
-			duration: 'for a duration of'
+			duration: 'for a duration of',
+			preview: 'Preview slice',
+			delete: 'Delete slice'
 		},
 		format: {
 			format: 'Format',
@@ -59,12 +62,15 @@ const messages = {
 			select: 'Selectionner la vidéo à télécharger'
 		},
 		slice: {
+			add: 'Ajouter une partie',
 			name: 'Nom de la partie',
 			keep: 'Garder la vidéo entière',
 			cutFrom: 'Coupe de',
 			copyTime: 'Copie le temps courant du lecteur youtube',
 			toTime: 'à',
-			duration: 'pour une durée de'
+			duration: 'pour une durée de',
+			preview: 'Prévisualiser la partie',
+			delete: 'Supprimer la partie'
 		},
 		format: {
 			format: 'Format',

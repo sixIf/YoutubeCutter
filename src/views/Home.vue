@@ -1,6 +1,6 @@
 <template>
-    <v-container fluid>
-        <v-row no-gutters fill-height align="center" justify="center">
+    <v-container fluid style="height: 100%;">
+        <v-row no-gutters align="center" justify="center" style="height: 100%;">
             <v-col cols="8">
                 <search-youtube-text-field @videos-found="$router.push('manage-videos')"/>
             </v-col>
