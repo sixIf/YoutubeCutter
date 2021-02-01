@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Help from '@/views/Help.vue'
-import HomeSearchForm from '@/views/HomeSearchForm.vue'
 import VideosManager from '@/views/VideosManager.vue'
 import store from '@/store/store'
 
@@ -16,19 +15,13 @@ const routes: RouteConfig[] = [
     },
     {
         path: '/',
+        name: 'home',
         component: Home,
-        children: [
-            {            
-                name: 'home',
-                path: '',
-                component: HomeSearchForm
-            },
-            {            
-                name: 'manage-videos',
-                path: '/manage-videos',
-                component: VideosManager
-            }
-        ]
+    },
+    {            
+        name: 'manage-videos',
+        path: '/manage-videos',
+        component: VideosManager
     },
     {
         path: '/help',

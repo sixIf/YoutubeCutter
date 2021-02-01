@@ -1,23 +1,22 @@
 <template>
-    <transition name="fade">
-        <router-view/>
-    </transition>
+    <v-container fluid>
+        <v-row no-gutters fill-height align="center" justify="center">
+            <v-col cols="8">
+                <search-youtube-text-field @videos-found="$router.push('manage-videos')"/>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script lang="ts">
-// @ is an alias to /src
 import { Component, Vue } from "vue-property-decorator";
+import SearchYoutubeTextField from "@/components/SearchYoutubeTextField.vue"
+@Component({
+    components: {
+        SearchYoutubeTextField
+    }
+})
+export default class HomeSearchForm extends Vue {
 
-// Define the component in class-style
-@Component
-export default class Home extends Vue {}
+}
 </script>
-<style scoped>
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s ease-in;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
-</style>

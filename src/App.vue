@@ -45,7 +45,9 @@
             </v-app-bar>
             <download-queue-drawer />
         <v-main class="primary">
-            <router-view />
+            <transition name="fade" mode="out-in">
+                <router-view />
+            </transition>
         </v-main>
     </v-app>
 </template>
@@ -140,5 +142,12 @@ html {
 
 .flag-icon-background{
     background-size: cover;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s ease-in;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
