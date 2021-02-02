@@ -38,7 +38,6 @@ const router = new VueRouter({
 
 // Check if Download Folder is set
 router.beforeEach((to, from, next) => {
-    console.log(store.state.fetchedVideosState!.fetchedVideos.length > 0)
     if (to.name === 'home' && (store.state.fetchedVideosState!.fetchedVideos.length > 0)) next({ name: 'manage-videos' })
     else if (to.name === 'manage-videos' && (store.state.fetchedVideosState!.fetchedVideos.length == 0)) next({ name: 'home' })
     else next()
