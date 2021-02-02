@@ -25,7 +25,7 @@
                             class="vibrate"
                             v-bind="attrs"
                             v-on="on"
-                            v-show="error.length != 0" 
+                            v-show="errorThrown" 
                         >
                             <v-icon class="primary--text">
                                 mdi-alert-circle
@@ -60,7 +60,7 @@ export default class SearchYoutubeTextField extends Vue {
     @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
     ytLink = "";
     isFetching = false;
-    error = '';
+    errorThrown = false;
     show = false;
     debouncedSearch = _.debounce(this.searchItem, 900);
 
@@ -83,8 +83,7 @@ export default class SearchYoutubeTextField extends Vue {
      * search order : Video - Playlist / Channel
      */
     async searchItem(){
-        let errorThrown = false;
-        this.error = '';
+        this.errorThrown = false;
         if (!this.ytLink) return;
         try {
             this.isFetching = true;
@@ -102,13 +101,13 @@ export default class SearchYoutubeTextField extends Vue {
                 this.ytLink = "";
             } catch (err) {
                 this.$emit("nothing-found");
-                errorThrown = true;
+                this.errorThrown = true;
                 log.error(err);
             }
             
         } finally {
             this.isFetching = false;
-            if (!errorThrown) this.$emit("videos-found");
+            if (!this.errorThrown) this.$emit("videos-found");
         }
     }
 
@@ -124,11 +123,9 @@ export default class SearchYoutubeTextField extends Vue {
         return formattedYtLink;
     }
 
+    // TODO Proper error info
     get displayError(): LocaleMessage {
-        switch (this.error) {
-            case 'id':
-                return this.$t('error.linkNotFound');
-        
+        switch (this.errorThrown) {
             default:
                 return this.$t('error.linkNotFound');
         }

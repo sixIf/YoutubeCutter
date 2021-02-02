@@ -18,18 +18,21 @@ export const mutations: MutationTree<FetchedVideosState> = {
     resetState(state){
         Object.assign(state, getDefaultState());
     },
+    /**
+     * @param selectedVideo must be the video object from the fetchedList 
+     */
     setSelectedVideo(state, selectedVideo: VideoDetail){
-        state.selectedVideo = selectedVideo
+        state.selectedVideo = selectedVideo;
     },
     setFetchedVideos(state, fetchedVideos: VideoDetail[]){
         state.fetchedVideos = _.cloneDeep(fetchedVideos);
     },
     setSingleFetchedVideo(state, fetchedVideos: VideoDetail){
-        state.fetchedVideos.push(fetchedVideos);
+        state.fetchedVideos.push(Object.assign({}, fetchedVideos));
     },
     setSelectedFormat(state, format: AvailableFormats){
         state.fetchedVideos.forEach((video) => {
-            video.sliceList[0].format = format;
+            video.sliceList[0].format = Object.assign({}, format);
         })
     },
     changeVideoToDownload(state, videoId: string){

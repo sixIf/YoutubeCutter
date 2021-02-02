@@ -1,5 +1,6 @@
 import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import pathToFfmpeg, { slice } from 'ffmpeg-static';
+import { loggers } from 'winston';
 
 ffmpeg.setFfmpegPath(
     // Ffmpeg.exe is unpacked into app.asar.unpacked
@@ -53,9 +54,11 @@ export class FfmpegService implements IFfmpegService {
                 .output(outputPath)
                 .duration(duration)
                 .on('error', (err: Error) => {
+                    console.log(err)
                     reject(err.message)
                 })
-                .on('end', () => resolve(`\nFinished slicing, saved to ${outputPath}`))
+                .on('end', () =>{ console.log('no erroer')
+                    resolve(`\nFinished slicing, saved to ${outputPath}`)})
                 .run();
         })
     }
