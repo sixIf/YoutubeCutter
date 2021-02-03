@@ -35,7 +35,6 @@ const { myIpcRenderer } = window;
     },
 })
 export default class App extends Vue {
-    isDownloading = false;
     snackbar = false;
     snackbarMessage = "";
 

@@ -7,9 +7,6 @@
         </router-link>
         <v-toolbar-title @click="$router.push('/')" style="cursor: pointer">Youtube Downloader</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn icon v-if="isDownloading">
-            <v-icon>mdi-download-circle</v-icon>
-        </v-btn>
         <router-link to="/help">
             <v-btn icon>
                 <v-icon class="card--text">mdi-help-circle</v-icon>
