@@ -25,7 +25,8 @@ const messages = {
 			select: 'Select the video to download'
 		},
 		slice: {
-			add: 'Add a slice',
+			add: 'Can`t create more',
+			cantAdd: '10 slices is the limit',
 			name: 'Slice name',
 			keep: 'Keep the whole video',
 			cutFrom: 'Cut from',
@@ -63,6 +64,7 @@ const messages = {
 		},
 		slice: {
 			add: 'Ajouter une partie',
+			cantAdd: 'Impossible d\'en créer plus',
 			name: 'Nom de la partie',
 			keep: 'Garder la vidéo entière',
 			cutFrom: 'Coupe de',

@@ -24,12 +24,11 @@ export class YoutubeService implements IYoutubeService {
     }
     async getVideoIdFromUrl(videoUrl: string): Promise<string> {
         const response = await this.youtubeClient.getVideoIdFromUrl(videoUrl);
-        return response;
+        return response;    
     }
 
     async findVideo(videoId: string): Promise<VideoDetail> {
         const response = await this.youtubeClient.findVideo(videoId);
-        console.log(response);
         return this.formatVideo(response);
     }
 

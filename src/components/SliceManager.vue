@@ -126,18 +126,18 @@
                     <v-tooltip left>
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn
-                                color="primary"
+                                :color="canCreateSlice ? 'primary' : 'grey'"
                                 fab
                                 small
                                 dark
-                                @click="createSlice"
+                                @click="canCreateSlice ? createSlice() : ''"
                                 v-bind="attrs"
                                 v-on="on"
                             >
                                 <v-icon>mdi-plus</v-icon>
                             </v-btn>                            
                         </template>
-                        <span> {{ $t("slice.add") }} </span>
+                        <span> {{ canCreateSlice ? $t("slice.add") : $t("slice.cantAdd") }} </span>
                     </v-tooltip>                    
                 </v-col>
             </v-row>
@@ -150,6 +150,7 @@ import { AvailableFormats, DOWNLOAD_FORMATS, PlayRequest, SlicedYoutube, SliceTo
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 import _, { toInteger } from "lodash"
+import { MAX_SLICE } from "@/config/litterals"
 import { formatTime } from "@/utils/time";
 
 @Component
@@ -163,15 +164,12 @@ export default class SliceManager extends Vue {
         if(objDiv) objDiv.scrollTop = objDiv.scrollHeight;
     }
 
-    createSlice(){
+    async createSlice(){
         const newSlice = Object.assign({}, this.selectedVideo.sliceList[0]);
         newSlice.name = newSlice.name.concat(` part-${this.selectedVideo.sliceList.length}`);
         newSlice.startTime = this.currentTime;
-        this.$store.commit('fetchedVideosState/createSlice', newSlice);
-        // Let time to store in order to scroll to effective end of list
-        setTimeout(() => {
-            this.scrollBottomList();
-        }, 50)
+        await this.$store.dispatch('fetchedVideosState/createSlice', newSlice);
+        this.scrollBottomList();
     }
 
     deleteSlice(index: number){
@@ -237,6 +235,10 @@ export default class SliceManager extends Vue {
 
     get availableFormats(){
         return DOWNLOAD_FORMATS;
+    }
+
+    get canCreateSlice(): boolean {
+        return this.selectedVideo.sliceList.length < MAX_SLICE;
     }
 
     getTimeRecap(slice: SlicedYoutube): string {

@@ -73,10 +73,9 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import { Component, Inject, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { Getter } from 'vuex-class';
-import { AvailableFormats, DownloadRequest, DOWNLOAD_FORMATS, PlayRequest, VideoDetail, YOUTUBE_SERVICE } from '@/config/litterals';
-import { IYoutubeService } from '@/services/youtubeService';
+import { AvailableFormats, DownloadRequest, DOWNLOAD_FORMATS, PlayRequest, VideoDetail } from '@/config/litterals';
 import YoutubePlayer from '@/components/YoutubePlayer.vue'
 import VideosList from '@/components/VideosList.vue'
 import SliceManager from '@/components/SliceManager.vue'
@@ -95,8 +94,6 @@ const { log, myIpcRenderer } = window;
     }
 })
 export default class VideosManager extends Vue {
-    @Inject(YOUTUBE_SERVICE)
-    youtubeService!: IYoutubeService;
     @Getter('fetchedVideosState/getFetchedVideos') videoList!: VideoDetail[]    
     @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
     downloadFolder = "";

@@ -4,19 +4,14 @@
 import ytdl from 'ytdl-core';
 
 export const YOUTUBE_SERVICE = "youtubeService";
-export const DOWNLOAD_FOLDER_SERVICE = "downloadFolderService";
 export const LOGGER_SERVICE = "loggerService";
+export const MAX_SLICE = 11;
 
 export const ERROR_TYPES: Record<string, string> = {
     403: 'quota',
     404: 'notFound',
     400: 'apiKeyInvalid'
 }
-
-export const API_KEY = 'AIzaSyDeSxTCCjIY0GQGLLFsw7aZeZqtdiSvznI'
-
-export const LOCAL_STORAGE_FOLDER = "DownloadFolder"
-export const LOCAL_STORAGE_LOCALE = "CurrentLocale"
 
 /**
  * Interfaces

@@ -9,8 +9,7 @@ import vuetify from './plugins/vuetify'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import '@/assets/css/main.styl'
 import { YoutubeService } from '@/services/youtubeService'
-import { DownloadFolderService } from '@/services/downloadFolderService'
-import { YOUTUBE_SERVICE, DOWNLOAD_FOLDER_SERVICE } from '@/config/litterals'
+import { YOUTUBE_SERVICE } from '@/config/litterals'
 import { ApplicationContainer } from '@/di/index'
 import Vuex from 'vuex'
 import store from './store/store'
@@ -26,7 +25,6 @@ new Vue({
     vuetify,
     provide: {
         [YOUTUBE_SERVICE]: ApplicationContainer.resolve(YoutubeService),
-        [DOWNLOAD_FOLDER_SERVICE]: ApplicationContainer.resolve(DownloadFolderService),
     },
     render: h => h(App)
 }).$mount('#app')

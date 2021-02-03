@@ -43,7 +43,7 @@
 import { DOWNLOAD_FORMATS, VideoDetail, YOUTUBE_SERVICE, AvailableFormats } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 import _ from "lodash";
-import { LocaleMessage, LocaleMessages } from "vue-i18n";
+import { LocaleMessage } from "vue-i18n";
 import { Component, Inject, Prop, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 const { log, myIpcRenderer } = window;
