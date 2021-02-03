@@ -38,9 +38,20 @@ const router = new VueRouter({
 
 // Check if Download Folder is set
 router.beforeEach((to, from, next) => {
-    if (to.name === 'home' && (store.state.fetchedVideosState!.fetchedVideos.length > 0)) next({ name: 'manage-videos' })
-    else if (to.name === 'manage-videos' && (store.state.fetchedVideosState!.fetchedVideos.length == 0)) next({ name: 'home' })
-    else next()
+    const storeGotVideos = store.state.fetchedVideosState!.fetchedVideos.length > 0;
+    switch (to.name) {
+        case 'home':
+            if (storeGotVideos) next({name: 'manage-videos'});
+            else next();
+            break;
+        case 'manage-videos':
+            if (storeGotVideos) next();
+            else next({name: 'home'});
+            break;
+        default:
+            next();
+            break;
+    }
 })
 
 export default router
