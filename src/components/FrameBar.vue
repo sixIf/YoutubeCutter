@@ -1,6 +1,6 @@
 <template>
     <v-app-bar class="frame-bar" color="secondary card--text" height="20px" app dense dark>
-
+        <!-- ADD minimize etc -->
     </v-app-bar>
 </template>
 
