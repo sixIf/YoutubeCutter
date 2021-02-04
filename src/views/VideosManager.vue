@@ -1,6 +1,6 @@
 <template>
     <v-container v-if="videoList.length != 0" fluid>
-        <v-row no-gutters fill-height align="start" justify="start">
+        <v-row no-gutters fill-height align="center" justify="start">
             <v-col cols="6">
                 <v-card class="card" height="800">
                     <v-container>

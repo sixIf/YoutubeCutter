@@ -8,9 +8,10 @@
                 >
             </template>
         </v-snackbar>
-        <app-bar />
+        <frame-bar />
         <download-queue-drawer />
         <v-main class="primary">
+            <app-bar />
             <transition name="fade" mode="out-in">
                 <router-view />
             </transition>
@@ -24,6 +25,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import DownloadQueueDrawer from "@/components/DownloadQueueDrawer.vue";
 import AppBar from "@/components/AppBar.vue";
+import FrameBar from "@/components/FrameBar.vue";
 import { DownloadRequest } from "@/config/litterals";
 const { myIpcRenderer } = window;
 
@@ -31,7 +33,8 @@ const { myIpcRenderer } = window;
 @Component({
     components: {
         DownloadQueueDrawer,
-        AppBar
+        AppBar,
+        FrameBar
     },
 })
 export default class App extends Vue {

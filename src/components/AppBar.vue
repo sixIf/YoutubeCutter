@@ -1,36 +1,40 @@
 <template>
-    <v-app-bar color="secondary card--text" style="z-index: 50" app dense dark>
-        <router-link to="/">
-            <v-btn icon>
-                <v-icon class="card--text">mdi-home</v-icon>
-            </v-btn>
-        </router-link>
-        <v-toolbar-title @click="$router.push('/')" style="cursor: pointer">Youtube Downloader</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <router-link to="/help">
-            <v-btn icon>
-                <v-icon class="card--text">mdi-help-circle</v-icon>
-            </v-btn>
-        </router-link>
-        <v-speed-dial v-if="currentLocale != ''" direction="bottom">
-            <template v-slot:activator>
-                <v-btn
-                    height="25"
-                    min-width="40"
-                    :class="`flag-icon-background flag-icon-${currentFlag}`"
-                ></v-btn>
-            </template>
-            <div v-for="flag in flagList" :key="flag">
-                <v-btn
-                    height="20"
-                    min-width="35"
-                    small
-                    @click="changeLocale(flag)"
-                    :class="`flag-icon-background flag-icon-${flag}`"
-                ></v-btn>
-            </div>
-        </v-speed-dial>
-    </v-app-bar>    
+    <v-container fluid class="second-bar primary">
+        <v-row align="center">
+            <v-col cols="2">
+                <router-link to="/">
+                    <v-img @click="$router.push('/')" src="../assets/image/icon.png" height="40px" width="40px"></v-img>
+                </router-link>
+            </v-col>
+            <v-col cols="1" offset="8">
+                <router-link to="/help">
+                    <v-btn icon>
+                        <v-icon class="card--text">mdi-help-circle</v-icon>
+                    </v-btn>
+                </router-link>
+            </v-col>
+            <v-col cols="1">
+                <v-speed-dial v-if="currentLocale != ''" direction="bottom">
+                    <template v-slot:activator>
+                        <v-btn
+                            height="25"
+                            min-width="40"
+                            :class="`flag-icon-background flag-icon-${currentFlag}`"
+                        ></v-btn>
+                    </template>
+                    <div v-for="flag in flagList" :key="flag">
+                        <v-btn
+                            height="20"
+                            min-width="35"
+                            small
+                            @click="changeLocale(flag)"
+                            :class="`flag-icon-background flag-icon-${flag}`"
+                        ></v-btn>
+                    </div>
+                </v-speed-dial>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script lang="ts">
@@ -77,3 +81,10 @@ export default class AppBar extends Vue {
     }    
 }
 </script>
+<style>
+    /* .second-bar {
+        position: fixed;
+        top: 20px;
+        left: 0px;
+    } */
+</style>

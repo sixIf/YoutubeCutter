@@ -107,6 +107,7 @@ function createWindow() {
         x: 0,
         y: 0,
         title: "Youtube Downloader",
+        frame: false,
         webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info

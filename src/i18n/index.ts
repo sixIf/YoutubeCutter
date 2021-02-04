@@ -42,6 +42,14 @@ const messages = {
 			video: 'Video',
 			audio: 'Audio'
 		},
+		downloadSteps: {
+			firstTitle: 'Copy link',
+			firstContent: 'Paste in the above form the link of the video, playlist or the channel',
+			secondTitle: 'Cut the videos',
+			secondContent: 'Select the part of the videos',
+			thirdTitle: 'Download',
+			thirdContent: 'Enjoy',
+		}
     },
     fr: {
 		contextMenu: {

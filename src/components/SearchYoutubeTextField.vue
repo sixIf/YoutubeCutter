@@ -3,9 +3,7 @@
         <v-text-field 
             v-model="ytLink"
             :label="$t('download.textInputLabel')"
-            :hint="hint"
             filled
-            rounded
             dense
             class="card"
             required
