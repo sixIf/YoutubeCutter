@@ -22,6 +22,8 @@ let win: BrowserWindow | null
 const loggerService = ApplicationContainer.resolve(LoggerService);
 let localesMessages: VueI18n.LocaleMessages;
 import ElectronStore from 'electron-store';
+import winston from "winston/lib/winston/config";
+import { loggers } from "winston";
 
 const schema = {
 	locale: {
@@ -236,6 +238,20 @@ ipcMain.on("set-locale-messages", (event, args: VueI18n.LocaleMessages) => {
     localesMessages = args;
 })
 
+ipcMain.on("minimize-window", (event, args: any) => {
+    if (win) win.minimize();
+})
+
+ipcMain.on("maximize-window", (event, args: any) => {
+    loggerService.info('called')
+    if (win && !win.isMaximized()) win.maximize();
+    else if (win) win.unmaximize();
+})
+
+ipcMain.on("close-window", (event, args: any) => {
+    if (win) win.close();
+})
+
 ipcMain.handle("get-current-locale", (event, args) => {
     return new Promise( (resolve, reject) => {
         try {
@@ -296,7 +312,6 @@ ipcMain.on("download-videos", (event, args: DownloadRequest) => {
     new DownloadService(args, win);
 });
 
-// Todo handle right click to paste
 ipcMain.on("open-context-menu", (event, type: ContextType) => {
     const locale = store.get("locale") as string;
     const contextMenu = localesMessages[locale]['contextMenu'] as VueI18n.LocaleMessageObject;

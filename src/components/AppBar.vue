@@ -6,32 +6,36 @@
                     <v-img @click="$router.push('/')" src="../assets/image/icon.png" height="40px" width="40px"></v-img>
                 </router-link>
             </v-col>
-            <v-col cols="1" offset="8">
-                <router-link to="/help">
-                    <v-btn icon>
-                        <v-icon class="card--text">mdi-help-circle</v-icon>
-                    </v-btn>
-                </router-link>
-            </v-col>
-            <v-col cols="1">
-                <v-speed-dial v-if="currentLocale != ''" direction="bottom">
-                    <template v-slot:activator>
-                        <v-btn
-                            height="25"
-                            min-width="40"
-                            :class="`flag-icon-background flag-icon-${currentFlag}`"
-                        ></v-btn>
-                    </template>
-                    <div v-for="flag in flagList" :key="flag">
-                        <v-btn
-                            height="20"
-                            min-width="35"
-                            small
-                            @click="changeLocale(flag)"
-                            :class="`flag-icon-background flag-icon-${flag}`"
-                        ></v-btn>
-                    </div>
-                </v-speed-dial>
+            <v-col cols="2" offset="8">
+                <v-row justify="center" align="center">
+                    <v-col cols="3">
+                        <router-link to="/help">
+                            <v-btn icon>
+                                <v-icon class="card--text">mdi-help-circle</v-icon>
+                            </v-btn>
+                        </router-link>
+                    </v-col>
+                    <v-col cols="3">
+                        <v-speed-dial v-if="currentLocale != ''" direction="bottom">
+                            <template v-slot:activator>
+                                <v-btn
+                                    height="25"
+                                    min-width="40"
+                                    :class="`flag-icon-background flag-icon-${currentFlag}`"
+                                ></v-btn>
+                            </template>
+                            <div v-for="flag in flagList" :key="flag">
+                                <v-btn
+                                    height="20"
+                                    min-width="35"
+                                    small
+                                    @click="changeLocale(flag)"
+                                    :class="`flag-icon-background flag-icon-${flag}`"
+                                ></v-btn>
+                            </div>
+                        </v-speed-dial>
+                    </v-col>
+                </v-row>
             </v-col>
         </v-row>
     </v-container>
