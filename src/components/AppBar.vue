@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid class="second-bar primary">
+    <v-container fluid class="second-bar primary" :style="`height: ${appBarHeight};`">
         <v-row align="center">
             <v-col cols="2">
                 <router-link to="/">
@@ -46,6 +46,7 @@ import { Component, Vue } from "vue-property-decorator";
 import 'flag-icon-css/css/flag-icon.css'
 import _ from "lodash";
 import { localesToFlag, localeType } from "@/i18n";
+import { APP_BAR_HEIGHT } from '@/config/litterals/ui'
 const { myIpcRenderer, log } = window;
 
 @Component
@@ -82,13 +83,10 @@ export default class AppBar extends Vue {
     get flagList(): string[] {
         const flags = _.filter(this.$i18n.availableLocales, (locale) => locale != this.currentLocale);
         return _.map(flags, (flag) => localesToFlag[flag as localeType])
-    }    
+    }
+    
+    get appBarHeight(): string {
+        return APP_BAR_HEIGHT;
+    }
 }
 </script>
-<style>
-    /* .second-bar {
-        position: fixed;
-        top: 20px;
-        left: 0px;
-    } */
-</style>

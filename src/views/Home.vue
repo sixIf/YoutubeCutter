@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid style="height: 100%;">
+    <v-container fluid :style="mainContainerStyle">
         <v-row align="center" justify="center" style="height: 100%;">
             <v-col cols="6">
                 <v-card class="card" shaped height="300px">
@@ -19,11 +19,20 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import SearchYoutubeTextField from "@/components/SearchYoutubeTextField.vue"
+import { APP_BAR_HEIGHT } from '@/config/litterals/ui'
 
 @Component({
     components: {
         SearchYoutubeTextField
     }
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+    get appBarHeight(): string {
+        return APP_BAR_HEIGHT;
+    }
+    
+    get mainContainerStyle(): string {
+        return `height: 100%; margin-top: -${this.appBarHeight};`
+    }
+}
 </script>
