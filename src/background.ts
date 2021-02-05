@@ -225,6 +225,9 @@ app.on('ready', async () => {
     }
 })
 
+ipcMain.on("open-external-url", (event, args: string) => {
+    shell.openExternal(args);
+});
 
 ipcMain.on("open-shell", (event, args: string) => {
     try {

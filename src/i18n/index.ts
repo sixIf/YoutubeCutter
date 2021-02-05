@@ -42,14 +42,17 @@ const messages = {
 			video: 'Video',
 			audio: 'Audio'
 		},
-		downloadSteps: {
-			firstTitle: 'Copy link',
-			firstContent: 'Paste in the above form the link of the video, playlist or the channel',
-			secondTitle: 'Cut the videos',
-			secondContent: 'Select the part of the videos',
-			thirdTitle: 'Download',
-			thirdContent: 'Enjoy',
-		}
+		help: {
+			title: 'Using this tool is easy as',
+			downloadSteps: {
+				firstTitle: 'Copy link',
+				firstContent: 'Paste in the above form the link of the video, playlist or the channel',
+				secondTitle: 'Cut the videos',
+				secondContent: 'Select the part of the videos',
+				thirdTitle: 'Download',
+				thirdContent: 'Enjoy',
+			}
+		},
     },
     fr: {
 		contextMenu: {
@@ -87,7 +90,18 @@ const messages = {
 			selectHint: 'Choix du format à télécharger',
 			video: 'Vidéo',
 			audio: 'Audio'
-		},		
+		},
+		help: {
+			title: 'Utiliser cet outil est aussi simple que',
+			downloadSteps: {
+				firstTitle: 'Copy link',
+				firstContent: 'Paste in the above form the link of the video, playlist or the channel',
+				secondTitle: 'Cut the videos',
+				secondContent: 'Select the part of the videos',
+				thirdTitle: 'Download',
+				thirdContent: 'Enjoy',
+			}
+		},				
     }
 }
 
