@@ -1,5 +1,15 @@
 <template>
     <div id="player"></div>
+    <!-- TODO, implement remote server serving YT Player
+        <iframe
+            :src="`http://127.0.0.1:5500/index.html`"
+            class="yt-iframe"
+            height="300"
+            width="550"
+            scrolling="no"
+            allowtransparency
+            allow="autoplay"
+        ></iframe> -->
 </template>
     
 
@@ -59,10 +69,12 @@ export default class YoutubePlayer extends Vue {
             width: "550",
             videoId: this.videoId,
             playerVars: {
-                origin: "localhost", // TODO
+                fs: 0,
+                origin: "http://caca", // TODO  
                 autoplay: 1
             }
         });
+        console.log(this.player)
     }
 
     initPlayer() {
@@ -96,3 +108,8 @@ export default class YoutubePlayer extends Vue {
     }
 }
 </script>
+<style scoped>
+    .yt-iframe {
+        border: none;
+    }
+</style>

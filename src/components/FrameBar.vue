@@ -63,7 +63,6 @@ export default class FrameBar extends Vue {
                 break;
         
             default:
-                console.log('ola')
                 element.style.backgroundColor = '#8a5353';
                 break;
         }
