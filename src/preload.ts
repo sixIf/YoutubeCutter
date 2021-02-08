@@ -26,7 +26,6 @@ contextBridge.exposeInMainWorld(
                 "minimize-window", "maximize-window", "close-window"
             ];
             if (validChannels.includes(channel)) {
-                console.log('call send ' + channel)
                 ipcRenderer.send(channel, data);
             }
         },
