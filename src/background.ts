@@ -117,7 +117,7 @@ function createWindow() {
                 .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
             preload: path.join(__dirname, "preload.js"),
             contextIsolation: true,
-            devTools: isDevelopment
+            devTools: true
         },
         show: false,
         /* global __static */
@@ -182,7 +182,7 @@ app.on('activate', () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
     await installExtension(VUEJS_DEVTOOLS)
-    if (isDevelopment && !process.env.IS_TEST) {
+    if (isDevelopment && !process.env.IS_TEST) {    
         // Install Vue Devtools
         try {
             await installExtension(VUEJS_DEVTOOLS)

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 <template>
-    <v-app-bar class="frame-bar" color="secondary card--text" height="20px" app dense dark>
+    <v-app-bar class="frame-bar" color="darkestPrimary white--text" height="20px" app dense dark>
         <v-spacer></v-spacer>
         <div id="minimize" 
             class="window-minimize-button window-control" 
@@ -56,7 +56,6 @@ export default class FrameBar extends Vue {
 
     brightUp(id: string) {
         const element = document.getElementById(id)!;
-        console.log(element)
         switch (id) {
             case 'close':
                 element.style.backgroundColor = 'crimson';

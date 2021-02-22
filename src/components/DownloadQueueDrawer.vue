@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-btn
-            :class="`success ${isDownloading ? 'bounce' : ''}`"
+            :class="`darkPrimary ${isDownloading ? 'bounce' : ''}`"
             color="white"
             dark
             icon

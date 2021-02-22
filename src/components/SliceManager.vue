@@ -9,8 +9,10 @@
                         </v-col>
                         <v-col cols="10">
                             <v-row align="center" justify="start">
-                                <v-col cols="8">
+                                <v-col cols="4">
                                     <v-text-field :value="slice.name" @input="debouncedSetName($event, slice, index)" :label="$t('slice.name')"></v-text-field>
+                                </v-col>
+                                <v-col cols="4">
                                     <v-select :value="slice.format"
                                         @change="setFormat($event, slice, index)"
                                         :items="availableFormats"
@@ -26,7 +28,7 @@
                                         </template>                            
                                     </v-select>
                                 </v-col>
-                                <v-col v-if="index == 0" cols="2">
+                                <v-col v-if="index == 0" cols="3">
                                     <v-tooltip bottom>
                                         <template v-slot:activator="{ on, attrs }">
                                             <v-icon class="theme--light" 
@@ -40,9 +42,9 @@
                                         <span>{{ $t("slice.keep") }}</span>
                                     </v-tooltip>
                                 </v-col>       
-                                <v-col v-else cols="2">
-                                    <v-row>
-                                        <v-col cols="12">
+                                <v-col v-else cols="4">
+                                    <v-row no-gutters>
+                                        <v-col cols="6">
                                             <v-tooltip bottom>
                                                 <template v-slot:activator="{ on, attrs }">
                                                     <v-btn
@@ -58,7 +60,7 @@
                                                 <span> {{ $t("slice.preview") }} </span>
                                             </v-tooltip>
                                         </v-col>
-                                        <v-col cols="12">
+                                        <v-col cols="6">
                                             <v-tooltip bottom>
                                                 <template v-slot:activator="{ on, attrs }">
                                                     <v-btn
@@ -152,10 +154,10 @@ import { Getter } from "vuex-class";
 import _, { toInteger } from "lodash"
 import { MAX_SLICE } from "@/config/litterals"
 import { formatTime } from "@/utils/time";
+import { getCurrentTime } from "@/helpers/videoHelper";
 
 @Component
 export default class SliceManager extends Vue {
-    @Prop({ default: 0}) currentTime!: number;
     @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
     debouncedSetName = _.debounce((name, slice, index) => this.setName(name, slice, index), 3000);
 
@@ -167,7 +169,7 @@ export default class SliceManager extends Vue {
     async createSlice(){
         const newSlice = Object.assign({}, this.selectedVideo.sliceList[0]);
         newSlice.name = newSlice.name.concat(` part-${this.selectedVideo.sliceList.length}`);
-        newSlice.startTime = this.currentTime;
+        newSlice.startTime = this.currentTime();
         await this.$store.dispatch('fetchedVideosState/createSlice', newSlice);
         this.scrollBottomList();
     }
@@ -185,17 +187,17 @@ export default class SliceManager extends Vue {
     }
 
     setStartTime(slice: SlicedYoutube, index: number){
-        if (this.currentTime < slice.endTime) {
+        if (this.currentTime() < slice.endTime) {
             const updatedSlice = Object.assign({}, slice);
-            updatedSlice.startTime = this.currentTime;
+            updatedSlice.startTime = this.currentTime();
             this.updateSlice({index: index, updatedSlice: updatedSlice});
         }
     }
 
     setEndTime(slice: SlicedYoutube, index: number){
-        if (this.currentTime > slice.startTime) {
+        if (this.currentTime() > slice.startTime) {
             const updatedSlice = Object.assign({}, slice);
-            updatedSlice.endTime = this.currentTime;
+            updatedSlice.endTime = this.currentTime();
             this.updateSlice({index: index, updatedSlice: updatedSlice});
         }
     }
@@ -239,6 +241,10 @@ export default class SliceManager extends Vue {
 
     get canCreateSlice(): boolean {
         return this.selectedVideo.sliceList.length < MAX_SLICE;
+    }
+
+    currentTime(): number {
+        return getCurrentTime();
     }
 
     getTimeRecap(slice: SlicedYoutube): string {

@@ -8,16 +8,18 @@ export default new Vuetify({
     options: { customProperties: true },
     themes: {
       light: {
-        primary: "#822D2D", // #d32f2f
-        lightPrimary: "#E89493", // #d32f2f
-        secondary: "#612222", // #e57373
-        card: "#DBDBDB",
-        lightCard: "#EDEDED",
-        darker: "#612222", // #3F51B5
-        success: "#AE884E",
-        cancel: "#673D3D",
+        primary: "#D32222",
+        darkPrimary: "#A61313",
+        darkestPrimary: "#830707",
+        dullPrimary: "#CE6262",
+        lightPrimary: "#F6D4D4",
+        black: "#2B0202",
+        grayOne: "#C9BEBE",
+        grayTwo: "#EEE9E9",
+        grayThree: "#F8F5F5",
+        white: "#FFFFFF",
+        error: "#824545",
         anchor: "transparent"
-
       },
     },
   },

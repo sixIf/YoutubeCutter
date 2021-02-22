@@ -2,18 +2,26 @@
     <v-container v-if="videoList.length != 0" fluid>
         <v-row no-gutters fill-height align="center" justify="start">
             <v-col cols="6">
-                <v-card class="card" height="800">
+                <!-- Search card -->
+                <v-card class="darkPrimary mb-4">
                     <v-container>
                         <v-row>
                             <v-col cols="12">
-                                <search-youtube-text-field :selectedFormat="selectedFormat"/>
+                                <search-youtube-text-field 
+                                    :selectedFormat="selectedFormat"
+                                    :inputTitle="$t('input.addYoutubeLink')"
+                                />
                             </v-col>
                         </v-row>
-                        <v-row>
-                            <v-col cols="12">
-                                <videos-list :videoList="videoList"></videos-list>
-                            </v-col>
-                        </v-row>
+                    </v-container>
+                </v-card>
+                <!-- Video list Card -->
+                <v-card class="grayTwo mb-4">
+                    <videos-list :videoList="videoList"></videos-list>
+                </v-card>
+                <!-- Download Options Card -->
+                <v-card class="grayOne" height="100">
+                    <v-container>
                         <v-row>
                             <v-col cols="4">
                                 <v-text-field
@@ -58,11 +66,11 @@
                     <v-row justify="center">
                         <youtube-player 
                             :videoId="currentVideoId"
+                            :videoStream="videoStream"
                             :playRequest="playRequest"
-                            @time-changed="updateCurrentTime"
                         ></youtube-player>
                         <v-col cols="12">
-                            <slice-manager :currentTime="currentTime" @play-slice="updatePlayRequest"/>
+                            <slice-manager @play-slice="updatePlayRequest"/>
                         </v-col>
                     </v-row>
                 </v-container>
@@ -98,18 +106,17 @@ export default class VideosManager extends Vue {
     @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
     downloadFolder = "";
     selectedFormat = DOWNLOAD_FORMATS[0];
-    currentTime = 0;
     playRequest: PlayRequest = {
         start: 0,
         end: 0
     };
 
-    updateCurrentTime(currentTime: number) {
-        this.currentTime = currentTime;
-    }
-
     updatePlayRequest(playRequest: PlayRequest){
         this.playRequest = Object.assign({}, playRequest);
+    }
+
+    get videoStream() {
+        return this.selectedVideo.formats[0].url;
     }
 
     downloadItems(){

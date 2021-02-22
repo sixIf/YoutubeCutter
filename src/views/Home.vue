@@ -2,11 +2,14 @@
     <v-container fluid :style="mainContainerStyle">
         <v-row align="center" justify="center" style="height: 100%;">
             <v-col cols="6">
-                <v-card class="card" shaped height="300px">
+                <v-card class="darkPrimary" shaped height="300px">
                     <v-container style="height: 100%;">
                         <v-row align="center" justify="center" style="height: 100%;">
                             <v-col cols="8">
-                                <search-youtube-text-field @videos-found="$router.push('manage-videos')"/>
+                                <search-youtube-text-field 
+                                    @videos-found="$router.push('manage-videos')"
+                                    :inputTitle="$t('input.youtubeLink')"
+                                />
                             </v-col>
                         </v-row>
                     </v-container>

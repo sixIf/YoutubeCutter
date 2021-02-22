@@ -1,20 +1,18 @@
 <template>
-    <v-container fluid class="second-bar primary" :style="`height: ${appBarHeight};`">
+    <v-container fluid class="second-bar grayThree" :style="`height: ${appBarHeight};`">
         <v-row align="center">
             <v-col cols="2">
                 <router-link to="/">
-                    <v-img @click="$router.push('/')" src="../assets/image/icon.png" height="40px" width="40px"></v-img>
+                    <v-btn icon>
+                        <svg style="width:50px;height:50px" viewBox="0 0 24 24">
+                            <path :fill="$vuetify.theme.currentTheme.primary" d="M19.07,4.93C17.22,3 14.66,1.96 12,2C9.34,1.96 6.79,3 4.94,4.93C3,6.78 1.96,9.34 2,12C1.96,14.66 3,17.21 4.93,19.06C6.78,21 9.34,22.04 12,22C14.66,22.04 17.21,21 19.06,19.07C21,17.22 22.04,14.66 22,12C22.04,9.34 21,6.78 19.07,4.93M17,12V18H13.5V13H10.5V18H7V12H5L12,5L19.5,12H17Z" />
+                        </svg>
+                    </v-btn>                
+                    <!-- <v-img @click="$router.push('/')" src="../assets/image/icon.png" height="40px" width="40px"></v-img> -->
                 </router-link>
             </v-col>
             <v-col cols="2" offset="8">
-                <v-row justify="center" align="center">
-                    <v-col cols="3">
-                        <router-link to="/help">
-                            <v-btn icon>
-                                <v-icon class="card--text">mdi-help-circle</v-icon>
-                            </v-btn>
-                        </router-link>
-                    </v-col>
+                <v-row justify="end" align="center">
                     <v-col cols="3">
                         <v-speed-dial v-if="currentLocale != ''" direction="bottom">
                             <template v-slot:activator>
@@ -34,6 +32,13 @@
                                 ></v-btn>
                             </div>
                         </v-speed-dial>
+                    </v-col>
+                    <v-col cols="3">
+                        <router-link to="/help">
+                            <v-btn icon>
+                                <v-icon size="35" class="card--text">mdi-help-circle</v-icon>
+                            </v-btn>
+                        </router-link>
                     </v-col>
                 </v-row>
             </v-col>

@@ -1,26 +1,20 @@
 <template>
-    <div id="player"></div>
-    <!-- TODO, implement remote server serving YT Player
-        <iframe
-            :src="`http://127.0.0.1:5500/index.html`"
-            class="yt-iframe"
-            height="300"
-            width="550"
-            scrolling="no"
-            allowtransparency
-            allow="autoplay"
-        ></iframe> -->
+    <video :id="playerID" controls width="560" height="315">
+        <source :src="videoStream" type="video/mp4">
+    </video>
 </template>
     
 
 <script lang="ts">
 /* eslint-disable no-undef */
 import { PlayRequest } from "@/config/litterals";
+import { playerID } from "@/config/litterals/ui";
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 
 @Component
 export default class YoutubePlayer extends Vue {
     @Prop({ default: "" }) videoId!: string;
+    @Prop({ default: "" }) videoStream!: string;
     @Prop({ default: () => {
             return {
                 start: 0,
@@ -28,18 +22,13 @@ export default class YoutubePlayer extends Vue {
             }
         }
     }) playRequest!: PlayRequest;
-    player!: YT.Player;
-    currentTime = 0;
+    player!: HTMLMediaElement;
     currentPlaybackTimeout!: NodeJS.Timeout;
 
-    @Watch('videoId')
-    onVideoIdChanged(newId: string){
-        console.log(`video id changed ${this.player && newId}`)
-        if (this.player && newId) {
-            this.player.loadVideoById(newId);
-            this.clearCurrentTimeout();
-        }
-        else this.initPlayer();
+    @Watch('videoStream')
+    onVideoStreamChanged(){
+        this.player.load();
+        this.player.play();
     }
 
     @Watch('playRequest', { deep: true })
@@ -52,10 +41,10 @@ export default class YoutubePlayer extends Vue {
 
     playSpecificSlice(start: number, duration: number){
         this.clearCurrentTimeout();
-        this.player.seekTo(start, true);
-        this.player.playVideo();
+        this.player.currentTime = start;
+        this.player.play();
         this.currentPlaybackTimeout = setTimeout(() => {
-            this.player.pauseVideo();
+            this.player.pause();
         }, duration * 1000)
     }
 
@@ -63,48 +52,14 @@ export default class YoutubePlayer extends Vue {
         if (this.currentPlaybackTimeout) clearTimeout(this.currentPlaybackTimeout);
     }
 
-    createPlayer() {
-        this.player = new YT.Player("player", {
-            height: "300",
-            width: "550",
-            videoId: this.videoId,
-            playerVars: {
-                fs: 0,
-                origin: "http://caca", // TODO  
-                autoplay: 1
-            }
-        });
-        console.log(this.player)
-    }
-
-    initPlayer() {
-        window.onYouTubeIframeAPIReady = () => {
-            this.createPlayer();
-        };
-
-        if(document.getElementById('iframe-api')) this.createPlayer();
-        else {
-            const tag = document.createElement("script");
-            tag.src = "https://www.youtube.com/iframe_api";
-            tag.id = "iframe-api"
-            const firstScriptTag = document.getElementsByTagName("script")[0];
-            if (firstScriptTag.parentNode)
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-        }
-    }
-
     mounted() {
-        this.initPlayer();
-        setInterval(() => {
-            if (this.player && this.player.getPlayerState() == YT.PlayerState.PAUSED)
-                this.currentTime = this.player.getCurrentTime();
-        }, 300)
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.player = document.getElementById(this.playerID)! as HTMLMediaElement;   
+        this.player.play();
     }
 
-    @Watch('currentTime')
-    onCurrentTimeChange(newVal: number, oldVal: number){
-        if (oldVal != newVal)
-            this.$emit("time-changed", this.currentTime);
+    get playerID(): string {
+        return playerID;
     }
 }
 </script>

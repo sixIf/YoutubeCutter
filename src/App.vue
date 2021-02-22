@@ -1,5 +1,5 @@
 <template>
-    <v-app class="primary">
+    <v-app class="grayThree">
         <v-snackbar v-model="snackbar" top color="info">
             {{ snackbarMessage }}
             <template v-slot:action="{ attrs }">
@@ -10,7 +10,7 @@
         </v-snackbar>
         <frame-bar />
         <download-queue-drawer />
-        <v-main class="primary">
+        <v-main class="grayThree">
             <app-bar />
             <transition name="fade" mode="out-in">
                 <router-view />

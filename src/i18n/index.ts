@@ -6,6 +6,10 @@ Vue.use(VueI18n);
 // Ready translated locale messages
 const messages = {
     en: {
+		input: {
+			youtubeLink: 'Youtube link',
+			addYoutubeLink: 'Add a Youtube link',
+		},
 		contextMenu: {
 			paste: 'Paste'
 		},
@@ -55,6 +59,10 @@ const messages = {
 		},
     },
     fr: {
+		input: {
+			youtubeLink: 'Lien Youtube',
+			addYoutubeLink: 'Ajouter un lien Youtube',
+		},		
 		contextMenu: {
 			paste: 'Coller'
 		},

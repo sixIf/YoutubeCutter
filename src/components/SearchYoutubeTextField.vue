@@ -1,11 +1,14 @@
 <template>
     <v-form @submit.prevent="">
+        <h1 class="grayTwo--text pb-5">{{ inputTitle }}</h1>
         <v-text-field 
             v-model="ytLink"
             :label="$t('download.textInputLabel')"
             filled
+            rounded
             dense
-            class="card"
+            color="grayOne"
+            background-color="grayTwo"
             required
             @input="debouncedSearch"
             @contextmenu="openTextFieldMenu"
@@ -54,6 +57,7 @@ export default class SearchYoutubeTextField extends Vue {
         default: () => {
             return DOWNLOAD_FORMATS[0]
     }}) selectedFormat !: AvailableFormats;
+    @Prop({default: ""}) inputTitle !: string;
     @Getter('fetchedVideosState/getFetchedVideos') videoList!: VideoDetail[];
     @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
     ytLink = "";
@@ -146,14 +150,14 @@ export default class SearchYoutubeTextField extends Vue {
     }
 
     @keyframes custombounce {
-    0% {
-        transform: translateX(0px);
-    }
-    50% {
-        transform: translateX(5px);
-    }
-    100% {
-        transform: translateX(0px);
-    }
+        0% {
+            transform: translateX(0px);
+        }
+        50% {
+            transform: translateX(5px);
+        }
+        100% {
+            transform: translateX(0px);
+        }
     }    
 </style>

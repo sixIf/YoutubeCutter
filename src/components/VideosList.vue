@@ -1,8 +1,8 @@
 <template>
-    <v-card elevation="8" class="card lightCard" height="600">
-        <v-container no-gutters>
+    <v-card elevation="8" class="grayTwo" height="520">
+        <v-container fluid no-gutters>
             <v-row justify="end">
-                <v-col v-if="videoList.length != 0" cols="2" max-height="50px">
+                <!-- <v-col v-if="videoList.length != 0" cols="2" max-height="50px">
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -17,13 +17,13 @@
                         </template>
                         <span>{{ $t('videoList.clear') }}</span> 
                     </v-tooltip>
-                </v-col>
+                </v-col> -->
                 <v-col cols="12">
                     <v-virtual-scroll
                         :items="videoList"
                         :item-height="120"
                         :bench="benched"
-                        class="no-x-scroll"
+                        class="no-x-scroll grayThree"
                         height="500"
                     >
                         <template v-slot:default="{ item }">
