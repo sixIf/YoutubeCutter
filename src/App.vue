@@ -22,6 +22,7 @@
 
 
 <script lang="ts">
+
 import { Component, Vue } from "vue-property-decorator";
 import DownloadQueueDrawer from "@/components/DownloadQueueDrawer.vue";
 import AppBar from "@/components/AppBar.vue";
@@ -87,5 +88,13 @@ html {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+
+* {
+ font-family: Ubuntu;
+}
+
+button {
+    font-weight: 800 !important;
 }
 </style>

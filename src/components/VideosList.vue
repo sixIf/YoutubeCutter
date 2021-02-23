@@ -1,84 +1,76 @@
 <template>
-    <v-card elevation="8" class="grayTwo" height="520">
-        <v-container fluid no-gutters>
-            <v-row justify="end">
-                <!-- <v-col v-if="videoList.length != 0" cols="2" max-height="50px">
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                                fab
-                                small
-                                @click="clearList()"
-                                v-on="on"
-                                v-bind="attrs"
-                            >
-                                <v-icon class="theme--light">mdi-delete</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>{{ $t('videoList.clear') }}</span> 
-                    </v-tooltip>
-                </v-col> -->
-                <v-col cols="12">
-                    <v-virtual-scroll
-                        :items="videoList"
-                        :item-height="120"
-                        :bench="benched"
-                        class="no-x-scroll grayThree"
-                        height="500"
-                    >
-                        <template v-slot:default="{ item }">
-                            <v-list-item :key="item.id" :value="item.id" :class="computeItemClass(item)">
-                                <v-list-item-avatar :tile="true" width="150" height="100" @click="selectVideo(item)" style="cursor: pointer">
-                                    <v-img :src="item.thumbnail"/>
-                                </v-list-item-avatar>
-                                <v-list-item-title>
-                                    <v-row align="center" style="height: 100px; cursor: pointer" @click="selectVideo(item)">
-                                        <v-col cols="12">{{item.title}}</v-col>
-                                    </v-row>
-                                    
-                                </v-list-item-title>
-                                <v-list-item-action>
-                                    <v-row align="center">
-                                        <v-col cols="6">
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <v-btn 
-                                                        icon 
-                                                        @click="selectVideo(item)"
-                                                        v-bind="attrs"
-                                                        v-on="on"
-                                                    >
-                                                        <v-icon :color="computeCutColor(item)">mdi-content-cut</v-icon>
-                                                    </v-btn>       
-                                                    </template>
-                                                <span>{{ $t('videoList.edit') }}</span>
-                                            </v-tooltip>                                                                                         
-                                        </v-col>
-                                        <v-col cols="6">
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <v-icon 
-                                                        class="theme--light black--text"
-                                                        @click="changeVideoToDownload(item)"
-                                                        v-bind="attrs"
-                                                        v-on="on"
-                                                    >
-                                                        {{ item.toDownload ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline' }}
-                                                    </v-icon>  
-                                                    </template>
-                                                <span>{{ getCheckboxTooltip(item) }}</span>
-                                            </v-tooltip>                                                
-                                        </v-col>
-                                    </v-row>
-                                </v-list-item-action>
-                            </v-list-item>
-                            <v-divider></v-divider>
-                        </template>
-                    </v-virtual-scroll>
-                </v-col>
-            </v-row>
-        </v-container>
-    </v-card>
+    <v-container fluid no-gutters>
+        <v-row justify="end">
+            <v-col cols="12">
+                <v-virtual-scroll
+                    :items="videoList"
+                    :item-height="120"
+                    :bench="benched"
+                    class="no-x-scroll grayThree"
+                    height="500"
+                >
+                    <template v-slot:default="{ item }">
+                        <v-list-item :key="item.id" :value="item.id" :class="computeItemClass(item)">
+                            <v-list-item-avatar :tile="true" width="150" height="100" @click="selectVideo(item)" style="cursor: pointer">
+                                <v-img :src="item.thumbnail"/>
+                            </v-list-item-avatar>
+                            <v-list-item-title>
+                            <v-tooltip bottom>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-row align="center" 
+                                                style="height: 100px; cursor: pointer" 
+                                                @click="selectVideo(item)"
+                                                v-bind="attrs"
+                                                v-on="on"
+                                            >
+                                                <v-col cols="12"><b>{{item.title}}</b></v-col>
+                                            </v-row>
+                                            </template>
+                                        <span>{{ item.title }}</span>
+                                    </v-tooltip>   
+                                
+                            </v-list-item-title>
+                            <v-list-item-action>
+                                <v-row align="center">
+                                    <v-col cols="6">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-btn 
+                                                    icon 
+                                                    @click="selectVideo(item)"
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                >
+                                                    <v-icon :color="computeCutColor(item)">mdi-content-cut</v-icon>
+                                                </v-btn>       
+                                                </template>
+                                            <span>{{ $t('videoList.edit') }}</span>
+                                        </v-tooltip>                                                                                         
+                                    </v-col>
+                                    <v-col cols="6">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-icon 
+                                                    class="theme--light black--text"
+                                                    @click="changeVideoToDownload(item)"
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                >
+                                                    {{ item.toDownload ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline' }}
+                                                </v-icon>  
+                                                </template>
+                                            <span>{{ getCheckboxTooltip(item) }}</span>
+                                        </v-tooltip>                                                
+                                    </v-col>
+                                </v-row>
+                            </v-list-item-action>
+                        </v-list-item>
+                        <v-divider></v-divider>
+                    </template>
+                </v-virtual-scroll>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script lang="ts">

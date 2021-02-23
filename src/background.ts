@@ -102,8 +102,8 @@ function createWindow() {
     let tray: Tray | null = null;
 
     win = new BrowserWindow({
-        width: 1155,
-        height: 955,
+        width: 1180,
+        height: 1000,
         minWidth: 1180,
         minHeight: 1000,
         x: 0,

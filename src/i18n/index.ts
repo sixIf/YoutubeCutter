@@ -17,7 +17,7 @@ const messages = {
 			textInputLabel: 'Video, Playlist or channel URL',
 			folder: 'Download Folder',
 			folderHint: 'Choose where to save the download',
-			button: 'Download'
+			button: 'Download {nb} video | Download {nb} videos'
 		},
 		error: {
 			linkNotFound: 'Link not found'
@@ -29,8 +29,10 @@ const messages = {
 			select: 'Select the video to download'
 		},
 		slice: {
-			add: 'Can`t create more',
-			cantAdd: '10 slices is the limit',
+			managerTitle: 'Cut parts of the video',
+			addLabel: 'Add',
+			add: 'Add a slice',
+			cantAdd: 'Can`t create more',
 			name: 'Slice name',
 			keep: 'Keep the whole video',
 			cutFrom: 'Cut from',
@@ -70,7 +72,7 @@ const messages = {
 			textInputLabel: 'URL d\'une vidéo, playlist ou chaîne',
 			folder: 'Dossier de téléchargement',
 			folderHint: 'Choisir où sauvegarder les vidéos à télécharger',
-			button: 'Télécharger'
+			button: 'Télécharger %{nb} vidéo | Télécharger %{nb} vidéos'
 		},
 		error: {
 			linkNotFound: 'Lien non trouvé'
@@ -82,7 +84,9 @@ const messages = {
 			select: 'Selectionner la vidéo à télécharger'
 		},
 		slice: {
-			add: 'Ajouter une partie',
+			managerTitle: 'Couper des parties de la vidéo',
+			add: 'Ajouter',
+			addLabel: 'Ajouter une partie',
 			cantAdd: 'Impossible d\'en créer plus',
 			name: 'Nom de la partie',
 			keep: 'Garder la vidéo entière',

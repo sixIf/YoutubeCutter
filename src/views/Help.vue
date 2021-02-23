@@ -126,18 +126,6 @@ export default class Help extends Vue {
 </script>
 
 <style>
-/* .octo-body {
-    transform: rotate(-135deg) translate(-70px, 100px);
-    transform-origin: center;
-    position: relative;
-    bottom: 0;
-}
-
-.octo-arm {
-    transform-origin: center;
-    transform: rotate(-135deg) translate(-70px, 100px);
-} */
-
 .github-corner:hover .octo-arm {
     animation: octocat-wave 560ms ease-in-out;
 }

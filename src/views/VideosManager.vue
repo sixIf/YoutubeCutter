@@ -1,9 +1,9 @@
 <template>
     <v-container v-if="videoList.length != 0" fluid>
-        <v-row no-gutters fill-height align="center" justify="start">
-            <v-col cols="6">
+        <v-row align="center" justify="center">
+            <v-col cols="6" xl="5" align-self="stretch">
                 <!-- Search card -->
-                <v-card class="darkPrimary mb-4">
+                <v-card class="darkPrimary mb-3" elevation="8" height="170">
                     <v-container>
                         <v-row>
                             <v-col cols="12">
@@ -16,31 +16,36 @@
                     </v-container>
                 </v-card>
                 <!-- Video list Card -->
-                <v-card class="grayTwo mb-4">
+                <v-card class="grayTwo mb-3" height="524">
+
                     <videos-list :videoList="videoList"></videos-list>
                 </v-card>
                 <!-- Download Options Card -->
-                <v-card class="grayOne" height="100">
+                <v-card class="grayOne" height="150" elevation="8" >
                     <v-container>
-                        <v-row>
-                            <v-col cols="4">
+                        <v-row justify="center" align="center">
+                            <v-col cols="6">
                                 <v-text-field
                                     v-model="downloadFolder"
                                     :label="$t('download.folder')"
-                                    :hint="$t('download.folderHint')"
-                                    persistent-hint
+                                    filled
+                                    dense
+                                    color="grayOne"
+                                    background-color="grayTwo"                                    
                                     readonly
                                     @click="selectDownloadFolder"    
                                 ></v-text-field>
                             </v-col>
-                            <v-col cols="4">
+                            <v-col cols="6">
                                 <v-select
                                     v-model="selectedFormat"
                                     :items="availableFormats"
-                                    :hint="$t('format.selectHint')"
+                                    filled
+                                    dense
+                                    color="grayOne"
+                                    background-color="grayTwo"
                                     :label="$t('format.format')"
                                     return-object
-                                    persistent-hint
                                 >
                                     <template v-slot:selection="{item}">
                                         {{ getSelectText(item) }}
@@ -50,30 +55,30 @@
                                     </template>
                                 </v-select>
                             </v-col>
-                            <v-col cols="4" align-self="center">
+                        </v-row>
+                        <v-row no-gutters justify="center" align="center">
+                            <v-col cols="6" xl="4">
                                 <v-btn
                                     color="primary"
                                     @click="downloadItems"
                                     :disabled="isDownloadDisbled"
-                                >{{ $t('download.button') }}</v-btn>
+                                >{{ $tc('download.button', videosToDownload.length, { nb: videosToDownload.length }) }}</v-btn>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-card>
             </v-col>
-            <v-col cols="6" v-if="currentVideoId">
-                <v-container no-gutters fluid>
-                    <v-row justify="center">
-                        <youtube-player 
-                            :videoId="currentVideoId"
-                            :videoStream="videoStream"
-                            :playRequest="playRequest"
-                        ></youtube-player>
-                        <v-col cols="12">
-                            <slice-manager @play-slice="updatePlayRequest"/>
-                        </v-col>
-                    </v-row>
-                </v-container>
+            <v-col cols="6" xl="5" v-if="currentVideoId" style="height: 892px">
+                <v-card height="40%" color="black">
+                    <youtube-player 
+                        :videoId="currentVideoId"
+                        :videoStream="videoStream"
+                        :playRequest="playRequest"
+                    ></youtube-player>
+                </v-card>
+                <v-card class="lightPrimary" height="60%">
+                    <slice-manager @play-slice="updatePlayRequest"/>
+                </v-card>
             </v-col>
         </v-row>
     </v-container>

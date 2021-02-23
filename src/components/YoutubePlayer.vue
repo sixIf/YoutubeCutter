@@ -1,5 +1,5 @@
 <template>
-    <video :id="playerID" controls width="560" height="315">
+    <video :id="playerID" controls width="100%" height="100%">
         <source :src="videoStream" type="video/mp4">
     </video>
 </template>
@@ -60,6 +60,28 @@ export default class YoutubePlayer extends Vue {
 
     get playerID(): string {
         return playerID;
+    }
+
+    get width(): number {
+        switch (this.$vuetify.breakpoint.name) {
+            case 'xl':
+                
+                return 620;
+        
+            default:
+                return 560;
+        }
+    }
+
+    get height(): number {
+        switch (this.$vuetify.breakpoint.name) {
+            case 'xl':
+                
+                return 348.75;
+        
+            default:
+                return 315;
+        }
     }
 }
 </script>

@@ -35,7 +35,7 @@
                     </v-col>
                     <v-col cols="3">
                         <router-link to="/help">
-                            <v-btn icon>
+                            <v-btn icon color="grayOne">
                                 <v-icon size="35" class="card--text">mdi-help-circle</v-icon>
                             </v-btn>
                         </router-link>

@@ -1,8 +1,8 @@
 <template>
     <v-container fluid :style="mainContainerStyle">
-        <v-row align="center" justify="center" style="height: 100%;">
+        <v-row no-gutters align="center" justify="center" style="height: 100%;">
             <v-col cols="6">
-                <v-card class="darkPrimary" shaped height="300px">
+                <v-card class="darkPrimary" shaped height="350">
                     <v-container style="height: 100%;">
                         <v-row align="center" justify="center" style="height: 100%;">
                             <v-col cols="8">
