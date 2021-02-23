@@ -1,13 +1,13 @@
 <template>
-    <v-card class="card" height="200px">
+    <v-card class="darkPrimary" height="250px">
         <v-container style="height: 100%">
             <v-row align="center" style="height: 100%" justify="center">
                 <v-col cols="4">
                     <div class="step-number">{{ step }}</div>
                 </v-col>
                 <v-col cols="8" class="text-col" align-self="start">
-                    <h2 class="step-title"><slot name="title"/></h2>
-                    <p><slot name="content"/></p>
+                    <h2 class="step-title grayThree--text"><slot name="title"/></h2>
+                    <p class="grayTwo--text pt-3"><slot name="content"/></p>
                 </v-col>
             </v-row>
         </v-container>
@@ -29,8 +29,8 @@ export default class StepTiles extends Vue {
         height: 70px;
         width: 70px;
         border-radius: 50%;
-        background-color: #d2e3fc;
-        color: #4285f4;
+        background-color: var(--v-darkestPrimary-base);
+        color: var(--v-grayThree-base);
         text-align: center;
         line-height: 70px;
     }

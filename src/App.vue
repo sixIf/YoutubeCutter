@@ -91,10 +91,15 @@ html {
 }
 
 * {
- font-family: Ubuntu;
+    font-family: Ubuntu !important;
+    color: var(--v-black-base);
 }
 
 button {
     font-weight: 800 !important;
+}
+
+.v-tooltip__content span{
+    color: var(--v-grayThree-base);
 }
 </style>

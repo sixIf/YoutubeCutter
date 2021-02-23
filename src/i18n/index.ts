@@ -30,8 +30,8 @@ const messages = {
 		},
 		slice: {
 			managerTitle: 'Cut parts of the video',
-			addLabel: 'Add',
-			add: 'Add a slice',
+			addLabel: 'Add a slice',
+			add: 'Add',
 			cantAdd: 'Can`t create more',
 			name: 'Slice name',
 			keep: 'Keep the whole video',
@@ -49,15 +49,17 @@ const messages = {
 			audio: 'Audio'
 		},
 		help: {
-			title: 'Using this tool is easy as',
+			title: 'How to use this tool',
 			downloadSteps: {
-				firstTitle: 'Copy link',
-				firstContent: 'Paste in the above form the link of the video, playlist or the channel',
+				firstTitle: 'Copy a link',
+				firstContent: 'Go to Youtube, copy the link to a video, a playlist or a channel, and paste it in the tool to start !',
 				secondTitle: 'Cut the videos',
-				secondContent: 'Select the part of the videos',
+				secondContent: 'You can add other videos, choose the download format and specific part of the videos to keep.',
 				thirdTitle: 'Download',
-				thirdContent: 'Enjoy',
-			}
+				thirdContent: 'Choose where to put the downloaded videos, then you can start the download !',
+			},
+			aboutTitle: 'About',
+			aboutContent: 'This projet aims to help people in their need to extract videos from Youtube, it is 100% open source and free to use.<br><br>Don’t forget to mention the content’s creators when using part of their videos.<br><br>If you wish to support our application, you can donate to :<br><br>If you encounter some problems, feel free to reach us at <email/discord>.'
 		},
     },
     fr: {
@@ -104,15 +106,17 @@ const messages = {
 			audio: 'Audio'
 		},
 		help: {
-			title: 'Utiliser cet outil est aussi simple que',
+			title: 'Comment ça marche ?',
 			downloadSteps: {
-				firstTitle: 'Copy link',
-				firstContent: 'Paste in the above form the link of the video, playlist or the channel',
-				secondTitle: 'Cut the videos',
-				secondContent: 'Select the part of the videos',
-				thirdTitle: 'Download',
-				thirdContent: 'Enjoy',
-			}
+				firstTitle: 'Copie un lien',
+				firstContent: 'Va sur Youtube, copie le lien vers une vidéo, une playlist ou une chaîne, puis colle le pour commencer !',
+				secondTitle: 'Coupe les vidéos',
+				secondContent: 'Tu peux rajouter des vidéos, choisir de le format de téléchargement et couper des parties de vidéos.',
+				thirdTitle: 'Télécharge',
+				thirdContent: 'Choisi dans quel dossier sauvegarder les vidéos et lance le téléchargement !',
+			},
+			aboutTitle: 'À propos',
+			aboutContent: 'This projet aims to help people in their need to extract videos from Youtube, it is 100% open source and free to use.<br><br>Don’t forget to mention the content’s creators when using part of their videos.<br><br>If you wish to support our application, you can donate to :<br><br>If you encounter some problems, feel free to reach us at <email/discord>.',
 		},				
     }
 }

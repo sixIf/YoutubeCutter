@@ -109,28 +109,30 @@
                                     </v-col>
                                 </v-row>
                                 <v-row v-if="index != 0" justify="center"  style="padding-bottom: 5px;">
-                                    <v-col cols="12" md="12" lg="8">
+                                    <v-col cols="12" md="12" lg="11">
                                         <span class="time-recap">
-                                            {{ $t("slice.cutFrom") }} 
+                                            {{ $t("slice.cutFrom")}} 
+                                            &nbsp;&nbsp;
                                             <v-tooltip bottom>
                                                 <template v-slot:activator="{ on, attrs }">
                                                     <v-btn
-                                                        class="selectableTime grayThree--text"
+                                                        class="selectableTime grayThree--text mr-3 ml-3"
                                                         color="darkPrimary"
                                                         @click="setStartTime(slice, index)"
                                                         v-on="on"
-                                                        v-bind="attrs" 
+                                                        v-bind="attrs"
                                                     >
                                                         {{ getFormattedTime(slice.startTime)}}
                                                     </v-btn>
                                                 </template>
                                                 <span>{{ $t("slice.copyTime") }}</span>
                                             </v-tooltip>
-                                            {{ $t("slice.toTime") }} 
+                                            {{ $t("slice.toTime") + "&nbsp;" }}
+                                            <span>&nbsp;</span>
                                             <v-tooltip bottom>
                                                 <template v-slot:activator="{ on, attrs }">
                                                     <v-btn
-                                                        class="selectableTime grayThree--text"
+                                                        class="selectableTime grayThree--text mr-3 ml-3"
                                                         color="darkPrimary"
                                                         @click="setEndTime(slice, index)"
                                                         v-on="on"
