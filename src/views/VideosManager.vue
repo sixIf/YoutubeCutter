@@ -121,7 +121,11 @@ export default class VideosManager extends Vue {
     }
 
     get videoStream() {
-        return this.selectedVideo.formats[0].url;
+        const bestFormat = _.filter(this.selectedVideo.formats, (format) => {
+            return (format.hasVideo && format.hasAudio);
+        })
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return bestFormat ? bestFormat[0]!.url : "";
     }
 
     downloadItems(){

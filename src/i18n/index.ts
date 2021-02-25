@@ -26,7 +26,10 @@ const messages = {
 			clear: 'Clear the video list',
 			edit: 'Edit the video and select specific parts',
 			deselect: 'Deselect the video',
-			select: 'Select the video to download'
+			select: 'Select the video to download',
+			audio: 'Full audio',
+			video: 'Full video',
+			slice: '{nb} slice | {nb} slices',
 		},
 		slice: {
 			managerTitle: 'Cut parts of the video',
@@ -83,7 +86,10 @@ const messages = {
 			clear: 'Vider la liste',
 			edit: 'Editer la vidéo en sélectionnant des parties',
 			deselect: 'Déselectionner la vidéo',
-			select: 'Selectionner la vidéo à télécharger'
+			select: 'Selectionner la vidéo à télécharger',
+			audio: 'Audio complet',
+			video: 'Vidéo complète',
+			slice: '{nb} morceau | {nb} morceaux',			
 		},
 		slice: {
 			managerTitle: 'Couper des parties de la vidéo',

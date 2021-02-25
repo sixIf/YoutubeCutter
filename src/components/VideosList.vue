@@ -23,7 +23,8 @@
                                                 v-bind="attrs"
                                                 v-on="on"
                                             >
-                                                <v-col cols="12"><b>{{item.title}}</b></v-col>
+                                                <v-col cols="12"><h3>{{item.title}}</h3></v-col>
+                                                <v-col cols="12">{{getCutInsight(item)}}</v-col>
                                             </v-row>
                                             </template>
                                         <span>{{ item.title }}</span>
@@ -134,6 +135,14 @@ export default class VideosList extends Vue {
     getCheckboxTooltip(item: VideoDetail) {
         return item.toDownload ? this.$t('videoList.deselect')
             : this.$t('videoList.select');
+    }
+
+    getCutInsight(item: VideoDetail): string {
+        let insight = "";
+        const fullSlice = item.sliceList[0];
+        if (fullSlice.isActive) insight += '| ' + this.$t(`videoList.${fullSlice.format.type}`) + ' ';
+        if (item.sliceList.length > 1) insight += '| ' + this.$tc('videoList.slice', item.sliceList.length-1, { nb: item.sliceList.length-1 })
+        return insight;
     }
 }
 </script>
