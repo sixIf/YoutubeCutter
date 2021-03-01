@@ -1,21 +1,19 @@
 import { GetterTree } from 'vuex';
 import { DownloadQueueState } from './types';
 import { RootState } from '../types';
+import { VideoDetail } from '@/config/litterals';
 
 export const getters: GetterTree<DownloadQueueState, RootState> = {
-    getBoardColumnSpan(state): number{
-        return state.boardColumnSpan;
+    getDoneItems(state): VideoDetail[]{
+        return state.done;
     },
-    getDetailsFolded(state): boolean{
-        return state.detailsFolded;
+    getDownloadingItems(state): VideoDetail[]{
+        return state.downloading;
     },
-    getFoldersFolded(state): boolean{
-        return state.foldersFolded;
+    getErrorItems(state): VideoDetail[]{
+        return state.errors;
     },
-    getShowFolderDetails(state): boolean{
-        return state.showFolderDetails;
-    },
-    getVerticalLayout(state): boolean{
-        return state.verticalLayout;
+    getInQueueItems(state): VideoDetail[]{
+        return state.inQueue;
     },
 };

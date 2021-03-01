@@ -95,6 +95,7 @@ import SliceManager from '@/components/SliceManager.vue'
 import SearchYoutubeTextField from '@/components/SearchYoutubeTextField.vue'
 import _ from 'lodash';
 import { generateUniqueId } from "@/helpers/stringHelper";
+import { ItemsToQueue } from "@/store/downloadQueueState/types";
 const { log, myIpcRenderer } = window;
 
 // Define the component in class-style
@@ -131,10 +132,12 @@ export default class VideosManager extends Vue {
     downloadItems(){
         const downloadRequest: DownloadRequest = {
             requestId: generateUniqueId(),
-            audioOnly: false,
             itemSelected: this.videosToDownload,
             downloadFolder: this.downloadFolder,
         };
+
+        const itemsToQueue: ItemsToQueue = { queue: "inQueue", items: this.videosToDownload};
+        this.$store.commit('downloadQueueState/setItemsInQueue', itemsToQueue);
 
         myIpcRenderer.send("download-videos", downloadRequest);  
 

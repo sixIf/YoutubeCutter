@@ -5,14 +5,16 @@ import { mutations } from './mutations';
 import { DownloadQueueState } from './types';
 import { RootState } from '../types';
 
-export const state: DownloadQueueState = {
-      boardColumnSpan: 0,
-      detailsFolded: false,
-      foldersFolded: false,
-      showFolderDetails: false,
-      verticalLayout: false,
+export const getDefaultState = (): DownloadQueueState => {
+    return {
+      done: [],
+      downloading: [],
+      errors: [],
+      inQueue: []
+    }
 };
 
+const state = getDefaultState();
 const namespaced = true;
 
 export const downloadQueueState: Module<DownloadQueueState, RootState> = {

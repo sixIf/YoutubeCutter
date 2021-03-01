@@ -76,7 +76,6 @@
 
 <script lang="ts">
 import { VideoDetail } from "@/config/litterals";
-import _ from "lodash";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 

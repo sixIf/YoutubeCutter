@@ -12,7 +12,7 @@ contextBridge.exposeInMainWorld(
         invoke: (channel: string, data: any) => {
             let validChannels = [
                 "get-video-infos", "get-playlist-videos", "get-default-download-folder", "get-video-id-from-url", 
-                "get-playlist-id-from-url", "get-current-locale"
+                "get-playlist-id-from-url", "get-current-locale", "move-up-item"
             ];
             if (validChannels.includes(channel)) {
                 return ipcRenderer.invoke(channel, data);
@@ -23,7 +23,7 @@ contextBridge.exposeInMainWorld(
                 "download-videos", "set-current-locale", "set-locale-messages", "open-context-menu", 
                 "download-progress", "item-downloaded", "open-external-url", "select-folder",
                 "open-shell", "download-error", "add-single-video", "explore-channel",
-                "minimize-window", "maximize-window", "close-window"
+                "minimize-window", "maximize-window", "close-window", "start-download-item"
             ];
             if (validChannels.includes(channel)) {
                 ipcRenderer.send(channel, data);
@@ -32,7 +32,7 @@ contextBridge.exposeInMainWorld(
         receive: (channel: string, func: any) => {
             let validChannels = [
                 "download-progress", "set-current-locale", "set-locale-messages", "item-downloaded",
-                "open-external-url", "selected-folder", "download-error", "add-single-video"
+                "open-external-url", "selected-folder", "download-error", "add-single-video", "start-download-item"
             ];
             if (validChannels.includes(channel)) {
                 // Deliberately strip event as it includes `sender` 

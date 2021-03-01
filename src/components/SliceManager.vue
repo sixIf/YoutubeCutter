@@ -16,7 +16,7 @@
                             :disabled="!canCreateSlice"
                             @click="createSlice"
                             v-bind="attrs"
-                                v-on="on"
+                            v-on="on"
                         >
                             {{ $t('slice.add') }}
                         </v-btn>

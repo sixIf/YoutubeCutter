@@ -19,7 +19,6 @@ export const ERROR_TYPES: Record<string, string> = {
 
 export interface DownloadRequest {
     readonly requestId: string;
-    readonly audioOnly: boolean;
     readonly itemSelected: VideoDetail[];
     readonly downloadFolder: string;
 }
@@ -29,19 +28,10 @@ export interface IAlert {
     readonly message: string;
 }
 
-export interface ItemDownloading {
-    progressAudio: string;
-    progressVideo: string;
-    readonly type: string;
-    readonly audioOnly: boolean;
-    readonly video: VideoDetail;
-}
-
 export interface VideoDetail {
     readonly id: string;
     readonly title: string;
     readonly thumbnail: string;
-    readonly keepFullItem?: boolean;
     sliceList: SlicedYoutube[];
     formats: ytdl.videoFormat[];
     bestAudioFormat?: string;
@@ -88,3 +78,5 @@ export interface PlayRequest {
 }
 
 export type ContextType = 'text-field';
+
+export const MAX_WORKERS = 3;

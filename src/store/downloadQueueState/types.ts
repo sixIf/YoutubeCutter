@@ -1,8 +1,15 @@
+import { VideoDetail } from "@/config/litterals";
 
 export interface DownloadQueueState {
-    verticalLayout: boolean;
-    detailsFolded: boolean;
-    foldersFolded: boolean;
-    showFolderDetails: boolean;
-    boardColumnSpan: number;
+    downloading: VideoDetail[];
+    inQueue: VideoDetail[];
+    done: VideoDetail[];
+    errors: VideoDetail[];
 } 
+
+export type QueueLists = "downloading" | "inQueue" | "done" | "errors";
+
+export interface ItemsToQueue {
+    queue: QueueLists;
+    items: VideoDetail[];
+}

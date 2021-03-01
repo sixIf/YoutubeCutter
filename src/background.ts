@@ -19,11 +19,11 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: BrowserWindow | null
+let downloadService: DownloadService;
 const loggerService = ApplicationContainer.resolve(LoggerService);
 let localesMessages: VueI18n.LocaleMessages;
 import ElectronStore from 'electron-store';
-import winston from "winston/lib/winston/config";
-import { loggers } from "winston";
+import { log } from "winston";
 
 const schema = {
 	locale: {
@@ -157,6 +157,9 @@ function createWindow() {
     win.webContents.on('new-window', async (event, url, frameName, disposition, options, additionalFeatures) => {
         event.preventDefault()
     })
+
+    // Create Download service
+    if (!downloadService) downloadService = new DownloadService(win);
 }
 
 // Quit when all windows are closed.
@@ -255,6 +258,11 @@ ipcMain.on("close-window", (event, args: any) => {
     if (win) win.close();
 })
 
+ipcMain.handle("move-up-item", (event, itemId: string) => {
+    loggerService.info(itemId)
+    return downloadService.prioritize(itemId);
+})
+
 ipcMain.handle("get-current-locale", (event, args) => {
     return new Promise( (resolve, reject) => {
         try {
@@ -312,7 +320,7 @@ ipcMain.on("select-folder", (event, args: string) => {
 
 
 ipcMain.on("download-videos", (event, args: DownloadRequest) => {
-    new DownloadService(args, win);
+    downloadService.handleDownloadRequest(args);
 });
 
 ipcMain.on("open-context-menu", (event, type: ContextType) => {

@@ -5,66 +5,84 @@
 import path from 'path';
 import fs from 'fs';
 import ytdl from 'ytdl-core';
-import { VideoDetail, ItemDownloading, DownloadRequest, SlicedYoutube } from '@/config/litterals/index'
+import { VideoDetail, DownloadRequest, SlicedYoutube, MAX_WORKERS } from '@/config/litterals/index'
 import sanitize from 'sanitize-filename'
 import { BrowserWindow } from 'electron';
-import _ from 'lodash';
+import _, { reject } from 'lodash';
 import { ApplicationContainer } from '../di';
 import { LoggerService } from "../services/loggerService"
 import { FfmpegService } from './ffmpegService';
 import { YOUTUBE_VIDEO_URL } from '@/config/litterals/youtube';
+import { resolve } from 'dns';
 
 export interface IDownloadService {
     downloadAudio(item: VideoDetail, output: string): Promise<string>;
     downloadVideo(item: VideoDetail, output: string, bestQuality: string): Promise<string>;
     handleItem(item: VideoDetail): void;
     deleteTempFiles(files: string[]): void;
-    initDownload(): void;
+    startWorker(): void;
+    handleDownloadRequest(request: DownloadRequest): void;
     pause(): void;
     cancel(): void;
     resume(): void;
-    removeItem(videoID: string): void;
+    saveState(): void;
+    prioritize(itemId: string): Promise<boolean>;
+    removeItem(itemId: string): void;
 }
 
 export class DownloadService implements IDownloadService {
-    static activeWorkers = 0;
+    activeWorkers = 0;
     loggerService = ApplicationContainer.resolve(LoggerService);
     ffmpegService!: FfmpegService;
     browserWin: BrowserWindow | null = null;
     sucessDownloadList: VideoDetail[] = [];
-    errorDownloadList: VideoDetail[] = [];
+    itemsToDownload: VideoDetail[];
     downloadRequest!: DownloadRequest;
-    nbToDownload = 0;
-    output!: string;
-    intervalId: NodeJS.Timeout;
 
-    constructor(request: DownloadRequest, win: BrowserWindow | null){
+    constructor(win: BrowserWindow | null){
+        this.itemsToDownload = [];
         this.browserWin = win;
-        this.downloadRequest = request;
-        this.nbToDownload = this.downloadRequest.itemSelected.length;
-        this.output = this.downloadRequest.downloadFolder;
         this.ffmpegService = new FfmpegService;
-        this.intervalId = setInterval(() => {
-            this.initDownload();    
-        }, 1000)
+    }
+    
+    async prioritize(itemId: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            const index = _.findIndex(this.itemsToDownload, (value: VideoDetail) => {
+                return value.id == itemId;
+            });
+            
+            if (index != -1) {
+                const elem = this.itemsToDownload.splice(index, 1)[0];
+                this.itemsToDownload.unshift(elem);
+                resolve(true);
+            } else {
+                reject(false);
+            }
+        })
     }
 
-    /**
-     * Launch next item to download in request
-     * if a worker is available, otherwise retry
-     * after 3 seconds
-     */
-    initDownload(): void {
-        if (DownloadService.activeWorkers < 3) {
-            const itemToDownload = this.downloadRequest.itemSelected.shift();
-            if(itemToDownload) {
-                DownloadService.activeWorkers++;
-                itemToDownload.downloadTry = itemToDownload.downloadTry ? itemToDownload.downloadTry + 1 : 1;
-                this.handleItem(itemToDownload);
-            }
-        }
+    handleDownloadRequest(request: DownloadRequest): void {
+        // Add each item in the download array
+        request.itemSelected.forEach(item => {
+            item.folderPath = request.downloadFolder;
+            this.itemsToDownload.push(item);
+        });
+        this.start();
+    }
 
-        if (this.remainingDownload == 0) clearInterval(this.intervalId)
+    start() {
+        for(let i=1; i <= MAX_WORKERS - this.activeWorkers; i++){
+            this.startWorker()
+        }
+    }
+
+    async startWorker() {
+        this.activeWorkers++;
+        while (this.itemsToDownload.length > 0){
+            const item = this.itemsToDownload.shift()!;
+            await this.handleItem(item);
+        }
+        this.activeWorkers--;
     }
 
     /**
@@ -72,19 +90,20 @@ export class DownloadService implements IDownloadService {
      * @param item what we want to download
      */
     async handleItem(item: VideoDetail) {
-        const videoNeeded = this.isThereVideoSlice(item.sliceList);
+        if (this.browserWin) this.browserWin.webContents.send('start-download-item', item); // notify renderer
         
+        const videoNeeded = this.isThereVideoSlice(item.sliceList);
         // Set item download output
         if (item.sliceList.length > 1) {
-            const newDir = path.join(this.output, sanitize(item.title));
+            const newDir = path.join(item.folderPath!, sanitize(item.title));
             if(!fs.existsSync(newDir)) fs.mkdirSync(newDir)
             item.folderPath = newDir;
-        } else item.folderPath = this.output;
+        }
 
-        const tempAudioPath = path.resolve(item.folderPath, sanitize(`TEMP_audio_${item.downloadTry}_${item.title}.mp3`));
-        const tempVideoPath = path.resolve(item.folderPath, sanitize(`TEMP_video_${item.downloadTry}_${item.title}.mp4`));
-        const audioPath = path.resolve(item.folderPath, sanitize(`${item.title}.mp3`));
-        const videoPath = path.resolve(item.folderPath, sanitize(`${item.title}.mp4`));
+        const tempAudioPath = path.resolve(item.folderPath!, sanitize(`TEMP_audio_${item.title}.mp3`));
+        const tempVideoPath = path.resolve(item.folderPath!, sanitize(`TEMP_video_${item.title}.mp4`));
+        const audioPath = path.resolve(item.folderPath!, sanitize(`${item.title}.mp3`));
+        const videoPath = path.resolve(item.folderPath!, sanitize(`${item.title}.mp4`));
         const tempFiles = [tempAudioPath, tempVideoPath];
         const fullVideoSlice = item.sliceList.shift();
 
@@ -146,18 +165,11 @@ export class DownloadService implements IDownloadService {
 
             if (this.browserWin) this.browserWin.webContents.send('item-downloaded', item); // notify renderer
 
-            this.sucessDownloadList.push(item);
         } catch (err) {
-            // if (item.downloadTry! < 3 && !downloadSucceeded) this.downloadRequest.itemSelected.push(item);
-            // else {
-            //     this.errorDownloadList.push(item);
-            //     if (this.browserWin) this.browserWin.webContents.send('download-error', item);
-            // }
             if (this.browserWin) this.browserWin.webContents.send('download-error', item);
             this.loggerService.error(err)
         } finally {
             this.deleteTempFiles(tempFiles);
-            DownloadService.activeWorkers--;
         }
     }
 
@@ -168,9 +180,9 @@ export class DownloadService implements IDownloadService {
             
             audio.on('error', (err) => reject(err))
             .on('info', (info: ytdl.videoInfo, format: ytdl.videoFormat) => item.bestAudioFormat = format.container)
-            .on('progress', (chunkLength: number, downloaded: number, total: number) => {
-                this.onItemProgress(chunkLength, downloaded, total, 'audio', item)
-            })
+            // .on('progress', (chunkLength: number, downloaded: number, total: number) => {
+            //     this.onItemProgress(chunkLength, downloaded, total, 'audio', item)
+            // })
             .pipe(fs.createWriteStream(tempOutput).on("error", (err) => reject(err)))
             .on('finish', () => resolve(tempOutput));
         })  
@@ -186,9 +198,9 @@ export class DownloadService implements IDownloadService {
                 item.bestVideoFormat = format.container;
                 item.videoHasAudio = format.hasAudio;
             })
-            .on('progress', (chunkLength: number, downloaded: number, total: number) => {
-                this.onItemProgress(chunkLength, downloaded, total, 'video', item)
-            })
+            // .on('progress', (chunkLength: number, downloaded: number, total: number) => {
+            //     this.onItemProgress(chunkLength, downloaded, total, 'video', item)
+            // })
             .pipe(fs.createWriteStream(tempOutput).on("error", (err) => reject(err)))
             .on('finish', () => resolve(tempOutput));
         })
@@ -211,25 +223,12 @@ export class DownloadService implements IDownloadService {
     resume(): void {
         throw new Error('Method not implemented.');
     }
-    removeItem(videoID: string): void {
+    removeItem(itemId: string): void {
         throw new Error('Method not implemented.');
     }    
-
-    get remainingDownload(): number {
-        return this.nbToDownload - (this.sucessDownloadList.length + this.errorDownloadList.length);
-    }
-
-    private onItemProgress(chunkLength: number, downloaded: number, total: number, type: string, videoDownloading: VideoDetail){
-        const percent = downloaded / total;
-        let objectToSend: ItemDownloading = {
-            progressAudio: type == 'audio' ? `${(percent * 100).toFixed(2)}` : '100',
-            progressVideo: type == 'video' ? `${(percent * 100).toFixed(2)}` : '0',
-            type: type, audioOnly: this.downloadRequest.audioOnly,
-            video: videoDownloading
-        }
-        // if (this.browserWin)
-        //     this.browserWin.webContents.send('download-progress', objectToSend);
-    }
+    saveState(): void {
+        throw new Error('Method not implemented.');
+    }    
 
     private isThereVideoSlice(sliceList: SlicedYoutube[]): boolean{
         return _.findIndex(sliceList, (slice) => { return slice.format.type === "video" }) != -1;

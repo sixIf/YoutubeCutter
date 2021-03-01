@@ -6,7 +6,7 @@ export const actions: ActionTree<FetchedVideosState, RootState> = {
     resetVideosState({ commit }){
         commit('resetState');
     },
-    async createSlice({ commit }, slice){
+    async createSlice({ commit }, slice): Promise<boolean>{
         return new Promise ((resolve, reject) => {
             try {
                 commit('createSlice', slice);

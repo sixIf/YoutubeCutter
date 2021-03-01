@@ -64,6 +64,19 @@ const messages = {
 			aboutTitle: 'About',
 			aboutContent: 'This projet aims to help people in their need to extract videos from Youtube, it is 100% open source and free to use.<br><br>Don’t forget to mention the content’s creators when using part of their videos.<br><br>If you wish to support our application, you can donate to :<br><br>If you encounter some problems, feel free to reach us at <email/discord>.'
 		},
+		queue: {
+			title: "Downloads",
+			downloading: "Downloading",
+			waiting: "Waiting",
+			downloaded: "Downloaded",
+			error: "Failed",
+			moveUpTooltip: "Move up in queue",
+			removeQueueTooltip: "Remove from queue",
+			playTooltip: "Play",
+			folderTooltip: "Open in folder",
+			viewErrorTooltip: "View error",
+			retryTooltip: "Retry download"
+		}
     },
     fr: {
 		input: {
@@ -123,7 +136,20 @@ const messages = {
 			},
 			aboutTitle: 'À propos',
 			aboutContent: 'This projet aims to help people in their need to extract videos from Youtube, it is 100% open source and free to use.<br><br>Don’t forget to mention the content’s creators when using part of their videos.<br><br>If you wish to support our application, you can donate to :<br><br>If you encounter some problems, feel free to reach us at <email/discord>.',
-		},				
+		},	
+		queue: {
+			title: "Téléchargements",
+			downloading: "En cours de téléchargement",
+			waiting: "En attente",
+			downloaded: "Téléchargés",
+			error: "Echecs de téléchargements",
+			moveUpTooltip: "Mettre en tête de la file d'attente",
+			removeQueueTooltip: "Retire de la file d'attente",
+			playTooltip: "Lecture",
+			folderTooltip: "Ouvre le dossier",
+			viewErrorTooltip: "Voir les erreurs",
+			retryTooltip: "Retenter le téléchargement"			
+		}					
     }
 }
 
