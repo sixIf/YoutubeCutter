@@ -32,6 +32,7 @@
                                 headerIcon="mdi-download-circle-outline" 
                                 :headerTitle="$t('queue.downloading')"
                                 :items="downloadingItems"
+                                :autoShow="true"
                             >
                                 <template v-slot:actionBtns>
                                     <v-progress-circular
@@ -101,6 +102,7 @@
                                 </template>                                
                             </queue-list-item>
                             <queue-list-item 
+                                v-if="!!errorItems.length"
                                 headerIcon="mdi-alert-circle-outline" 
                                 :headerTitle="$t('queue.error')"
                                 :items="errorItems"

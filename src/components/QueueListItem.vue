@@ -4,9 +4,10 @@
         :prepend-icon="headerIcon"
         color="primary"
         active-class="lightPrimary"
+        v-model="isActive"
       >
         <template v-slot:activator>
-          <v-list-item-title ><h2>{{ headerTitle }}</h2></v-list-item-title>    
+          <v-list-item-title ><h2>{{ headerTitle + ` - (${items.length})` }}</h2></v-list-item-title>    
         </template>
             <v-virtual-scroll
                 :items="items"
@@ -33,18 +34,25 @@
 <script lang="ts">
 import { VideoDetail } from "@/config/litterals";
 import { QueueLists } from "@/store/downloadQueueState/types";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 
 @Component
 export default class  extends Vue {
     @Prop({ default: ""}) headerIcon!: string;
     @Prop({ default: ""}) headerTitle!: string;
+    @Prop({ default: false}) autoShow!: boolean;
     @Prop({ default: "downloading"}) type!: QueueLists;
     @Prop({ default: () => {
             return []
         }
     }) items!: VideoDetail[];
     itemHeight = 50;
+    isActive = false;
+
+    @Watch("items")
+    onItemsLengthChange(newVal: VideoDetail[]){
+        if (this.autoShow) this.isActive = !!newVal;
+    }
 
     get virtualScrollHeight(): number {
         return Math.min(this.itemHeight * 15, this.itemHeight * this.items.length);
