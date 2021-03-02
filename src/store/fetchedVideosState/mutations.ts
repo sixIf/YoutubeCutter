@@ -21,6 +21,14 @@ export const mutations: MutationTree<FetchedVideosState> = {
     /**
      * @param selectedVideo must be the video object from the fetchedList 
      */
+    setVideoFormats(state, video: VideoDetail){
+        const videoIndex = _.findIndex(state.fetchedVideos, (value) => {
+            return value.id == video.id;
+        });
+        if (videoIndex != -1) {
+            state.fetchedVideos[videoIndex] = Object.assign({}, video);
+        }
+    },
     setSelectedVideo(state, selectedVideo: VideoDetail){
         state.selectedVideo = selectedVideo;
     },

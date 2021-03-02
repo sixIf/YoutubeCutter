@@ -27,8 +27,7 @@ export default class YoutubePlayer extends Vue {
 
     @Watch('videoStream')
     onVideoStreamChanged(){
-        this.player.load();
-        this.player.play();
+        this.playVideo();
     }
 
     @Watch('playRequest', { deep: true })
@@ -55,7 +54,12 @@ export default class YoutubePlayer extends Vue {
     mounted() {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         this.player = document.getElementById(this.playerID)! as HTMLMediaElement;   
-        this.player.play();
+        this.playVideo();
+    }
+
+    playVideo(){
+        this.player.load();
+        if (this.videoStream) this.player.play();
     }
 
     get playerID(): string {

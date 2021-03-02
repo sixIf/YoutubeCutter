@@ -68,7 +68,7 @@
                     </v-container>
                 </v-card>
             </v-col>
-            <v-col cols="6" xl="5" v-if="currentVideoId" style="height: 892px">
+            <v-col cols="6" xl="5" style="height: 892px">
                 <v-card height="40%" color="black">
                     <youtube-player 
                         :videoId="currentVideoId"
@@ -76,7 +76,7 @@
                         :playRequest="playRequest"
                     ></youtube-player>
                 </v-card>
-                <v-card class="lightPrimary" height="60%">
+                <v-card class="lightPrimary" height="60%" :disabled="!videoStream">
                     <slice-manager @play-slice="updatePlayRequest"/>
                 </v-card>
             </v-col>
@@ -126,7 +126,7 @@ export default class VideosManager extends Vue {
             return (format.hasVideo && format.hasAudio);
         })
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return bestFormat ? bestFormat[0]!.url : "";
+        return bestFormat.length != 0 ? bestFormat[0]!.url : "";
     }
 
     downloadItems(){

@@ -91,17 +91,17 @@ export default class VideosList extends Vue {
 
     mounted() {
         if(this.videoList.length > 0 && !this.selectedVideo.id)
-            this.$store.commit('fetchedVideosState/setSelectedVideo', this.videoList[0]);
+            this.selectVideo(this.videoList[0]);
     }
 
     @Watch('videoList')
     onVideoListChanged(newList: VideoDetail[]){
         if(newList.length > 0 && !this.selectedVideo.id)
-            this.$store.commit('fetchedVideosState/setSelectedVideo', newList[0]);
+            this.selectVideo(newList[0]);
     }
 
     selectVideo(video: VideoDetail){
-        this.$store.commit('fetchedVideosState/setSelectedVideo', video);
+        this.$store.dispatch('fetchedVideosState/setSelectedVideo', video);
     }
 
     changeVideoToDownload(video: VideoDetail){

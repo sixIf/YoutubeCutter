@@ -71,7 +71,8 @@ export class DownloadService implements IDownloadService {
     }
 
     start() {
-        for(let i=1; i <= MAX_WORKERS - this.activeWorkers; i++){
+        const activeWorkers = this.activeWorkers;
+        for(let i=1; i <= MAX_WORKERS - activeWorkers; i++){
             this.startWorker()
         }
     }
