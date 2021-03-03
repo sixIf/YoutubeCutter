@@ -11,14 +11,15 @@
                 width="80"
                 height="80"
                 viewBox="0 0 250 250"
-                style="
-                    fill: #151513;
+                :style="
+                    `fill: ${$vuetify.theme.currentTheme.black};
                     color: #fff;
                     position: absolute;
                     bottom: 0;
                     border: 0;
                     left: 0;
                     transform: scale(-1, 1) rotate(90deg);
+                    `
                 "
                 aria-hidden="true"
             >
@@ -145,6 +146,7 @@ export default class Help extends Vue {
 
     openExternalUrl(link: string) {
         myIpcRenderer.send("open-external-url", link);
+        this.$vuetify.theme.currentTheme.black;
     }
 }
 </script>
