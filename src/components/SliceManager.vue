@@ -168,7 +168,7 @@ import { getCurrentTime } from "@/helpers/videoHelper";
 @Component
 export default class SliceManager extends Vue {
     @Getter('fetchedVideosState/getSelectedVideo') selectedVideo!: VideoDetail;
-    debouncedSetName = _.debounce((name, slice, index) => this.setName(name, slice, index), 3000);
+    debouncedSetName = _.debounce((name, slice, index) => this.setName(name, slice, index), 1000);
 
     scrollBottomList(){
         const objDiv = document.getElementById("slice-list");

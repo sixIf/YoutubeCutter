@@ -114,12 +114,12 @@ export class DownloadService implements IDownloadService {
                 let outputPath = '';
                 switch (slice.format.type) {
                     case 'video':
-                        outputPath = path.resolve(item.folderPath!, sanitize(`${slice.name}.mp4`));
+                        outputPath = this.findAvailableSlicePath(item.folderPath!, sanitize(`${slice.name}.mp4`))
                         await this.ffmpegService.sliceInput(videoPath, outputPath, slice.startTime, slice.endTime);
                         break;
                     case 'audio':
                         const currentAudioPath = !item.videoHasAudio ? audioPath : videoPath;
-                        outputPath = path.resolve(item.folderPath!, sanitize(`${slice.name}.mp3`));
+                        outputPath = this.findAvailableSlicePath(item.folderPath!, sanitize(`${slice.name}.mp3`));
                         await this.ffmpegService.sliceInput(currentAudioPath, outputPath, slice.startTime, slice.endTime);
                         break;
                 }
@@ -148,7 +148,6 @@ export class DownloadService implements IDownloadService {
                     }
                     break;
             }
-            
 
             if (this.browserWin) this.browserWin.webContents.send('item-downloaded', item); // notify renderer
 
@@ -167,9 +166,6 @@ export class DownloadService implements IDownloadService {
             
             audio.on('error', (err) => reject(err))
             .on('info', (info: ytdl.videoInfo, format: ytdl.videoFormat) => item.bestAudioFormat = format.container)
-            // .on('progress', (chunkLength: number, downloaded: number, total: number) => {
-            //     this.onItemProgress(chunkLength, downloaded, total, 'audio', item)
-            // })
             .pipe(fs.createWriteStream(tempOutput).on("error", (err) => reject(err)))
             .on('finish', () => resolve(tempOutput));
         })  
@@ -185,9 +181,6 @@ export class DownloadService implements IDownloadService {
                 item.bestVideoFormat = format.container;
                 item.videoHasAudio = format.hasAudio;
             })
-            // .on('progress', (chunkLength: number, downloaded: number, total: number) => {
-            //     this.onItemProgress(chunkLength, downloaded, total, 'video', item)
-            // })
             .pipe(fs.createWriteStream(tempOutput).on("error", (err) => reject(err)))
             .on('finish', () => resolve(tempOutput));
         })
@@ -243,6 +236,16 @@ export class DownloadService implements IDownloadService {
 
     private isThereVideoSlice(sliceList: SlicedYoutube[]): boolean{
         return _.findIndex(sliceList, (slice) => { return slice.format.type === "video" }) != -1;
+    }
+
+    private findAvailableSlicePath(folderPath: string, fileName: string){
+        let count = 1;
+        let currentPath = path.resolve(folderPath, fileName);
+        while(fs.existsSync(currentPath)){
+            let newFileName = `(${count++}) ` + fileName;
+            currentPath = path.resolve(folderPath, newFileName);
+        }
+        return currentPath;
     }
 
     /**
