@@ -13,7 +13,6 @@ import { ApplicationContainer } from '../di';
 import { LoggerService } from "../services/loggerService"
 import { FfmpegService } from './ffmpegService';
 import { YOUTUBE_VIDEO_URL } from '@/config/litterals/youtube';
-import { resolve } from 'dns';
 
 export interface IDownloadService {
     downloadAudio(item: VideoDetail, output: string): Promise<string>;
@@ -27,7 +26,7 @@ export interface IDownloadService {
     resume(): void;
     saveState(): void;
     prioritize(itemId: string): Promise<boolean>;
-    removeItem(itemId: string): void;
+    removeItem(itemId: string): Promise<boolean>;
 }
 
 export class DownloadService implements IDownloadService {
@@ -45,22 +44,6 @@ export class DownloadService implements IDownloadService {
         this.ffmpegService = new FfmpegService;
     }
     
-    async prioritize(itemId: string): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            const index = _.findIndex(this.itemsToDownload, (value: VideoDetail) => {
-                return value.id == itemId;
-            });
-            
-            if (index != -1) {
-                const elem = this.itemsToDownload.splice(index, 1)[0];
-                this.itemsToDownload.unshift(elem);
-                resolve(true);
-            } else {
-                reject(false);
-            }
-        })
-    }
-
     handleDownloadRequest(request: DownloadRequest): void {
         // Add each item in the download array
         request.itemSelected.forEach(item => {
@@ -103,9 +86,9 @@ export class DownloadService implements IDownloadService {
 
         const tempAudioPath = path.resolve(item.folderPath!, sanitize(`TEMP_audio_${item.title}.mp3`));
         const tempVideoPath = path.resolve(item.folderPath!, sanitize(`TEMP_video_${item.title}.mp4`));
-        const audioPath = path.resolve(item.folderPath!, sanitize(`${item.title}.mp3`));
-        const videoPath = path.resolve(item.folderPath!, sanitize(`${item.title}.mp4`));
-        const tempFiles = [tempAudioPath, tempVideoPath];
+        let audioPath = path.resolve(item.folderPath!, sanitize(`${item.title}.mp3`));
+        let videoPath = path.resolve(item.folderPath!, sanitize(`${item.title}.mp4`));
+        const tempFiles = [];
         const fullVideoSlice = item.sliceList.shift();
 
         try {
@@ -118,10 +101,12 @@ export class DownloadService implements IDownloadService {
                     await this.downloadAudio(item, tempAudioPath);
                     await this.ffmpegService.convertToMp3(tempAudioPath, audioPath);
                     await this.ffmpegService.mergeAudioVideo(tempAudioPath, tempVideoPath, videoPath);
+                    tempFiles.push(tempVideoPath, tempAudioPath);
                 } else fs.renameSync(tempVideoPath, videoPath);
             } else { // Download only audio
                 await this.downloadAudio(item, tempAudioPath);
                 await this.ffmpegService.convertToMp3(tempAudioPath, audioPath);
+                tempFiles.push(tempAudioPath);
             }
             
             // Create requested slices
@@ -133,8 +118,9 @@ export class DownloadService implements IDownloadService {
                         await this.ffmpegService.sliceInput(videoPath, outputPath, slice.startTime, slice.endTime);
                         break;
                     case 'audio':
+                        const currentAudioPath = !item.videoHasAudio ? audioPath : videoPath;
                         outputPath = path.resolve(item.folderPath!, sanitize(`${slice.name}.mp3`));
-                        await this.ffmpegService.sliceInput(audioPath, outputPath, slice.startTime, slice.endTime);
+                        await this.ffmpegService.sliceInput(currentAudioPath, outputPath, slice.startTime, slice.endTime);
                         break;
                 }
             }
@@ -142,22 +128,22 @@ export class DownloadService implements IDownloadService {
             // Handle main slice
             switch (fullVideoSlice!.format.type) {
                 case 'video':
+                    if(!item.videoHasAudio) tempFiles.push(audioPath);
                     if (fullVideoSlice!.isActive) {
-                        tempFiles.push(audioPath);
                         item.filePath = videoPath;
                     }
                     else {
-                        tempFiles.push(audioPath, videoPath);
+                        tempFiles.push(videoPath);
                         item.filePath = '';
                     }
                     break;
                 case 'audio':
+                    if(videoNeeded) tempFiles.push(videoPath);
                     if (fullVideoSlice!.isActive) {
-                        tempFiles.push(videoPath);
                         item.filePath = audioPath;
                     }
                     else {
-                        tempFiles.push(audioPath, videoPath);
+                        tempFiles.push(audioPath);
                         item.filePath = '';
                     }
                     break;
@@ -215,6 +201,33 @@ export class DownloadService implements IDownloadService {
         });
     }
 
+    async prioritize(itemId: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            const index = _.findIndex(this.itemsToDownload, (value: VideoDetail) => {
+                return value.id == itemId;
+            });
+            
+            if (index != -1) {
+                const elem = this.itemsToDownload.splice(index, 1)[0];
+                this.itemsToDownload.unshift(elem);
+                resolve(true);
+            } else {
+                reject(false);
+            }
+        })
+    }
+
+    async removeItem(itemId: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            const deletedItems = _.remove(this.itemsToDownload, (value: VideoDetail) => {
+                return value.id == itemId;
+            });
+            
+            if (deletedItems.length != 0) resolve(true);
+            else reject(false);
+        })
+    }
+
     pause(): void {
         throw new Error('Method not implemented.');
     }
@@ -224,9 +237,6 @@ export class DownloadService implements IDownloadService {
     resume(): void {
         throw new Error('Method not implemented.');
     }
-    removeItem(itemId: string): void {
-        throw new Error('Method not implemented.');
-    }    
     saveState(): void {
         throw new Error('Method not implemented.');
     }    

@@ -103,9 +103,9 @@ function createWindow() {
 
     win = new BrowserWindow({
         width: 1180,
-        height: 1000,
+        height: 1015,
         minWidth: 1180,
-        minHeight: 1000,
+        minHeight: 1015,
         x: 0,
         y: 0,
         title: "Youtube Downloader",
@@ -259,8 +259,11 @@ ipcMain.on("close-window", (event, args: any) => {
 })
 
 ipcMain.handle("move-up-item", (event, itemId: string) => {
-    loggerService.info(itemId)
     return downloadService.prioritize(itemId);
+})
+
+ipcMain.handle("remove-item", (event, itemId: string) => {
+    return downloadService.removeItem(itemId);
 })
 
 ipcMain.handle("get-current-locale", (event, args) => {

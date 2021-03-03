@@ -8,7 +8,7 @@
                             <v-col cols="8">
                                 <search-youtube-text-field 
                                     @videos-found="$router.push('manage-videos')"
-                                    :inputTitle="$t('input.youtubeLink')"
+                                    :inputTitle="$t('search.youtubeLink')"
                                 />
                             </v-col>
                         </v-row>

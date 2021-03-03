@@ -12,7 +12,7 @@ contextBridge.exposeInMainWorld(
         invoke: (channel: string, data: any) => {
             let validChannels = [
                 "get-video-infos", "get-playlist-videos", "get-default-download-folder", "get-video-id-from-url", 
-                "get-playlist-id-from-url", "get-current-locale", "move-up-item"
+                "get-playlist-id-from-url", "get-current-locale", "move-up-item", "remove-item"
             ];
             if (validChannels.includes(channel)) {
                 return ipcRenderer.invoke(channel, data);

@@ -9,7 +9,7 @@
                             <v-col cols="12">
                                 <search-youtube-text-field 
                                     :selectedFormat="selectedFormat"
-                                    :inputTitle="$t('input.addYoutubeLink')"
+                                    :inputTitle="$t('search.addYoutubeLink')"
                                 />
                             </v-col>
                         </v-row>
