@@ -18,7 +18,9 @@ export default new Vuetify({
         grayTwo: "#EEE9E9",
         grayThree: "#F8F5F5",
         white: "#FFFFFF",
-        error: "#824545",
+        error: "#F2BB05",
+        success: "#8EA604",
+        info: "#4392F1",
         anchor: "transparent"
       },
     },

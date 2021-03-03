@@ -1,13 +1,5 @@
 <template>
     <v-app class="grayThree">
-        <v-snackbar v-model="snackbar" top color="info">
-            {{ snackbarMessage }}
-            <template v-slot:action="{ attrs }">
-                <v-btn dark text v-bind="attrs" @click="snackbar = false"
-                    >Close</v-btn
-                >
-            </template>
-        </v-snackbar>
         <frame-bar />
         <download-queue-drawer />
         <v-main class="grayThree">
@@ -27,8 +19,6 @@ import { Component, Vue } from "vue-property-decorator";
 import DownloadQueueDrawer from "@/components/DownloadQueueDrawer.vue";
 import AppBar from "@/components/AppBar.vue";
 import FrameBar from "@/components/FrameBar.vue";
-import { DownloadRequest } from "@/config/litterals";
-const { myIpcRenderer } = window;
 
 // Define the component in class-style
 @Component({
@@ -39,18 +29,6 @@ const { myIpcRenderer } = window;
     },
 })
 export default class App extends Vue {
-    snackbar = false;
-    snackbarMessage = "";
-
-    mounted() {
-        myIpcRenderer.receive(
-            "download-error",
-            (data: DownloadRequest) => {
-                this.snackbar = true;
-                this.snackbarMessage = `Download error : ${data.itemSelected[0].title}`;
-            }
-        );
-    }    
 }
 </script>
 <style>

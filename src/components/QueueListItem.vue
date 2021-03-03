@@ -40,7 +40,6 @@ import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 export default class  extends Vue {
     @Prop({ default: ""}) headerIcon!: string;
     @Prop({ default: ""}) headerTitle!: string;
-    @Prop({ default: false}) autoShow!: boolean;
     @Prop({ default: "downloading"}) type!: QueueLists;
     @Prop({ default: () => {
             return []
@@ -48,11 +47,6 @@ export default class  extends Vue {
     }) items!: VideoDetail[];
     itemHeight = 50;
     isActive = false;
-
-    @Watch("items")
-    onItemsLengthChange(newVal: VideoDetail[]){
-        if (this.autoShow) this.isActive = !!newVal;
-    }
 
     get virtualScrollHeight(): number {
         return Math.min(this.itemHeight * 15, this.itemHeight * this.items.length);

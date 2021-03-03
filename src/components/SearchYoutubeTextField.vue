@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { DOWNLOAD_FORMATS, VideoDetail, YOUTUBE_SERVICE, AvailableFormats } from "@/config/litterals";
+import { DOWNLOAD_FORMATS, VideoDetail, YOUTUBE_SERVICE, AvailableFormats, IAlert } from "@/config/litterals";
 import { IYoutubeService } from "@/services/youtubeService";
 import _ from "lodash";
 import { LocaleMessage } from "vue-i18n";
@@ -86,11 +86,13 @@ export default class SearchYoutubeTextField extends Vue {
      */
     async searchItem(){
         this.errorThrown = false;
+        let videoNb = 0;
         if (!this.ytLink) return;
         try {
             this.isFetching = true;
             const videoId = await this.youtubeService.getVideoIdFromUrl(this.ytLink);
             const videoFound = await this.youtubeService.findVideo(videoId);
+            videoNb = 1;
             this.addVideoToList(videoFound);
             this.ytLink = "";
         } catch (err) {
@@ -99,6 +101,7 @@ export default class SearchYoutubeTextField extends Vue {
                 const formattedYtLink = this.getFormattedUrl();
                 const playlistId = await this.youtubeService.getPlaylistIdFromUrl(formattedYtLink);
                 const videoInPlaylist = await this.youtubeService.findPlaylistVideos(playlistId);
+                videoNb = videoInPlaylist.length;
                 videoInPlaylist.forEach((video) => this.addVideoToList(video));
                 this.ytLink = "";
             } catch (err) {
@@ -109,7 +112,20 @@ export default class SearchYoutubeTextField extends Vue {
             
         } finally {
             this.isFetching = false;
-            if (!this.errorThrown) this.$emit("videos-found");
+            let alert: IAlert;
+            if (!this.errorThrown) {
+                alert = {
+                    type: "info",
+                    message: this.$tc("search.info", videoNb, { nb: videoNb })
+                }
+                this.$emit("videos-found");
+            } else {
+                alert = {
+                    type: "error",
+                    message: this.$tc("search.error")
+                }
+            }
+            this.$store.commit("uiState/setAlert", alert);
         }
     }
 
@@ -140,11 +156,6 @@ export default class SearchYoutubeTextField extends Vue {
 </script>
 
 <style scoped>
-    .error {
-        background-color: var(--v-card-base);
-        color: var(--v-lightPrimary-base);
-    }
-
     .vibrate {
         animation: 0.5s linear 0s 2 normal custombounce;
     }

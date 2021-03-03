@@ -6,9 +6,11 @@ Vue.use(VueI18n);
 // Ready translated locale messages
 const messages = {
     en: {
-		input: {
+		search: {
 			youtubeLink: 'Youtube link',
 			addYoutubeLink: 'Add a Youtube link',
+			info: 'Added {nb} video | Added {nb} videos',
+			error: 'Video not found, please verify your link'
 		},
 		contextMenu: {
 			paste: 'Paste'
@@ -65,23 +67,27 @@ const messages = {
 			aboutContent: 'This projet aims to help people in their need to extract videos from Youtube, it is 100% open source and free to use.<br><br>Don’t forget to mention the content’s creators when using part of their videos.<br><br>If you wish to support our application, you can donate to :<br><br>If you encounter some problems, feel free to reach us at <email/discord>.'
 		},
 		queue: {
-			title: "Downloads",
-			downloading: "Downloading",
-			waiting: "Waiting",
-			downloaded: "Downloaded",
-			error: "Failed",
-			moveUpTooltip: "Move up in queue",
-			removeQueueTooltip: "Remove from queue",
-			playTooltip: "Play",
-			folderTooltip: "Open in folder",
-			viewErrorTooltip: "View error",
-			retryTooltip: "Retry download"
+			title: 'Downloads',
+			downloading: 'Downloading',
+			waiting: 'Waiting',
+			downloaded: 'Downloaded',
+			error: 'Failed',
+			moveUpTooltip: 'Move up in queue',
+			removeQueueTooltip: 'Remove from queue',
+			playTooltip: 'Play',
+			folderTooltip: 'Open in folder',
+			viewErrorTooltip: 'View error',
+			retryTooltip: 'Retry download',
+			videoDownloaded: 'Downloaded {video}',
+			videoError: 'Error downloading {video}'
 		}
     },
     fr: {
-		input: {
+		search: {
 			youtubeLink: 'Lien Youtube',
 			addYoutubeLink: 'Ajouter un lien Youtube',
+			info: '{nb} vidéo ajoutée | {nb} vidéos ajoutées',
+			error: 'Vidéo introuvable, vérifier le lien.'
 		},		
 		contextMenu: {
 			paste: 'Coller'
@@ -138,17 +144,19 @@ const messages = {
 			aboutContent: 'This projet aims to help people in their need to extract videos from Youtube, it is 100% open source and free to use.<br><br>Don’t forget to mention the content’s creators when using part of their videos.<br><br>If you wish to support our application, you can donate to :<br><br>If you encounter some problems, feel free to reach us at <email/discord>.',
 		},	
 		queue: {
-			title: "Téléchargements",
-			downloading: "En cours de téléchargement",
-			waiting: "En attente",
-			downloaded: "Téléchargés",
-			error: "Echecs de téléchargements",
-			moveUpTooltip: "Mettre en tête de la file d'attente",
-			removeQueueTooltip: "Retire de la file d'attente",
-			playTooltip: "Lecture",
-			folderTooltip: "Ouvre le dossier",
-			viewErrorTooltip: "Voir les erreurs",
-			retryTooltip: "Retenter le téléchargement"			
+			title: 'Téléchargements',
+			downloading: 'En cours de téléchargement',
+			waiting: 'En attente',
+			downloaded: 'Téléchargés',
+			error: 'Echecs de téléchargements',
+			moveUpTooltip: 'Mettre en tête de la file d\'attente',
+			removeQueueTooltip: 'Retire de la file d\'attente',
+			playTooltip: 'Lecture',
+			folderTooltip: 'Ouvre le dossier',
+			viewErrorTooltip: 'Voir les erreurs',
+			retryTooltip: 'Retenter le téléchargement',
+			videoDownloaded: 'Téléchargé {video}',
+			videoError: 'Erreur de téléchargement {video}'						
 		}					
     }
 }

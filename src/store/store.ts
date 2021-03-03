@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import { RootState } from "./types";
 import { fetchedVideosState } from './fetchedVideosState/index';
 import { downloadQueueState } from './downloadQueueState/index';
+import { uiState } from './uiState/index';
 
 Vue.use(Vuex);
 
@@ -12,6 +13,7 @@ export default new Vuex.Store<RootState>({
 	},
 	modules: {
 		fetchedVideosState,
-		downloadQueueState
+		downloadQueueState,
+		uiState
 	}
 });

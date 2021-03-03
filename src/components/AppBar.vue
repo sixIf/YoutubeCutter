@@ -1,5 +1,9 @@
 <template>
     <v-container fluid class="second-bar grayThree" :style="`height: ${appBarHeight};`">
+        <alert v-if="alert" 
+            :alert="alert"
+        >
+        </alert>
         <v-row align="center">
             <v-col cols="2">
                 <router-link to="/">
@@ -36,7 +40,7 @@
                     <v-col cols="3">
                         <router-link to="/help">
                             <v-btn icon color="grayOne">
-                                <v-icon size="35" class="card--text">mdi-help-circle</v-icon>
+                                <v-icon size="35">mdi-help-circle</v-icon>
                             </v-btn>
                         </router-link>
                     </v-col>
@@ -50,12 +54,21 @@
 import { Component, Vue } from "vue-property-decorator";
 import 'flag-icon-css/css/flag-icon.css'
 import _ from "lodash";
+import Alert from "@/components/Alert.vue"
 import { localesToFlag, localeType } from "@/i18n";
 import { APP_BAR_HEIGHT } from '@/config/litterals/ui'
+import { IAlert } from "@/config/litterals";
+import { Getter } from "vuex-class";
+
 const { myIpcRenderer, log } = window;
 
-@Component
+@Component({
+    components: {
+        Alert
+    }
+})
 export default class AppBar extends Vue {
+    @Getter("uiState/getAlert")  alert: IAlert | undefined;
     currentLocale: localeType = "en";
 
     changeLocale(flag: string) {

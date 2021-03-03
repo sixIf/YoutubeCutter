@@ -28,5 +28,11 @@ export const mutations: MutationTree<DownloadQueueState> = {
             const elem = state.inQueue.splice(index, 1)[0];
             state.inQueue.unshift(elem);
         }
+    },
+    removeItem(state, itemId: string){
+        const index = _.findIndex(state.inQueue, (value: VideoDetail) => {
+            return value.id == itemId;
+        });
+        if (index != -1) state.inQueue.splice(index, 1)[0];
     }
 };

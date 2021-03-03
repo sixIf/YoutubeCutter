@@ -3,6 +3,9 @@ import { DownloadQueueState, ItemsToQueue } from './types';
 import { RootState } from '../types';
 
 export const actions: ActionTree<DownloadQueueState, RootState> = {
+    removeFromQueue({ commit }, itemId: string){
+        commit('removeItem', itemId);
+    },
     prioritize({ commit }, itemId: string){
         commit('prioritizeItem', itemId);
     },

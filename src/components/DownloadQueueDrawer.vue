@@ -32,7 +32,6 @@
                                 headerIcon="mdi-download-circle-outline" 
                                 :headerTitle="$t('queue.downloading')"
                                 :items="downloadingItems"
-                                :autoShow="true"
                             >
                                 <template v-slot:actionBtns>
                                     <v-progress-circular
@@ -61,7 +60,7 @@
                                         <v-col cols="6">
                                             <v-tooltip bottom>
                                                 <template v-slot:activator="{ on, attrs }">
-                                                    <v-btn icon v-bind="attrs" v-on="on" @click="removeQueued(item.id)">
+                                                    <v-btn icon v-bind="attrs" v-on="on" @click="removeQueuedItem(item)">
                                                         <v-icon>mdi-close-circle-outline</v-icon>
                                                     </v-btn>
                                                 </template>
@@ -143,10 +142,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import * as _ from "lodash";
-import {
-    VideoDetail,
-    DownloadRequest,
-} from "@/config/litterals";
+import { IAlert, VideoDetail } from "@/config/litterals";
 import QueueListItem from "@/components/QueueListItem.vue"
 import { Getter } from "vuex-class";
 import { ItemsToQueue } from "@/store/downloadQueueState/types";
@@ -184,6 +180,24 @@ export default class DownloadQueueDrawer extends Vue {
             })
     }
 
+    async removeQueuedItem(item: VideoDetail){
+        myIpcRenderer.invoke("remove-item", item.id)
+            .then(() => {
+                this.$store.dispatch("downloadQueueState/removeFromQueue", item.id)
+            })
+            .catch(() => {
+                window.log.error(`The video ${item.id} not found in background Queue`);
+            })
+    }
+
+    setAlert(type: string, message: string): void {
+        const alert: IAlert = {
+                type: type,
+                message: message
+        }
+        this.$store.commit("uiState/setAlert", alert);
+    }
+
     mounted() {
         myIpcRenderer.receive("start-download-item", (data: VideoDetail) => {
             const itemToQueue: ItemsToQueue = { queue: "downloading", items: [data] };
@@ -192,9 +206,9 @@ export default class DownloadQueueDrawer extends Vue {
 
         myIpcRenderer.receive("item-downloaded", (data: VideoDetail) => {
             window.log.info(`Behold, video ${data.title} downloaded`);
-
             const itemToQueue: ItemsToQueue = { queue: "done", items: [data] };
             this.$store.dispatch("downloadQueueState/changeItemList", itemToQueue);
+            this.setAlert("success", this.$t("queue.videoDownloaded", { video: data.title }) as string);
         });
 
         myIpcRenderer.receive(
@@ -205,6 +219,7 @@ export default class DownloadQueueDrawer extends Vue {
 
             const itemToQueue: ItemsToQueue = { queue: "errors", items: [data] };
             this.$store.dispatch("downloadQueueState/changeItemList", itemToQueue);
+            this.setAlert("error", this.$t("queue.videoError", { video: data.title }) as string);
             }
         );
     }

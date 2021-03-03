@@ -7,10 +7,10 @@ import { RootState } from '../types';
 
 export const getDefaultState = (): DownloadQueueState => {
     return {
-      done: [],
-      downloading: [],
-      errors: [],
-      inQueue: []
+		done: [],
+		downloading: [],
+		errors: [],
+		inQueue: []
     }
 };
 
@@ -18,9 +18,9 @@ const state = getDefaultState();
 const namespaced = true;
 
 export const downloadQueueState: Module<DownloadQueueState, RootState> = {
-  namespaced,
-  state,
-  getters,
-  actions,
-  mutations,
+	namespaced,
+	state,
+	getters,
+	actions,
+	mutations,
 };
