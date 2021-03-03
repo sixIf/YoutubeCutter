@@ -1,25 +1,26 @@
-# Youtube-downloader
+# YoutubeCutter
 <h1 align="center">
-  <img src="https://i.imgur.com/JFIO6mh.png" alt="Youtube To MP3" width="200">
+  <img src="https://i.imgur.com/CpEzcSM.png" alt="Youtube Cutter" width="200">
   <br>
-  Youtube Downloader
+  Youtube Cutter
   <br>
   <br>
-  <img src="https://i.imgur.com/5KaLtmF.gif" alt="Youtube To MP3">
+  <img src="https://i.imgur.com/ZfYsOWA.gifv" alt="Youtube Cutter">
 </h1>
 
 ### About
 
-Yet another youtube downloader made with vue-electron. You can download full videos or only audios.<br/>
-If you have an Api Key, you can browse youtube channels through an easy to use interface.
+Yet another Youtube downloader made with vue-electron.<br/>
+The tool's specificity is that you can select only part of the video you want to download, and specify wanted the format (audio / video).<br/>
+
 
 ### Features
 
--   [x] Downloading videos as well as MP3s
--   [x] Download channels and playlists ( Youtube Api key required )
+-   [x] Downloading videos as well as mp3
+-   [x] Download specific part of the video in mp3 or mp4
+-   [x] Download entire channels and playlists
 -   [x] Multiple downloads at a time
 -   [x] Works on Windows
--   [] Currently Mac - Linux are untested
 
 
 ### Stack
@@ -46,9 +47,7 @@ npm run electron:build
 
 ### Download ffmpeg.exe
 [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html)<br/>
-You have to put ffmpeg executable inside ./dist_electron in order to handle sounds.
-
-      
+You have to put ffmpeg executable inside ./dist_electron in order to handle sound manipulation.
 
 ## Disclaimer
 
