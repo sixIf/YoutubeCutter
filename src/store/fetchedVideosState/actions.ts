@@ -25,7 +25,6 @@ export const actions: ActionTree<FetchedVideosState, RootState> = {
     async setSelectedVideo({ commit }, video: VideoDetail){
         if (video.formats.length == 0) {
             try {
-                console.log('on call')
                 const videoWithFormats = await youtubeService.findVideo(video.id);
                 commit('setVideoFormats', videoWithFormats);
                 commit('setSelectedVideo', videoWithFormats);

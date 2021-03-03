@@ -2,11 +2,11 @@
     <v-card class="darkPrimary" height="250px">
         <v-container style="height: 100%">
             <v-row align="center" style="height: 100%" justify="center">
-                <v-col cols="4">
+                <v-col cols="4" lg="3">
                     <div class="step-number">{{ step }}</div>
                 </v-col>
                 <v-col cols="8" class="text-col" align-self="start">
-                    <h2 class="step-title grayThree--text"><slot name="title"/></h2>
+                    <h2 class="step-title grayThree--text" style="height: 50px"><slot name="title"/></h2>
                     <p class="grayTwo--text pt-3"><slot name="content"/></p>
                 </v-col>
             </v-row>

@@ -136,7 +136,7 @@ const messages = {
 				firstTitle: 'Copie un lien',
 				firstContent: 'Va sur Youtube, copie le lien vers une vidéo, une playlist ou une chaîne, puis colle le pour commencer !',
 				secondTitle: 'Coupe les vidéos',
-				secondContent: 'Tu peux rajouter des vidéos, choisir de le format de téléchargement et couper des parties de vidéos.',
+				secondContent: 'Tu peux rajouter des vidéos, choisir le format de téléchargement et couper des parties de vidéos.',
 				thirdTitle: 'Télécharge',
 				thirdContent: 'Choisi dans quel dossier sauvegarder les vidéos et lance le téléchargement !',
 			},
