@@ -6,14 +6,14 @@
         </alert>
         <v-row align="center">
             <v-col cols="2">
-                <router-link to="/">
-                    <v-btn icon>
-                        <svg style="width:50px;height:50px" viewBox="0 0 24 24">
-                            <path :fill="$vuetify.theme.currentTheme.primary" d="M19.07,4.93C17.22,3 14.66,1.96 12,2C9.34,1.96 6.79,3 4.94,4.93C3,6.78 1.96,9.34 2,12C1.96,14.66 3,17.21 4.93,19.06C6.78,21 9.34,22.04 12,22C14.66,22.04 17.21,21 19.06,19.07C21,17.22 22.04,14.66 22,12C22.04,9.34 21,6.78 19.07,4.93M17,12V18H13.5V13H10.5V18H7V12H5L12,5L19.5,12H17Z" />
-                        </svg>
-                    </v-btn>                
+                <!-- <router-link to="/"> -->
+                    <v-btn icon @click="goHome()">
+                        <v-icon color="primary" size="50">
+                            {{ homeIcon }}
+                        </v-icon>
+                    </v-btn>                 
                     <!-- <v-img @click="$router.push('/')" src="../assets/image/icon.png" height="40px" width="40px"></v-img> -->
-                </router-link>
+                <!-- </router-link> -->
             </v-col>
             <v-col cols="2" offset="8">
                 <v-row justify="end" align="center">
@@ -78,6 +78,13 @@ export default class AppBar extends Vue {
         myIpcRenderer.send("set-current-locale", locale)
     }
 
+    goHome(){
+        if (this.$route.name == 'manage-videos') {
+            this.$store.dispatch('fetchedVideosState/resetVideosState');
+        }
+        this.$router.push('/');
+    }
+
     async mounted() {
         myIpcRenderer.send("set-locale-messages", this.$i18n.messages);
 
@@ -105,6 +112,10 @@ export default class AppBar extends Vue {
     
     get appBarHeight(): string {
         return APP_BAR_HEIGHT;
+    }
+
+    get homeIcon(): string {
+        return this.$route.name == "help" ? "mdi-arrow-left-circle" : "mdi-home-circle";
     }
 }
 </script>

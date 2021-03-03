@@ -100,12 +100,14 @@
         </v-row>
         <v-row align="center" justify="center">
             <v-col cols="8">
-                <v-card class="lightPrimary" height="300">
-                    <v-row align="center" justify="center" style="height: 100%">
-                        <v-col cols="12">
-                            <h4 class="black--text" v-html="$t('help.aboutContent')"></h4>
-                        </v-col>
-                    </v-row>
+                <v-card class="grayOne" height="300">
+                    <v-container style="height: 100%">
+                        <v-row align="center" justify="center" style="height: 100%">
+                            <v-col cols="12">
+                                <h4 class="black--text" v-html="$t('help.aboutContent')"></h4>
+                            </v-col>
+                        </v-row>
+                    </v-container>
                 </v-card>
             </v-col>
         </v-row>
