@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-btn
-            :class="isDownloading ? 'bounce' : ''"
+            :class="`darkPrimary ${isDownloading ? 'bounce' : ''}`"
             color="white"
             dark
             icon
@@ -12,242 +12,214 @@
         </v-btn>
         <v-navigation-drawer
             v-model="drawer"
+            class="card"
             absolute
             right
             temporary
-            width="500"
+            width="800"
             style="z-index: 101"
         >
-            <v-list-item style="position: sticky">
-                <v-list-item-content>
-                    <v-tabs
-                        v-model="tab"
-                        background-color="transparent"
-                        color="basil"
-                        grow
-                    >
-                        <v-tab v-for="tab in tabs" :key="tab">{{ tab }}</v-tab>
-                    </v-tabs>
-                </v-list-item-content>
-            </v-list-item>
-
-            <v-divider></v-divider>
-            <v-tabs-items v-model="tab">
-                <v-tab-item>
-                    <v-list
-                        v-for="infos in videoDownloading"
-                        :key="infos.video.id"
-                    >
-                        <v-list-item>
-                            <template v-slot:default>
-                                <v-list-item-content>
-                                    <v-list-item-title>{{
-                                        infos.video.title
-                                    }}</v-list-item-title>
-                                    <v-list-item-subtitle
-                                        style="padding-left: 10px"
-                                        >1. Downloading audio
-                                        {{
-                                            infos.progressAudio
-                                        }}%</v-list-item-subtitle
-                                    >
-                                    <div v-if="!infos.audioOnly">
-                                        <v-list-item-subtitle
-                                            style="padding-left: 10px"
-                                            >2. Downloading video
-                                            {{
-                                                infos.progressVideo
-                                            }}%</v-list-item-subtitle
-                                        >
-                                    </div>
-                                </v-list-item-content>
-                                <v-list-item-action>
+            <v-container fluid>
+                <v-row>
+                    <v-col cols="12" class="primary">
+                        <h1 class="white--text" style="text-align: center">{{ $t('queue.title') }}</h1>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="12">
+                        <v-list>
+                            <queue-list-item 
+                                headerIcon="mdi-download-circle-outline" 
+                                :headerTitle="$t('queue.downloading')"
+                                :items="downloadingItems"
+                            >
+                                <template v-slot:actionBtns>
                                     <v-progress-circular
                                         indeterminate
                                         color="primary"
-                                    />
-                                </v-list-item-action>
-                            </template>
-                        </v-list-item>
-                        <v-divider></v-divider>
-                    </v-list>
-                </v-tab-item>
-                <v-tab-item
-                    style="height: 90vh; overflow-y: scroll; overflow-x: hidden"
-                >
-                    <v-alert
-                        type="warning"
-                        v-if="errorDownloadRequest.length > 0"
-                        >{{ `Some download failed.` }}</v-alert
-                    >
-                    <v-row>
-                        <v-col cols="6" v-if="errorDownloadRequest.length != 0">
-                            <v-btn
-                                @click="redownloadFailed"
-                                style="margin: 20px"
-                                color="warning"
-                                >Retry failed download</v-btn
+                                    ></v-progress-circular>
+                                </template>
+                            </queue-list-item>
+                            <queue-list-item 
+                                headerIcon="mdi-clock-outline" 
+                                :headerTitle="$t('queue.waiting')"
+                                :items="inQueueItems"
                             >
-                        </v-col>
-                        <v-col cols="6" v-if="videoDownloaded.length != 0">
-                            <v-btn
-                                style="margin: 20px"
-                                @click="clearDownloadedList"
-                                >Clear list</v-btn
+                                <template v-slot:actionBtns="{ item, index }">
+                                    <v-row>
+                                        <v-col cols="6" v-if="index > 0">
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-btn icon v-bind="attrs" v-on="on" @click="moveUp(item)">
+                                                        <v-icon>mdi-chevron-up-circle</v-icon>
+                                                    </v-btn>
+                                                </template>
+                                                <span>{{ $t('queue.moveUpTooltip') }}</span>
+                                            </v-tooltip>
+                                        </v-col>
+                                        <v-col cols="6">
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-btn icon v-bind="attrs" v-on="on" @click="removeQueuedItem(item)">
+                                                        <v-icon>mdi-close-circle-outline</v-icon>
+                                                    </v-btn>
+                                                </template>
+                                                <span>{{ $t('queue.removeQueueTooltip') }}</span>
+                                            </v-tooltip>
+                                        </v-col>
+                                    </v-row>
+                                </template>                            
+                            </queue-list-item>
+                            <queue-list-item 
+                                headerIcon="mdi-check-outline" 
+                                :headerTitle="$t('queue.downloaded')"
+                                :items="doneItems"
                             >
-                        </v-col>
-                    </v-row>
-                    <v-list
-                        v-for="infos in videoDownloaded"
-                        :key="infos.video.id"
-                    >
-                        <v-list-item>
-                            <template v-slot:default>
-                                <v-list-item-content>
-                                    <v-list-item-title>{{
-                                        infos.video.title
-                                    }}</v-list-item-title>
-                                </v-list-item-content>
-                                <v-list-item-icon>
-                                    <v-icon
-                                        @click="open(infos.video.folderPath)"
-                                        >mdi-folder
-                                    </v-icon>
-                                    <v-icon @click="open(infos.video.filePath)"
-                                        >mdi-play
-                                    </v-icon>
-                                </v-list-item-icon>
-                            </template>
-                        </v-list-item>
-                        <v-divider></v-divider>
-                    </v-list>
-                </v-tab-item>
-            </v-tabs-items>
+                                <template v-slot:actionBtns="{ item }">
+                                    <v-row>
+                                        <v-col cols="6" v-if="item.filePath">
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-btn icon v-bind="attrs" v-on="on" @click="open(item.filePath)">
+                                                        <v-icon>mdi-play-circle-outline</v-icon>
+                                                    </v-btn>
+                                                </template>
+                                                <span>{{ $t('queue.playTooltip') }}</span>
+                                            </v-tooltip>
+                                        </v-col>
+                                        <v-col cols="6">
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-btn icon v-bind="attrs" v-on="on" @click="open(item.folderPath)">
+                                                        <v-icon>mdi-folder</v-icon>
+                                                    </v-btn>
+                                                </template>
+                                                <span>{{ $t('queue.folderTooltip') }}</span>
+                                            </v-tooltip>
+                                        </v-col>
+                                    </v-row>
+                                </template>                                
+                            </queue-list-item>
+                            <queue-list-item 
+                                v-if="!!errorItems.length"
+                                headerIcon="mdi-alert-circle-outline" 
+                                :headerTitle="$t('queue.error')"
+                                :items="errorItems"
+                            >
+                                <template v-slot:actionBtns="{ item }">
+                                    <v-row>
+                                        <v-col cols="6">
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-btn icon v-bind="attrs" v-on="on" @click="$store.commit('fetchedVideosState/setSingleFetchedVideo', item)">
+                                                        <v-icon>mdi-alert-circle-outline</v-icon>
+                                                    </v-btn>
+                                                </template>
+                                                <span>{{ $t('queue.viewErrorTooltip') }}</span>
+                                            </v-tooltip>
+                                        </v-col>
+                                        <v-col cols="6">
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-btn icon v-bind="attrs" v-on="on" @click="$store.commit('fetchedVideosState/removeFetchedVideo', item)">
+                                                        <v-icon>mdi-sync</v-icon>
+                                                    </v-btn>
+                                                </template>
+                                                <span>{{ $t('queue.retryTooltip') }}</span>
+                                            </v-tooltip>
+                                        </v-col>
+                                    </v-row>
+                                </template>                                
+                            </queue-list-item>
+                        </v-list>
+                    </v-col>
+                </v-row>
+            </v-container>
         </v-navigation-drawer>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import * as _ from "lodash";
-import {
-    YOUTUBE_SERVICE,
-    ItemStruct,
-    ItemDownloading,
-    ERROR_TYPES,
-    DownloadRequest,
-} from "@/config/litterals";
-import { IYoutubeService } from "@/services/youtubeService";
+import { IAlert, VideoDetail } from "@/config/litterals";
+import QueueListItem from "@/components/QueueListItem.vue"
+import { Getter } from "vuex-class";
+import { ItemsToQueue } from "@/store/downloadQueueState/types";
 const { myIpcRenderer } = window;
 
-@Component
+@Component({
+    components: {
+        QueueListItem
+    }
+})
 export default class DownloadQueueDrawer extends Vue {
-    dialog = false;
+    @Getter("downloadQueueState/getInQueueItems")  inQueueItems!: VideoDetail[];
+    @Getter("downloadQueueState/getDownloadingItems")  downloadingItems!: VideoDetail[];
+    @Getter("downloadQueueState/getDoneItems")  doneItems!: VideoDetail[];
+    @Getter("downloadQueueState/getErrorItems")  errorItems!: VideoDetail[];
     drawer = null;
-    tab = null;
-    tabs = ["Downloading", "Finished"];
-    videoDownloading: Array<ItemDownloading> = [];
-    videoDownloaded: Array<ItemDownloading> = [];
-    errorDownloadRequest: Array<DownloadRequest> = [];
     isDownloading = false;
 
-    redownloadFailed() {
-        this.errorDownloadRequest.forEach((request: DownloadRequest) => {
-            window.myIpcRenderer.send("download-videos", request);
-        });
-    }
-
-    clearDownloadedList() {
-        this.videoDownloaded = _.cloneDeep([]);
+    @Watch("downloadingItems", { deep: true})
+    onDownloadingItemsChange(newVal: VideoDetail[]){
+        this.isDownloading = newVal.length != 0 ? true : false;
     }
 
     open(path: string) {
-        window.myIpcRenderer.send("open-shell", path);
+        myIpcRenderer.send("open-shell", path);
+    }
+
+    async moveUp(item: VideoDetail){
+        myIpcRenderer.invoke("move-up-item", item.id)
+            .then(() => {
+                this.$store.dispatch("downloadQueueState/prioritize", item.id)
+            })
+            .catch(() => {
+                window.log.error(`The video ${item.id} not found in background Queue`);
+            })
+    }
+
+    async removeQueuedItem(item: VideoDetail){
+        myIpcRenderer.invoke("remove-item", item.id)
+            .then(() => {
+                this.$store.dispatch("downloadQueueState/removeFromQueue", item.id)
+            })
+            .catch(() => {
+                window.log.error(`The video ${item.id} not found in background Queue`);
+            })
+    }
+
+    setAlert(type: string, message: string): void {
+        const alert: IAlert = {
+                type: type,
+                message: message
+        }
+        this.$store.commit("uiState/setAlert", alert);
     }
 
     mounted() {
-        window.myIpcRenderer.receive(
-            "download-progress",
-            (data: ItemDownloading) => {
-                this.isDownloading = true;
-                const index = this.videoDownloading.findIndex(
-                    (x) => x.video.id === data.video.id
-                );
-                if (index == -1) this.videoDownloading.push(data);
-                else {
-                    if (data.type == "audio")
-                        this.videoDownloading[index].progressAudio =
-                            data.progressAudio;
-                    else
-                        this.videoDownloading[index].progressVideo =
-                            data.progressVideo;
-                }
-            }
-        );
-
-        window.myIpcRenderer.receive("item-downloaded", (data: ItemStruct) => {
-            this.isDownloading = false;
-            const indexToDelete = _.findIndex(this.videoDownloading, function (
-                x
-            ) {
-                return x.video.id === data.id;
-            });
-            if (indexToDelete != -1) {
-                this.videoDownloaded.push(
-                    _.cloneDeep(this.videoDownloading[indexToDelete])
-                );
-                _.remove(this.videoDownloading, function (
-                    value: ItemDownloading,
-                    index: number
-                ) {
-                    return index == indexToDelete;
-                });
-                console.log(`Behold, video ${data.title} downloaded`);
-            } else {
-                this.videoDownloaded.push({
-                    video: data,
-                    progressAudio: "100",
-                    progressVideo: "100",
-                    type: "video",
-                    audioOnly: false,
-                });
-            }
+        myIpcRenderer.receive("start-download-item", (data: VideoDetail) => {
+            const itemToQueue: ItemsToQueue = { queue: "downloading", items: [data] };
+            this.$store.dispatch("downloadQueueState/changeItemList", itemToQueue);
         });
 
-        window.myIpcRenderer.receive(
+        myIpcRenderer.receive("item-downloaded", (data: VideoDetail) => {
+            window.log.info(`Behold, video ${data.title} downloaded`);
+            const itemToQueue: ItemsToQueue = { queue: "done", items: [data] };
+            this.$store.dispatch("downloadQueueState/changeItemList", itemToQueue);
+            this.setAlert("success", this.$t("queue.videoDownloaded", { video: data.title }) as string);
+        });
+
+        myIpcRenderer.receive(
             "download-error",
-            (data: DownloadRequest) => {
-                console.log("Download error in vue");
-                console.log(data);
-                this.isDownloading = false;
-                const indexToDelete = _.findIndex(
-                    this.videoDownloading,
-                    function (x) {
-                        return x.video.id === data.itemSelected[0].id;
-                    }
-                );
-                if (indexToDelete != -1) {
-                    _.remove(this.videoDownloading, function (
-                        value: ItemDownloading,
-                        index: number
-                    ) {
-                        return index == indexToDelete;
-                    });
-                }
-                const indexToUpdate = _.findIndex(
-                    this.errorDownloadRequest,
-                    function (x) {
-                        return x.requestId === data.requestId;
-                    }
-                );
-                if (indexToUpdate != -1)
-                    this.errorDownloadRequest[
-                        indexToDelete
-                    ].itemSelected.concat(data.itemSelected);
-                else this.errorDownloadRequest.push(_.cloneDeep(data));
-                console.log(
-                    `Error downloading video ${data.itemSelected[0].title}`
-                );
+            (data: VideoDetail) => {
+                window.log.info("Download error");
+                window.log.info(JSON.stringify(data));
+
+            const itemToQueue: ItemsToQueue = { queue: "errors", items: [data] };
+            this.$store.dispatch("downloadQueueState/changeItemList", itemToQueue);
+            this.setAlert("error", this.$t("queue.videoError", { video: data.title }) as string);
             }
         );
     }

@@ -2,19 +2,38 @@
 declare const __static: string;
 
 'use strict'
-
-import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, autoUpdater } from 'electron'
+import "reflect-metadata"
+import { ApplicationContainer } from './di';
+import { LoggerService } from "./services/loggerService"
+import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, autoUpdater, MenuItem, globalShortcut } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
-// import { appMainPath } from '@/helpers/pathHelper'
-import {downloadItems, getVideoInfo} from '@/helpers/ytDownloaderHelper'
-import { DownloadRequest, ItemStruct } from '@/config/litterals/index'
-import fs from 'fs'
+import { DownloadRequest, ContextType } from '@/config/litterals/index'
+import { DownloadService } from "./services/downloadService";
+import ytdl from "ytdl-core";
+import { YOUTUBE_VIDEO_URL } from "./config/litterals/youtube";
+import ytpl from "ytpl";
+import VueI18n from "vue-i18n";
 const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: BrowserWindow | null
+let downloadService: DownloadService;
+const loggerService = ApplicationContainer.resolve(LoggerService);
+let localesMessages: VueI18n.LocaleMessages;
+import ElectronStore from 'electron-store';
+import { log } from "winston";
+
+const schema = {
+	locale: {
+		type: "string",
+		default: "en"
+	},
+} as const;
+
+const store = new ElectronStore({schema});
+
 
 // Set auto updater
 if (!isDevelopment){
@@ -38,8 +57,8 @@ if (!isDevelopment){
     });
       
     autoUpdater.on('error', message => {
-        console.error('There was a problem updating the application')
-        console.error(message)
+        loggerService.error('There was a problem updating the application')
+        loggerService.error(message)
     });
 
 
@@ -54,54 +73,9 @@ protocol.registerSchemesAsPrivileged([
     { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
-function createWindow() {
-    // Create the browser window.
-    let tray: Tray | null = null;
-
-    win = new BrowserWindow({
-        width: 855,
-        height: 655,
-        webPreferences: {
-            // Use pluginOptions.nodeIntegration, leave this alone
-            // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-            nodeIntegration: (process.env
-                .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
-            preload: path.join(__dirname, "preload.js"),
-            contextIsolation: true
-        },
-        /* global __static */
-        icon: path.join(__static, 'icon.png')
-    })
-
-    if (process.env.WEBPACK_DEV_SERVER_URL) {
-        // Load the url of the dev server if in development mode
-        win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
-        if (!process.env.IS_TEST) win.webContents.openDevTools()
-    } else {
-        createProtocol('app')
-        // Load the index.html when not in development
-        win.loadURL('app://./index.html')
-    }
-
-    win.on('minimize', function (event: any) {
-        event.preventDefault();
-        if (win) win.hide();
-        tray = createTray();
-    });
-
-    win.on('restore', function (event: any) {
-        if (win) win.show();
-        if (tray) tray.destroy();
-    });
-
-    win.on('closed', () => {
-        win = null
-    })
-}
-
-
+// Minimize app correctly
 function createTray() {
-    let appIcon = new Tray(path.join(__static, 'icon.png'));
+    const appIcon = new Tray(path.join(__static, 'icon.png'));
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Show', click: function () {
@@ -121,6 +95,71 @@ function createTray() {
     appIcon.setToolTip('Youtube downloader');
     appIcon.setContextMenu(contextMenu);
     return appIcon;
+}
+
+function createWindow() {
+    // Create the browser window.
+    let tray: Tray | null = null;
+
+    win = new BrowserWindow({
+        width: 1180,
+        height: 1015,
+        minWidth: 1180,
+        minHeight: 1015,
+        x: 0,
+        y: 0,
+        title: "Youtube Downloader",
+        frame: false,
+        webPreferences: {
+            // Use pluginOptions.nodeIntegration, leave this alone
+            // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
+            nodeIntegration: (process.env
+                .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
+            preload: path.join(__dirname, "preload.js"),
+            contextIsolation: true,
+            devTools: true
+        },
+        show: false,
+        /* global __static */
+        icon: path.join(__static, 'icon.png')
+    })
+
+    if (process.env.WEBPACK_DEV_SERVER_URL) {
+        // Load the url of the dev server if in development mode
+        win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
+        if (!process.env.IS_TEST) win.webContents.openDevTools()
+    } else {
+        createProtocol('app')
+        // Load the index.html when not in development
+        win.loadURL('app://./index.html')
+    }
+
+    win.once('ready-to-show', () => {
+        if (win) win.show()
+    })
+
+    win.on('minimize', function (event: any) {
+        event.preventDefault();
+        if (win) win.hide();
+        tray = createTray();
+    });
+
+    win.on('restore', function (event: any) {
+        if (win) win.show();
+        if (tray) tray.destroy();
+    });
+
+    win.on('closed', () => {
+        win = null
+    })
+
+    // Disable opening a new window
+    win.webContents.on('new-window', async (event, url, frameName, disposition, options, additionalFeatures) => {
+        event.preventDefault()
+    })
+
+    // Create Download service
+    if (!downloadService) downloadService = new DownloadService(win);
 }
 
 // Quit when all windows are closed.
@@ -146,13 +185,12 @@ app.on('activate', () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
     await installExtension(VUEJS_DEVTOOLS)
-    console.log(process.env.IS_TEST)
-    if (isDevelopment && !process.env.IS_TEST) {
+    if (isDevelopment && !process.env.IS_TEST) {    
         // Install Vue Devtools
         try {
             await installExtension(VUEJS_DEVTOOLS)
         } catch (e) {
-            console.error('Vue Devtools failed to install:', e.toString())
+            loggerService.error(`Vue Devtools failed to install: , ${e.toString()}`)
         }
     }
     
@@ -171,8 +209,22 @@ app.on('ready', async () => {
 
         // Create win, load the rest of the app, etc...
         app.whenReady().then(() => {
+            if(!isDevelopment){
+                const ret = globalShortcut.register('CommandOrControl+R', () => {
+                    loggerService.info('CommandOrControl+R is disabled')
+                })    
+                
+                if (!ret) {
+                    loggerService.error('globalShortcut.register(CommandOrControl+R) failed')
+                }            
+            }
             createWindow()
         })
+
+        app.on('will-quit', () => {
+            // Supprime tous les raccourcis.
+            globalShortcut.unregisterAll()
+        })        
     }
 })
 
@@ -181,45 +233,115 @@ ipcMain.on("open-external-url", (event, args: string) => {
 });
 
 ipcMain.on("open-shell", (event, args: string) => {
-    shell.openPath(args);
+    try {
+        shell.openPath(args);
+    } catch (err) {
+        loggerService.error(err);
+    }
 });
 
-ipcMain.handle("getVideoInfo", async (event, args: string) => {
-    try {
-        const returnValue = await getVideoInfo(args);
-        return returnValue;
-    } catch (err) {
-        console.log(err)
-        return {
-            type: "error",
-            error: err
+ipcMain.on("set-locale-messages", (event, args: VueI18n.LocaleMessages) => {
+    localesMessages = args;
+})
+
+ipcMain.on("minimize-window", (event, args: any) => {
+    if (win) win.minimize();
+})
+
+ipcMain.on("maximize-window", (event, args: any) => {
+    loggerService.info('called')
+    if (win && !win.isMaximized()) win.maximize();
+    else if (win) win.unmaximize();
+})
+
+ipcMain.on("close-window", (event, args: any) => {
+    if (win) win.close();
+})
+
+ipcMain.handle("move-up-item", (event, itemId: string) => {
+    return downloadService.prioritize(itemId);
+})
+
+ipcMain.handle("remove-item", (event, itemId: string) => {
+    return downloadService.removeItem(itemId);
+})
+
+ipcMain.handle("get-current-locale", (event, args) => {
+    return new Promise( (resolve, reject) => {
+        try {
+            const locale = store.get("locale");
+            resolve(locale);
+        } catch (err) {
+            reject(err);
         }
-    }
-    // console.log(returnValue)
+    })
+})
+
+ipcMain.on("set-current-locale", (event, locale: string) => {
+    store.set("locale", locale);
+})
+
+ipcMain.handle("get-video-infos", async (event, videoId: string) => {
+    return ytdl.getInfo(`${YOUTUBE_VIDEO_URL}${videoId}`);
 });
+
+ipcMain.handle("get-video-id-from-url", (event, url: string) => {
+    return new Promise( (resolve, reject) => {
+        try {
+            const returnValue = ytdl.getURLVideoID(url);
+            resolve(returnValue);
+        } catch (err) {
+            loggerService.error(err)
+            reject(err);
+        }
+    })
+});
+
+ipcMain.handle("get-playlist-id-from-url", (event, url: string) => {
+    return ytpl.getPlaylistID(url);
+});
+
+ipcMain.handle("get-playlist-videos", async (event, playlistId: string) => {
+    return ytpl(playlistId, { limit: Infinity });
+});
+
+ipcMain.handle("get-default-download-folder", (event, args) => {
+    return new Promise( (resolve, reject) => {
+        try {
+            const downloadPath = app.getPath('downloads');
+            resolve(downloadPath);
+        } catch (err) {
+            reject(err);
+        }
+    })
+})
 
 ipcMain.on("select-folder", (event, args: string) => {
     if (win)
-        win.webContents.send('selected-folder', dialog.showOpenDialogSync({ properties: ['openDirectory'] }));
+        win.webContents.send('selected-folder', dialog.showOpenDialogSync(win, { properties: ['openDirectory'] }));
 });
 
 
 ipcMain.on("download-videos", (event, args: DownloadRequest) => {
-    // Loop over args to download each videos selected
-    const appMainPath = args.downloadFolder;
-    const WORKER_NUMBER = 3;
-    if (appMainPath) {
-        const subDirectory = args.audioOnly ? "Audios" : "Videos";
-        if (!fs.existsSync(path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle))) {
-            fs.mkdirSync(path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle), { recursive: true });
-        }
-        const output = path.join(appMainPath, args.channelTitle, subDirectory, args.playlistTitle);
-        for (var i = 0; i < WORKER_NUMBER; i++)
-            downloadItems(args, output, win);
-    } else {
-        console.log('There is no download folder set, wow..')
-    }
+    downloadService.handleDownloadRequest(args);
 });
+
+ipcMain.on("open-context-menu", (event, type: ContextType) => {
+    const locale = store.get("locale") as string;
+    const contextMenu = localesMessages[locale]['contextMenu'] as VueI18n.LocaleMessageObject;
+    const pasteLabel = contextMenu['paste'] as string;
+    const menu = new Menu();
+    switch (type) {
+        case 'text-field':
+            menu.append(new MenuItem({ id: 'right-click', label: pasteLabel, role: 'paste', accelerator: 'CommandOrControl+V'}));
+            break;
+    
+            default:
+                break;
+    }
+    if (win && menu.items.length > 0) menu.popup();
+});
+
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

@@ -1,70 +1,34 @@
 <template>
-    <v-app>
-        <div>
-            <v-snackbar v-model="snackbar" top color="info">
-                {{ snackbarMessage }}
-                <template v-slot:action="{ attrs }">
-                    <v-btn dark text v-bind="attrs" @click="snackbar = false"
-                        >Close</v-btn
-                    >
-                </template>
-            </v-snackbar>
-            <v-app-bar color="primary" style="z-index: 50" app dense dark>
-                <router-link to="/">
-                    <v-btn icon>
-                        <v-icon>mdi-home</v-icon>
-                    </v-btn>
-                </router-link>
-                <v-toolbar-title @click="$router.push('/')" style="cursor: pointer">Youtube Downloader</v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-btn icon v-if="isDownloading">
-                    <v-icon>mdi-download-circle</v-icon>
-                </v-btn>
-                <router-link to="/help">
-                    <v-btn icon>
-                        <v-icon>mdi-help-circle</v-icon>
-                    </v-btn>
-                </router-link>
-                <router-link to="/settings">
-                    <v-btn icon>
-                        <v-icon>mdi-cog</v-icon>
-                    </v-btn>
-                </router-link>
-            </v-app-bar>
-            <download-queue-drawer />
-        </div>
-        <router-view />
+    <v-app class="grayThree">
+        <frame-bar />
+        <download-queue-drawer />
+        <v-main class="grayThree">
+            <app-bar />
+            <transition name="fade" mode="out-in">
+                <router-view />
+            </transition>
+        </v-main>
     </v-app>
 </template>
 
 
 
 <script lang="ts">
+
 import { Component, Vue } from "vue-property-decorator";
 import DownloadQueueDrawer from "@/components/DownloadQueueDrawer.vue";
-import { DownloadRequest, ItemStruct } from "./config/litterals";
-const { myIpcRenderer } = window;
+import AppBar from "@/components/AppBar.vue";
+import FrameBar from "@/components/FrameBar.vue";
 
 // Define the component in class-style
 @Component({
     components: {
         DownloadQueueDrawer,
+        AppBar,
+        FrameBar
     },
 })
 export default class App extends Vue {
-    isDownloading = false;
-    snackbar = false;
-    snackbarMessage = "";
-
-    mounted() {
-        window.myIpcRenderer.receive(
-            "download-error",
-            (data: DownloadRequest) => {
-                this.snackbar = true;
-                this.snackbarMessage = `Download error : ${data.itemSelected[0].title}`;
-            }
-        );
-    }
 }
 </script>
 <style>
@@ -84,12 +48,36 @@ html {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #d32f2f;
+    background: #612222;
     border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #e57373;
+    background: #612220;
+}
+
+.flag-icon-background{
+    background-size: cover;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s ease-in;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+* {
+    font-family: Ubuntu !important;
+    color: var(--v-black-base);
+}
+
+button {
+    font-weight: 800 !important;
+}
+
+.v-tooltip__content span{
+    color: var(--v-grayThree-base);
 }
 </style>

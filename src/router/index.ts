@@ -1,21 +1,13 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '@/views/Home.vue'
-import ChannelDashboard from '@/layouts/ChannelDashboard.vue'
-import ChannelVideos from '@/views/ChannelVideos.vue'
-import PlaylistVideos from '@/views/PlaylistVideos.vue'
-import ChannelPlaylists from '@/views/ChannelPlaylists.vue'
-import SearchChannel from '@/views/SearchChannel.vue'
-import SearchVideos from '@/views/SearchVideos.vue'
 import Help from '@/views/Help.vue'
-import Settings from '@/views/Settings.vue'
-import { ApiKeyService } from "@/services/apiKeyService"
-import { DownloadFolderService } from "@/services/downloadFolderService"
-import { ApplicationContainer } from "@/di/index"
+import VideosManager from '@/views/VideosManager.vue'
+import store from '@/store/store'
 
 Vue.use(VueRouter)
 
-const routes: Array<RouteConfig> = [
+const routes: RouteConfig[] = [
     {
         path: '/exit',
         name: 'exit',
@@ -24,59 +16,18 @@ const routes: Array<RouteConfig> = [
     {
         path: '/',
         name: 'home',
-        component: Home
+        component: Home,
     },
-    {
-        path: '/search-channel',
-        name: 'search-channel',
-        component: SearchChannel
-    },
-    {
-        path: '/search-videos',
-        name: 'search-videos',
-        component: SearchVideos
+    {            
+        name: 'manage-videos',
+        path: '/manage-videos',
+        component: VideosManager
     },
     {
         path: '/help',
         name: 'help',
         component: Help
-    },
-    {
-        path: '/settings',
-        name: 'settings',
-        component: Settings
-    },
-    {
-        path: '/channel/:channelTitle/:id',
-        component: ChannelDashboard,
-        children: [
-            {
-                path: '',
-                redirect: { name: 'channel-playlists' }
-            },
-            {
-                path: 'videos/:playlistId',
-                name: 'channel-uploaded-videos',
-                component: ChannelVideos
-            },
-            {
-                path: 'playlists',
-                name: 'channel-playlists',
-                component: ChannelPlaylists
-            },
-            {
-                path: 'playlist/:playlistId/:playlistTitle/videos',
-                name: 'playlist-videos',
-                component: PlaylistVideos
-            },
-            // {
-            //   path: 'help',
-            //   name: 'help',
-            //   component: Help
-            // }
-        ]
-
-    },
+    }
 ]
 
 const router = new VueRouter({
@@ -85,12 +36,22 @@ const router = new VueRouter({
     routes
 })
 
-// Check if API_Key is set, if not redirect to set api key page
+// Check if Download Folder is set
 router.beforeEach((to, from, next) => {
-    // const apiKeyService = ApplicationContainer.resolve(ApiKeyService)
-    const downloadFolderService = ApplicationContainer.resolve(DownloadFolderService)
-    if (to.name !== 'settings' && (!downloadFolderService.getDownloadFolder())) next({ name: 'settings' })
-    else next()
+    const storeGotVideos = store.state.fetchedVideosState!.fetchedVideos.length > 0;
+    switch (to.name) {
+        case 'home':
+            if (storeGotVideos) next({name: 'manage-videos'});
+            else next();
+            break;
+        case 'manage-videos':
+            if (storeGotVideos) next();
+            else next({name: 'home'});
+            break;
+        default:
+            next();
+            break;
+    }
 })
 
 export default router

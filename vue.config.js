@@ -10,7 +10,7 @@ module.exports = {
       preload: 'src/preload.ts',
       builderOptions: {
         extraFiles: {
-          from: 'node_modules/ffmpeg-static/ffmpeg.exe', // Todo replace with an absolute path
+          from: 'node_modules/ffmpeg-static/ffmpeg.exe',
           to: './resources/app.asar.unpacked/ffmpeg.exe'
         }
       },

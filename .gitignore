@@ -12,6 +12,7 @@ yarn-debug.log*
 yarn-error.log*
 access.log
 pnpm-debug.log*
+*.log
 
 # Editor directories and files
 .idea
