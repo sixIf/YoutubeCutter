@@ -5,7 +5,7 @@
   Youtube Cutter
   <br>
   <br>
-  <img src="https://i.imgur.com/ZfYsOWA.gifv" alt="Youtube Cutter">
+  <img src="https://i.imgur.com/ZfYsOWA.gif" alt="Youtube Cutter">
 </h1>
 
 ### About
