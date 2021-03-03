@@ -19,7 +19,8 @@ The tool's specificity is that you can select only part of the video you want to
 -   [x] Downloading videos as well as mp3
 -   [x] Download specific part of the video in mp3 or mp4
 -   [x] Download entire channels and playlists
--   [x] Multiple downloads at a time
+-   [x] Supported Language: English - French
+-   [x] 3 downloads at a time
 -   [x] Works on Windows
 
 
@@ -30,7 +31,11 @@ The tool's specificity is that you can select only part of the video you want to
 -   [Sass](https://github.com/sass/sass) - CSS with superpowers
 -   [Webpack](https://webpack.js.org/) - A module bundler for JavaScript
 
-## Setup locally
+## How to Install
+
+Head to the [release page](https://github.com/sixIf/Youtube-downloader/releases) to get the latest version.
+
+## Build locally
 ```
 npm install
 ```
