@@ -26,7 +26,7 @@ export const mutations: MutationTree<FetchedVideosState> = {
             return value.id == video.id;
         });
         if (videoIndex != -1) {
-            state.fetchedVideos[videoIndex] = Object.assign({}, video);
+            state.fetchedVideos[videoIndex] = video;
         }
     },
     setSelectedVideo(state, selectedVideo: VideoDetail){
