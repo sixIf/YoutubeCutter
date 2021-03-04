@@ -1,5 +1,5 @@
 <template>
-    <v-card class="darkPrimary" height="250px">
+    <v-card class="darkPrimary" height="280px">
         <v-container style="height: 100%">
             <v-row align="center" style="height: 100%" justify="center">
                 <v-col cols="4" lg="3">
@@ -7,7 +7,7 @@
                 </v-col>
                 <v-col cols="8" class="text-col" align-self="start">
                     <h2 class="step-title grayThree--text" style="height: 50px"><slot name="title"/></h2>
-                    <p class="grayTwo--text pt-3"><slot name="content"/></p>
+                    <p class="grayTwo--text pt-3" style="height: 100px; font-size: 1.1em;"><slot name="content"/></p>
                 </v-col>
             </v-row>
         </v-container>

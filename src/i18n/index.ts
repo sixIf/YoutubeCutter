@@ -64,7 +64,8 @@ const messages = {
 				thirdContent: 'Choose where to put the downloaded videos, then you can start the download !',
 			},
 			aboutTitle: 'About',
-			aboutContent: 'This projet aims to help people in their need to extract videos from Youtube, it is 100% open source and free to use.<br><br>Don’t forget to mention the content’s creators when using part of their videos.<br><br>If you wish to support our application, you can donate to :<br><br>If you encounter some problems, feel free to reach us at <email/discord>.'
+			aboutContent: 'I made this projet to help people in their need to extract videos from Youtube, it is 100% open source and free to use.<br/><br/>Don’t forget to mention the content’s creators when using part of their videos, and don’t use it for copyrighted material.<br/><br/>If you like this app, feel free to support it by donating !',
+			donate: 'Donate'
 		},
 		queue: {
 			title: 'Downloads',
@@ -141,7 +142,8 @@ const messages = {
 				thirdContent: 'Choisi dans quel dossier sauvegarder les vidéos et lance le téléchargement !',
 			},
 			aboutTitle: 'À propos',
-			aboutContent: 'This projet aims to help people in their need to extract videos from Youtube, it is 100% open source and free to use.<br><br>Don’t forget to mention the content’s creators when using part of their videos.<br><br>If you wish to support our application, you can donate to :<br><br>If you encounter some problems, feel free to reach us at <email/discord>.',
+			aboutContent: 'J\'ai fait ce projet pour aider a extraire des vidéos sur Youtube, de manière gratuite et Open-source.<br/><br/>N\'oubliez pas de mentionner les créateurs de contenus lors de votre utilisation et de ne télécharger que des vidéos libres de droits.<br/><br/>Si vous aimez cette application, n\'hésitez pas à faire un don !',
+			donate: 'Donation'
 		},	
 		queue: {
 			title: 'Téléchargements',
