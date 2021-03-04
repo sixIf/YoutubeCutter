@@ -87,10 +87,11 @@ export default class SearchYoutubeTextField extends Vue {
     async searchItem(){
         this.errorThrown = false;
         let videoNb = 0;
+        const formattedYtLink = this.getFormattedUrl();
         if (!this.ytLink) return;
         try {
             this.isFetching = true;
-            const videoId = await this.youtubeService.getVideoIdFromUrl(this.ytLink);
+            const videoId = await this.youtubeService.getVideoIdFromUrl(formattedYtLink);
             const videoFound = await this.youtubeService.findVideo(videoId);
             videoNb = 1;
             this.addVideoToList(videoFound);
@@ -98,7 +99,6 @@ export default class SearchYoutubeTextField extends Vue {
         } catch (err) {
             log.error(err);
             try {
-                const formattedYtLink = this.getFormattedUrl();
                 const playlistId = await this.youtubeService.getPlaylistIdFromUrl(formattedYtLink);
                 const videoInPlaylist = await this.youtubeService.findPlaylistVideos(playlistId);
                 videoNb = videoInPlaylist.length;
@@ -133,7 +133,7 @@ export default class SearchYoutubeTextField extends Vue {
      * Getters
      */
 
-    // Ytpl struggle to decode channel url sometimes
+    // Appen https:// to link if missing
     getFormattedUrl(): string {
         let formattedYtLink = this.ytLink.charAt(0) == 'y' ? 'https://www.'.concat(this.ytLink) : this.ytLink;
         const slashOccurrence = formattedYtLink.match(/\//g);
