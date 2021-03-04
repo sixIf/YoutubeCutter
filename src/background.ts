@@ -5,7 +5,7 @@ declare const __static: string;
 import "reflect-metadata"
 import { ApplicationContainer } from './di';
 import { LoggerService } from "./services/loggerService"
-import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, autoUpdater, MenuItem, globalShortcut } from 'electron'
+import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, MenuItem, globalShortcut } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -15,6 +15,8 @@ import ytdl from "ytdl-core";
 import { YOUTUBE_VIDEO_URL } from "./config/litterals/youtube";
 import ytpl from "ytpl";
 import VueI18n from "vue-i18n";
+import { autoUpdater } from "electron-updater"
+import ElectronStore from 'electron-store';
 const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -22,8 +24,6 @@ let win: BrowserWindow | null
 let downloadService: DownloadService;
 const loggerService = ApplicationContainer.resolve(LoggerService);
 let localesMessages: VueI18n.LocaleMessages;
-import ElectronStore from 'electron-store';
-import { log } from "winston";
 
 const schema = {
 	locale: {
@@ -33,40 +33,6 @@ const schema = {
 } as const;
 
 const store = new ElectronStore({schema});
-
-
-// Set auto updater
-if (!isDevelopment){
-    const server = 'https://youtube-downloader.sixif.vercel.app';
-    const url = `${server}/update/${process.platform}/${app.getVersion()}`;
-    
-    autoUpdater.setFeedURL({ url });
-
-    autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-        const dialogOpts = {
-          type: 'info',
-          buttons: ['Restart', 'Later'],
-          title: 'Application Update',
-          message: process.platform === 'win32' ? releaseNotes : releaseName,
-          detail: 'A new version has been downloaded. Restart the application to apply the updates.'
-        }
-      
-        dialog.showMessageBox(dialogOpts).then((returnValue) => {
-          if (returnValue.response === 0) autoUpdater.quitAndInstall()
-        })
-    });
-      
-    autoUpdater.on('error', message => {
-        loggerService.error('There was a problem updating the application')
-        loggerService.error(message)
-    });
-
-
-    setInterval(() => {
-        autoUpdater.checkForUpdates()
-    }, 60000)
-
-}
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -126,7 +92,8 @@ function createWindow() {
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
-        win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
+        win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
+        autoUpdater.checkForUpdatesAndNotify();
         if (!process.env.IS_TEST) win.webContents.openDevTools()
     } else {
         createProtocol('app')

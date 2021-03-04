@@ -9,6 +9,7 @@ module.exports = {
     electronBuilder: {
       preload: 'src/preload.ts',
       builderOptions: {
+        publish: ['github'],
         extraFiles: {
           from: 'node_modules/ffmpeg-static/ffmpeg.exe',
           to: './resources/app.asar.unpacked/ffmpeg.exe'
