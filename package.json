@@ -1,6 +1,6 @@
 {
   "name": "youtube-cutter",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -27,6 +27,7 @@
     "@types/youtube-player": "^5.5.3",
     "core-js": "^3.6.5",
     "electron-store": "^6.0.1",
+    "electron-updater": "^4.3.8",
     "ffmpeg-static": "^4.2.5",
     "flag-icon-css": "^3.5.0",
     "fluent-ffmpeg": "^2.1.2",
