@@ -57,7 +57,7 @@
                             </v-col>
                         </v-row>
                         <v-row no-gutters justify="center" align="center">
-                            <v-col cols="6" xl="4">
+                            <v-col cols="12" style="text-align: center;">
                                 <v-btn
                                     color="primary"
                                     @click="downloadItems"
