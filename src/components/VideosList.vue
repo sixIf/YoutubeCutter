@@ -1,13 +1,14 @@
 <template>
-    <v-container fluid no-gutters>
-        <v-row justify="end">
-            <v-col cols="12">
+    <v-container fluid no-gutters style="height: 100%">
+        <v-row justify="end" style="height: 100%">
+            <v-col cols="12" class="flex-column-no-wrap">
                 <v-virtual-scroll
                     :items="videoList"
                     :item-height="120"
                     :bench="benched"
+                    max-height="100%"
                     class="no-x-scroll grayThree"
-                    height="500"
+                    style="flex: 1 0 0"
                 >
                     <template v-slot:default="{ item }">
                         <v-list-item :key="item.id" :value="item.id" :class="computeItemClass(item)">

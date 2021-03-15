@@ -54,7 +54,7 @@ const messages = {
 			audio: 'Audio'
 		},
 		help: {
-			title: 'How to use this tool',
+			title: 'How to use this app',
 			downloadSteps: {
 				firstTitle: 'Copy a link',
 				firstContent: 'Go to Youtube, copy the link to a video, a playlist or a channel, and paste it in the tool to start !',
@@ -135,14 +135,14 @@ const messages = {
 			title: 'Comment ça marche ?',
 			downloadSteps: {
 				firstTitle: 'Copie un lien',
-				firstContent: 'Va sur Youtube, copie le lien vers une vidéo, une playlist ou une chaîne, puis colle le pour commencer !',
+				firstContent: 'Va sur Youtube, copie le lien vers une vidéo, une playlist ou une chaîne, puis colle le pour commencer.',
 				secondTitle: 'Coupe les vidéos',
 				secondContent: 'Tu peux rajouter des vidéos, choisir le format de téléchargement et couper des parties de vidéos.',
 				thirdTitle: 'Télécharge',
 				thirdContent: 'Choisi dans quel dossier sauvegarder les vidéos et lance le téléchargement !',
 			},
 			aboutTitle: 'À propos',
-			aboutContent: 'J\'ai fait ce projet pour aider a extraire des vidéos sur Youtube, de manière gratuite et Open-source.<br/><br/>N\'oubliez pas de mentionner les créateurs de contenus lors de votre utilisation et de ne télécharger que des vidéos libres de droits.<br/><br/>Si vous aimez cette application, n\'hésitez pas à faire un don !',
+			aboutContent: 'Si tu aimes l\'appli, une aide serait grandement appréciée !',
 			donate: 'Donation'
 		},	
 		queue: {

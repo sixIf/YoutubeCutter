@@ -1,12 +1,16 @@
 <template>
     <v-app class="grayThree">
         <frame-bar />
-        <download-queue-drawer />
         <v-main class="grayThree">
-            <app-bar />
-            <transition name="fade" mode="out-in">
-                <router-view />
-            </transition>
+            <div class="flex-column-wrap" style="height: 100%;">
+                <app-bar />
+                    <v-container fluid style="flex: 1 0 0">
+                        <transition name="fade" mode="out-in">
+                            <router-view />
+                        </transition>
+                    </v-container>
+                <download-queue-drawer />
+            </div>
         </v-main>
     </v-app>
 </template>
@@ -79,5 +83,15 @@ button {
 
 .v-tooltip__content span{
     color: var(--v-grayThree-base);
+}
+
+.flex-column-wrap {
+    display: flex; 
+    flex-flow: column wrap;
+}
+
+.flex-column-no-wrap {
+    display: flex; 
+    flex-flow: column nowrap;
 }
 </style>

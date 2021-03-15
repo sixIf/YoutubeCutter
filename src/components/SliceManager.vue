@@ -1,157 +1,167 @@
 <template>
         <v-container style="height: 100%">
-            <v-row no-gutters style="height: 15%" align="center" justify="start">
-                <v-col cols="2">
-                    <v-img src="../assets/image/icon.png" height="50px" width="50px"></v-img>
-                </v-col>
-                <v-col cols="7">
-                    <h2>{{ $t("slice.managerTitle") }}</h2>
-                </v-col>
-                <v-col cols="3">
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                            rounded
-                            color="primary"
-                            :disabled="!canCreateSlice"
-                            @click="createSlice"
-                            v-bind="attrs"
-                            v-on="on"
-                        >
-                            {{ $t('slice.add') }}
-                        </v-btn>
-                        </template>
-                        <span> {{ canCreateSlice ? $t("slice.addLabel") : $t("slice.cantAdd") }} </span>  
-                    </v-tooltip>                    
-                </v-col>
-            </v-row>
-            <v-row no-gutters justify="start" style="height: 400px">
-                <v-col cols="12">
-                    <v-list id="slice-list" class="grayThree" height="400px" style="overflow-y: scroll; overflow-x: hidden">
-                        <v-list-item v-for="(slice, index) in selectedVideo.sliceList" :key="slice.id">
-                            <v-container>
-                                <v-row align="center" :class="index == 0 ? activeClass(slice) : ''">
-                                    <v-col cols="2">
-                                        <v-icon size="40px">{{`mdi-numeric-${index}-box`}}</v-icon>
-                                    </v-col>
-                                    <v-col cols="10">
-                                        <v-row align="center" justify="start">
-                                            <v-col cols="4">
-                                                <v-text-field :value="slice.name" @input="debouncedSetName($event, slice, index)" :label="$t('slice.name')"></v-text-field>
+            <v-row class="flex-column-no-wrap" style="height: 100%">
+                <v-container style="flex: 0 0 80px">
+                    <v-row no-gutters align="center" justify="start">
+                        <v-col cols="2">
+                            <v-img src="../assets/image/icon.png" height="50px" width="50px"></v-img>
+                        </v-col>
+                        <v-col cols="7">
+                            <h2>{{ $t("slice.managerTitle") }}</h2>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                    rounded
+                                    color="primary"
+                                    :disabled="!canCreateSlice"
+                                    @click="createSlice"
+                                    v-bind="attrs"
+                                    v-on="on"
+                                >   
+                                    {{ $t('slice.add') }}
+                                </v-btn>
+                                </template>
+                                <span> {{ canCreateSlice ? $t("slice.addLabel") : $t("slice.cantAdd") }} </span>  
+                            </v-tooltip>                    
+                        </v-col>
+                    </v-row>
+                </v-container>
+                <v-container style="flex: 1 0 0">
+                    <v-row no-gutters justify="start" style="height: 100%">
+                        <v-col cols="12" class="flex-column-no-wrap">
+                            <v-list id="slice-list" class="grayThree" style="overflow-y: scroll; overflow-x: hidden; flex: 1 0 0">
+                                <v-list-item v-for="(slice, index) in selectedVideo.sliceList" :key="slice.id">
+                                    <v-container>
+                                        <v-row align="center" :class="index == 0 ? activeClass(slice) : ''">
+                                            <v-col cols="2">
+                                                <v-icon size="40px">{{`mdi-numeric-${index}-box`}}</v-icon>
                                             </v-col>
-                                            <v-col cols="5">
-                                                <v-select :value="slice.format"
-                                                    @change="setFormat($event, slice, index)"
-                                                    :items="availableFormats"
-                                                    :label="$t('format.format')"
-                                                    return-object
-                                                    persistent-hint                          
-                                                >
-                                                    <template v-slot:selection="{item}">
-                                                        {{ getSelectText(item) }}
-                                                    </template>
-                                                    <template v-slot:item="{item}">
-                                                        {{ getSelectText(item) }}
-                                                    </template>                            
-                                                </v-select>
-                                            </v-col>
-                                            <v-col v-if="index == 0" cols="3">
-                                                <v-tooltip bottom>
-                                                    <template v-slot:activator="{ on, attrs }">
-                                                        <v-icon class="theme--light" 
-                                                            @click="changeIsActive(slice, index)"
-                                                            v-bind="attrs"
-                                                            v-on="on"
+                                            <v-col cols="10">
+                                                <v-row align="center" justify="start">
+                                                    <v-col cols="4">
+                                                        <v-text-field 
+                                                            :value="slice.name" 
+                                                            @input="debouncedSetName($event, slice, index)" 
+                                                            :label="$t('slice.name')"
+                                                        ></v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="5">
+                                                        <v-select :value="slice.format"
+                                                            @change="setFormat($event, slice, index)"
+                                                            :items="availableFormats"
+                                                            :label="$t('format.format')"
+                                                            return-object
+                                                            persistent-hint                          
                                                         >
-                                                            {{ slice.isActive ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'}}
-                                                        </v-icon>
-                                                    </template>
-                                                    <span>{{ $t("slice.keep") }}</span>
-                                                </v-tooltip>
-                                            </v-col>       
-                                            <v-col v-else cols="3">
-                                                <v-row no-gutters>
-                                                    <v-col cols="6">
+                                                            <template v-slot:selection="{item}">
+                                                                {{ getSelectText(item) }}
+                                                            </template>
+                                                            <template v-slot:item="{item}">
+                                                                {{ getSelectText(item) }}
+                                                            </template>                            
+                                                        </v-select>
+                                                    </v-col>
+                                                    <v-col v-if="index == 0" cols="3">
                                                         <v-tooltip bottom>
                                                             <template v-slot:activator="{ on, attrs }">
-                                                                <v-btn
-                                                                    fab
-                                                                    small
-                                                                    @click="playSlice(slice)"
+                                                                <v-icon class="theme--light" 
+                                                                    @click="changeIsActive(slice, index)"
                                                                     v-bind="attrs"
                                                                     v-on="on"
                                                                 >
-                                                                    <v-icon class="theme--light">mdi-play</v-icon>
-                                                                </v-btn>
+                                                                    {{ slice.isActive ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'}}
+                                                                </v-icon>
                                                             </template>
-                                                            <span> {{ $t("slice.preview") }} </span>
+                                                            <span>{{ $t("slice.keep") }}</span>
                                                         </v-tooltip>
-                                                    </v-col>
-                                                    <v-col cols="6" class="pl-1">
-                                                        <v-tooltip bottom>
-                                                            <template v-slot:activator="{ on, attrs }">
-                                                                <v-btn
-                                                                    fab
-                                                                    small
-                                                                    @click="deleteSlice(index)"
-                                                                    v-bind="attrs"
-                                                                    v-on="on"
-                                                                >
-                                                                    <v-icon class="theme--light">mdi-delete</v-icon>
-                                                                </v-btn>
-                                                            </template>
-                                                            <span> {{ $t("slice.delete") }} </span>
-                                                        </v-tooltip>
-                                                    </v-col>
+                                                    </v-col>       
+                                                    <v-col v-else cols="3">
+                                                        <v-row no-gutters>
+                                                            <v-col cols="6">
+                                                                <v-tooltip bottom>
+                                                                    <template v-slot:activator="{ on, attrs }">
+                                                                        <v-btn
+                                                                            fab
+                                                                            small
+                                                                            @click="playSlice(slice)"
+                                                                            v-bind="attrs"
+                                                                            v-on="on"
+                                                                        >
+                                                                            <v-icon class="theme--light">mdi-play</v-icon>
+                                                                        </v-btn>
+                                                                    </template>
+                                                                    <span> {{ $t("slice.preview") }} </span>
+                                                                </v-tooltip>
+                                                            </v-col>
+                                                            <v-col cols="6" class="pl-1">
+                                                                <v-tooltip bottom>
+                                                                    <template v-slot:activator="{ on, attrs }">
+                                                                        <v-btn
+                                                                            fab
+                                                                            small
+                                                                            @click="deleteSlice(index)"
+                                                                            v-bind="attrs"
+                                                                            v-on="on"
+                                                                        >
+                                                                            <v-icon class="theme--light">mdi-delete</v-icon>
+                                                                        </v-btn>
+                                                                    </template>
+                                                                    <span> {{ $t("slice.delete") }} </span>
+                                                                </v-tooltip>
+                                                            </v-col>
+                                                        </v-row>
+                                                    </v-col>       
                                                 </v-row>
-                                            </v-col>       
+                                            </v-col>
                                         </v-row>
-                                    </v-col>
-                                </v-row>
-                                <v-row v-if="index != 0" justify="center"  style="padding-bottom: 5px;">
-                                    <v-col cols="12" md="12" lg="11">
-                                        <span class="time-recap">
-                                            {{ $t("slice.cutFrom")}} 
-                                            &nbsp;&nbsp;
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <v-btn
-                                                        class="selectableTime grayThree--text mr-3 ml-3"
-                                                        color="darkPrimary"
-                                                        @click="setStartTime(slice, index)"
-                                                        v-on="on"
-                                                        v-bind="attrs"
-                                                    >
-                                                        {{ getFormattedTime(slice.startTime)}}
-                                                    </v-btn>
-                                                </template>
-                                                <span>{{ $t("slice.copyTime") }}</span>
-                                            </v-tooltip>
-                                            {{ $t("slice.toTime") + "&nbsp;" }}
-                                            <span>&nbsp;</span>
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <v-btn
-                                                        class="selectableTime grayThree--text mr-3 ml-3"
-                                                        color="darkPrimary"
-                                                        @click="setEndTime(slice, index)"
-                                                        v-on="on"
-                                                        v-bind="attrs" 
-                                                    >
-                                                        {{ getFormattedTime(slice.endTime)}}
-                                                    </v-btn>                                        
-                                                </template>
-                                                <span>{{ $t("slice.copyTime") }}</span>
-                                            </v-tooltip>
-                                            <span>{{ getTimeRecap(slice) }}</span>
-                                        </span>
-                                    </v-col>
-                                </v-row>
-                                <v-divider></v-divider> 
-                            </v-container>
-                        </v-list-item>
-                    </v-list>
-                </v-col>
+                                        <v-row v-if="index != 0" justify="center"  style="padding-bottom: 5px;">
+                                            <v-col cols="12" md="12" lg="11">
+                                                <span class="time-recap">
+                                                    {{ $t("slice.cutFrom")}} 
+                                                    &nbsp;&nbsp;
+                                                    <v-tooltip bottom>
+                                                        <template v-slot:activator="{ on, attrs }">
+                                                            <v-btn
+                                                                class="selectableTime grayThree--text mr-3 ml-3"
+                                                                color="darkPrimary"
+                                                                @click="setStartTime(slice, index)"
+                                                                v-on="on"
+                                                                v-bind="attrs"
+                                                            >
+                                                                {{ getFormattedTime(slice.startTime)}}
+                                                            </v-btn>
+                                                        </template>
+                                                        <span>{{ $t("slice.copyTime") }}</span>
+                                                    </v-tooltip>
+                                                    {{ $t("slice.toTime") + "&nbsp;" }}
+                                                    <span>&nbsp;</span>
+                                                    <v-tooltip bottom>
+                                                        <template v-slot:activator="{ on, attrs }">
+                                                            <v-btn
+                                                                class="selectableTime grayThree--text mr-3 ml-3"
+                                                                color="darkPrimary"
+                                                                @click="setEndTime(slice, index)"
+                                                                v-on="on"
+                                                                v-bind="attrs" 
+                                                            >
+                                                                {{ getFormattedTime(slice.endTime)}}
+                                                            </v-btn>                                        
+                                                        </template>
+                                                        <span>{{ $t("slice.copyTime") }}</span>
+                                                    </v-tooltip>
+                                                    <span>{{ getTimeRecap(slice) }}</span>
+                                                </span>
+                                            </v-col>
+                                        </v-row>
+                                        <v-divider></v-divider> 
+                                    </v-container>
+                                </v-list-item>
+                            </v-list>
+                        </v-col>
+                    </v-row>
+                </v-container>
             </v-row>
     </v-container>
 </template>

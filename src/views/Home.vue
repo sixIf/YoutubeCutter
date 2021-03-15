@@ -35,7 +35,7 @@ export default class Home extends Vue {
     }
     
     get mainContainerStyle(): string {
-        return `height: 100%; margin-top: -${this.appBarHeight};`
+        return `height: 100%;`
     }
 }
 </script>

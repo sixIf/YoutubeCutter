@@ -1,5 +1,8 @@
 <template>
-    <v-container fluid class="second-bar grayThree" :style="`height: ${appBarHeight};`">
+    <v-container fluid 
+        class="second-bar grayThree" 
+        :style="`flex: 0 0 ${appBarHeight}; height: ${appBarHeight}`"
+    >
         <alert v-if="alert" 
             :alert="alert"
         >
@@ -17,7 +20,7 @@
             </v-col>
             <v-col cols="2" offset="8">
                 <v-row justify="end" align="center">
-                    <v-col cols="3">
+                    <v-col cols="4" lg="3">
                         <v-speed-dial v-if="currentLocale != ''" direction="bottom">
                             <template v-slot:activator>
                                 <v-btn
@@ -37,7 +40,7 @@
                             </div>
                         </v-speed-dial>
                     </v-col>
-                    <v-col cols="3">
+                    <v-col cols="4" lg="3">
                         <router-link to="/help">
                             <v-btn icon color="grayOne">
                                 <v-icon size="35">mdi-help-circle</v-icon>

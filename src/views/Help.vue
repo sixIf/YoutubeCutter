@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid style="height: 100%">
+    <v-row align="center" justify="center" style="height: 100%">
         <a
             @click.prevent="openExternalUrl(githubLink)"
             :href="githubLink"
@@ -39,49 +39,54 @@
                 ></path>
             </svg>
         </a>
-        <v-row align="center" justify="center">
-            <v-col cols="5">
-                <v-card class="dullPrimary" height="88">
-                    <v-row align="center" justify="center" style="height: 100%">
-                            <h1 class="grayThree--text">{{ $t("help.title") }}</h1>
-                    </v-row>
-                </v-card>
-            </v-col>
-        </v-row>
-        <v-row align="center" justify="center" style="height: 40%">
-            <v-col
-                v-for="(step, index) in downloadSteps"
-                :key="index"
-                :cols="downloadSteps.length"
-            >
-                <step-tiles :step="index + 1">
-                    <template v-slot:title>{{ $t(step.title) }}</template>
-                    <template v-slot:content>{{ $t(step.content) }}</template>
-                </step-tiles>
-            </v-col>
-        </v-row>
-        <v-row align="center" justify="center">
-            <v-col cols="6">
-                <v-card class="grayTwo mt-5 mb-3" height="230">
-                    <v-container style="height: 100%">
+
+        <v-container style="height: 100%">
+            <v-row align="center" justify="center" class="mb-5">
+                <v-col cols="5">
+                    <v-card class="dullPrimary" height="88">
                         <v-row align="center" justify="center" style="height: 100%">
-                            <v-col cols="9">
-                                <h4 class="black--text" style="line-height: 20px" v-html="$t('help.aboutContent')"></h4>
-                            </v-col>
+                                <h1 class="grayThree--text">{{ $t("help.title") }}</h1>
                         </v-row>
-                    </v-container>
-                </v-card>
-            </v-col>
-        </v-row>
-        <v-row align="center" justify="center">
-            <v-col cols="12" style="text-align: center;">
-                <v-btn class="info" rounded width="150" height="50" @click="openExternalUrl(donateLink)">
-                    <h3 class="white--text">{{ $t('help.donate') }}</h3>
-                </v-btn>
-            </v-col>
-        </v-row>        
-        <v-spacer />
-    </v-container>
+                    </v-card>
+                </v-col>
+            </v-row>
+            <v-row align="center    " justify="center" style="height: 60%" class="mb-5">
+                <v-col
+                    v-for="(step, index) in downloadSteps"
+                    :key="index"
+                    cols="4"
+                    lg="3"
+                    style="height: 100%; max-height: 350px"
+                >
+                    <step-tiles :step="index + 1">
+                        <template v-slot:title>{{ $t(step.title) }}</template>
+                        <template v-slot:content>{{ $t(step.content) }}</template>
+                    </step-tiles>
+                </v-col>
+            </v-row>
+            <!-- <v-row align="center" justify="center">
+                <v-col cols="6">
+                    <v-card class="grayTwo mt-5 mb-3" height="100">
+                        <v-container style="height: 100%">
+                            <v-row align="center" justify="center" style="height: 100%">
+                                <v-col cols="9">
+                                    <h4 class="black--text" style="line-height: 20px" v-html="$t('help.aboutContent')"></h4>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card>
+                </v-col>
+            </v-row> -->
+            <v-row align="center" justify="center">
+                <v-col cols="12" style="text-align: center;">
+                    <v-btn class="info" rounded width="150" height="50" @click="openExternalUrl(donateLink)">
+                        <h3 class="white--text">{{ $t('help.donate') }}</h3>
+                    </v-btn>
+                </v-col>
+            </v-row>        
+        </v-container>
+
+    </v-row>
 </template>
 
 <script lang="ts">

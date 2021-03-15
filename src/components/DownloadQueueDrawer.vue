@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="flex-container" :style="`flex: 0 0 ${appBarHeight}; height: ${appBarHeight}`">
         <v-btn
             :class="`darkPrimary ${isDownloading ? 'bounce' : ''}`"
             color="white"
@@ -141,11 +141,11 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import * as _ from "lodash";
 import { IAlert, VideoDetail } from "@/config/litterals";
 import QueueListItem from "@/components/QueueListItem.vue"
 import { Getter } from "vuex-class";
 import { ItemsToQueue } from "@/store/downloadQueueState/types";
+import { APP_BAR_HEIGHT } from "@/config/litterals/ui";
 const { myIpcRenderer } = window;
 
 @Component({
@@ -223,16 +223,23 @@ export default class DownloadQueueDrawer extends Vue {
             }
         );
     }
+
+    get appBarHeight(): string {
+        return APP_BAR_HEIGHT;
+    }    
 }
 </script>
 
 <style lang="stylus">
 #download-queue
-  position fixed
+  margin-right: 15px
   z-index 100
-  bottom 8px
-  right  5px
   background: #d32f2f
+
+.flex-container
+  display: flex
+  justify-content: flex-end
+  align-items: center
 
 .bounce
   -webkit-animation bounce 1s infinite

@@ -5,7 +5,7 @@ declare const __static: string;
 import "reflect-metadata"
 import { ApplicationContainer } from './di';
 import { LoggerService } from "./services/loggerService"
-import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, MenuItem, globalShortcut } from 'electron'
+import { app, protocol, ipcMain, BrowserWindow, shell, Tray, Menu, dialog, MenuItem, globalShortcut, screen } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -67,11 +67,13 @@ function createWindow() {
     // Create the browser window.
     let tray: Tray | null = null;
 
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize
+
     win = new BrowserWindow({
-        width: 1180,
-        height: 1015,
-        minWidth: 1180,
-        minHeight: 1015,
+        width: width,
+        height: height,
+        minHeight: 728,
+        minWidth: 900,
         x: 0,
         y: 0,
         title: "Youtube Downloader",

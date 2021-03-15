@@ -1,9 +1,9 @@
 <template>
-    <v-container v-if="videoList.length != 0" fluid>
-        <v-row align="center" justify="center">
-            <v-col cols="6" xl="5" align-self="stretch">
+    <v-row align="center" justify="center" style="height: 100%">
+        <v-col cols="6" xl="5" align-self="stretch">
+            <div class="flex-column-wrap" style="height: 100%">
                 <!-- Search card -->
-                <v-card class="darkPrimary mb-3" elevation="8" height="170">
+                <v-card class="darkPrimary mb-3" elevation="8" style="flex: 0 0 150px;">
                     <v-container>
                         <v-row>
                             <v-col cols="12">
@@ -16,12 +16,11 @@
                     </v-container>
                 </v-card>
                 <!-- Video list Card -->
-                <v-card class="grayTwo mb-3" height="524">
-
+                <v-card class="grayTwo mb-3" style="flex: 1 0 auto;">
                     <videos-list :videoList="videoList"></videos-list>
                 </v-card>
                 <!-- Download Options Card -->
-                <v-card class="grayOne" height="150" elevation="8" >
+                <v-card class="grayOne" elevation="8" style="flex: 0 0 150px;">
                     <v-container>
                         <v-row justify="center" align="center">
                             <v-col cols="6">
@@ -67,21 +66,23 @@
                         </v-row>
                     </v-container>
                 </v-card>
-            </v-col>
-            <v-col cols="6" xl="5" style="height: 892px">
-                <v-card height="40%" color="black">
+            </div>
+        </v-col>
+        <v-col cols="6" xl="5" align-self="stretch">
+            <div class="flex-column-wrap" style="height: 100%">
+                <v-card color="black" style="flex: 0 0 250px; height: 250px">
                     <youtube-player 
                         :videoId="currentVideoId"
                         :videoStream="videoStream"
                         :playRequest="playRequest"
                     ></youtube-player>
                 </v-card>
-                <v-card class="lightPrimary" height="60%" :disabled="!videoStream">
+                <v-card class="lightPrimary" style="flex: 1 0 auto;" :disabled="!videoStream">
                     <slice-manager @play-slice="updatePlayRequest"/>
                 </v-card>
-            </v-col>
-        </v-row>
-    </v-container>
+            </div>
+        </v-col>
+    </v-row>
 </template>
 
 <script lang="ts">
@@ -119,14 +120,6 @@ export default class VideosManager extends Vue {
 
     updatePlayRequest(playRequest: PlayRequest){
         this.playRequest = Object.assign({}, playRequest);
-    }
-
-    get videoStream() {
-        const bestFormat = _.filter(this.selectedVideo.formats, (format) => {
-            return (format.hasVideo && format.hasAudio);
-        })
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return bestFormat.length != 0 ? bestFormat[0]!.url : "";
     }
 
     downloadItems(){
@@ -186,6 +179,14 @@ export default class VideosManager extends Vue {
      * Getters
      */
 
+    get videoStream() {
+        const bestFormat = _.filter(this.selectedVideo.formats, (format) => {
+            return (format.hasVideo && format.hasAudio);
+        })
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return bestFormat.length != 0 ? bestFormat[0]!.url : "";
+    }
+    
     get videosToDownload(): VideoDetail[] {
         return _.filter(this.videoList, (video) => video.toDownload)
     }
