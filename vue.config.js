@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-const ffmpeg = require.resolve('ffmpeg-static')
 
 module.exports = {
   "transpileDependencies": [

@@ -2,10 +2,8 @@ import { ILoggerService } from './services/loggerService'
 
 declare global {
   interface Window {
-    myIpcRenderer: MyIpcRenderer,
-    log: ILoggerService,
-    youtube: Youtube;
-    onYouTubeIframeAPIReady: Function;
+    myIpcRenderer: MyIpcRenderer;
+    log: ILoggerService;
   }
 }
 
@@ -18,8 +16,4 @@ export interface MyIpcRenderer {
 export interface MyLogger {
   info(info: string): string; 
   error(info: string): string; 
-}
-
-interface Youtube{
-  createPlayer(videoID: string, playerID: string): any;
 }

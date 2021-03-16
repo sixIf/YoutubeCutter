@@ -10,7 +10,7 @@ contextBridge.exposeInMainWorld(
     'myIpcRenderer',
     {
         invoke: (channel: string, data: any) => {
-            let validChannels = [
+            const validChannels = [
                 "get-video-infos", "get-playlist-videos", "get-default-download-folder", "get-video-id-from-url", 
                 "get-playlist-id-from-url", "get-current-locale", "move-up-item", "remove-item"
             ];
@@ -19,7 +19,7 @@ contextBridge.exposeInMainWorld(
             }
         },
         send: (channel: string, data: any) => {
-            let validChannels =  [
+            const validChannels =  [
                 "download-videos", "set-current-locale", "set-locale-messages", "open-context-menu", 
                 "download-progress", "item-downloaded", "open-external-url", "select-folder",
                 "open-shell", "download-error", "add-single-video", "explore-channel",
@@ -30,7 +30,7 @@ contextBridge.exposeInMainWorld(
             }
         },
         receive: (channel: string, func: any) => {
-            let validChannels = [
+            const validChannels = [
                 "download-progress", "set-current-locale", "set-locale-messages", "item-downloaded",
                 "open-external-url", "selected-folder", "download-error", "add-single-video", "start-download-item"
             ];

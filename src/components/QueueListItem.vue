@@ -34,7 +34,7 @@
 <script lang="ts">
 import { VideoDetail } from "@/config/litterals";
 import { QueueLists } from "@/store/downloadQueueState/types";
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class  extends Vue {

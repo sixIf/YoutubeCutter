@@ -8,7 +8,7 @@ import ytdl from 'ytdl-core';
 import { VideoDetail, DownloadRequest, SlicedYoutube, MAX_WORKERS } from '@/config/litterals/index'
 import sanitize from 'sanitize-filename'
 import { BrowserWindow } from 'electron';
-import _, { reject } from 'lodash';
+import _ from 'lodash';
 import { ApplicationContainer } from '../di';
 import { LoggerService } from "../services/loggerService"
 import { FfmpegService } from './ffmpegService';
@@ -86,8 +86,8 @@ export class DownloadService implements IDownloadService {
 
         const tempAudioPath = path.resolve(item.folderPath!, sanitize(`TEMP_audio_${item.title}.mp3`));
         const tempVideoPath = path.resolve(item.folderPath!, sanitize(`TEMP_video_${item.title}.mp4`));
-        let audioPath = path.resolve(item.folderPath!, sanitize(`${item.title}.mp3`));
-        let videoPath = path.resolve(item.folderPath!, sanitize(`${item.title}.mp4`));
+        const audioPath = path.resolve(item.folderPath!, sanitize(`${item.title}.mp3`));
+        const videoPath = path.resolve(item.folderPath!, sanitize(`${item.title}.mp4`));
         const tempFiles = [];
         const fullVideoSlice = item.sliceList.shift();
 
@@ -95,6 +95,7 @@ export class DownloadService implements IDownloadService {
             
             if (videoNeeded) { // Download the whole video with audio
                 const bestFormat = await this.chooseBestVideoQuality(item);
+                this.loggerService.info(`format ${bestFormat}----------------`)
                 await this.downloadVideo(item, tempVideoPath, bestFormat);
 
                 if (!item.videoHasAudio){
@@ -113,15 +114,17 @@ export class DownloadService implements IDownloadService {
             for (const slice of item.sliceList) {
                 let outputPath = '';
                 switch (slice.format.type) {
-                    case 'video':
+                    case 'video': {
                         outputPath = this.findAvailableSlicePath(item.folderPath!, sanitize(`${slice.name}.mp4`))
                         await this.ffmpegService.sliceInput(videoPath, outputPath, slice.startTime, slice.endTime);
                         break;
-                    case 'audio':
+                    }
+                    case 'audio': {
                         const currentAudioPath = !item.videoHasAudio ? audioPath : videoPath;
                         outputPath = this.findAvailableSlicePath(item.folderPath!, sanitize(`${slice.name}.mp3`));
                         await this.ffmpegService.sliceInput(currentAudioPath, outputPath, slice.startTime, slice.endTime);
                         break;
+                    }
                 }
             }
 
@@ -242,7 +245,7 @@ export class DownloadService implements IDownloadService {
         let count = 1;
         let currentPath = path.resolve(folderPath, fileName);
         while(fs.existsSync(currentPath)){
-            let newFileName = `(${count++}) ` + fileName;
+            const newFileName = `(${count++}) ` + fileName;
             currentPath = path.resolve(folderPath, newFileName);
         }
         return currentPath;
@@ -254,24 +257,26 @@ export class DownloadService implements IDownloadService {
      * Downloading a UltraHD seems to be broken for some videos
      * hence the limitation we enforce with 1080 max
      */
-    private chooseBestVideoQuality(item: VideoDetail): Promise<string> {
-        return new Promise ( async (resolve, reject) => {
-            if (item.formats.length == 0) {
-                try {
-                    const videoInfo = await ytdl.getInfo(YOUTUBE_VIDEO_URL.concat(item.id));
-                    item.formats = videoInfo.formats
-                } catch (err) {
-                    reject(err)
-                }
+    private async chooseBestVideoQuality(item: VideoDetail): Promise<string> {
+        let error: Error;
+        if (item.formats.length == 0) {
+            try {
+                const videoInfo = await ytdl.getInfo(YOUTUBE_VIDEO_URL.concat(item.id));
+                item.formats = videoInfo.formats
+            } catch (err) {
+                error = err;
             }
+        }
 
-            const sortedFormats = _.orderBy(item.formats, (format) => format.height, 'desc')
-            const chosenFormat = _.find(sortedFormats, (format) => {
-                if (format.height) return format.container == 'mp4' && format.height! <= 1080
-                else return false
-            });
+        const sortedFormats = _.orderBy(item.formats, (format) => format.height, 'desc')
+        const chosenFormat = _.find(sortedFormats, (format) => {
+            if (format.height) return format.container == 'mp4' && format.height! <= 1080
+            else return false
+        });
 
-            if (chosenFormat) resolve(chosenFormat.itag.toString());
+        return new Promise ( (resolve, reject) => {
+            if (error) reject(error)
+            else if (chosenFormat) resolve(chosenFormat.itag.toString());
             else (resolve('highestvideo'));
         })
     }
