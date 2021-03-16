@@ -1,3 +1,35 @@
 {
-	"extends": "../tsconfig.json"
-}
+	"compilerOptions": {
+	  "target": "esnext",
+	  "module": "esnext",
+	  "strict": true,
+	  "jsx": "preserve",
+	  "importHelpers": true,
+	  "moduleResolution": "node",
+	  "experimentalDecorators": true,
+	  "emitDecoratorMetadata": true,
+	  "esModuleInterop": true,
+	  "allowSyntheticDefaultImports": true,
+	  "sourceMap": true,
+	  "baseUrl": ".",
+	  "types": [
+		"webpack-env",
+		"jest",
+	  ],
+	  "typeRoots": [
+		"./node_modules/@types",
+	  ],
+	  "lib": [
+		"esnext",
+		"dom",
+		"dom.iterable",
+		"scripthost"
+	  ]
+	},
+	"include": [
+	  "./*.ts",
+	],
+	"exclude": [
+	  "node_modules"
+	]
+  }
