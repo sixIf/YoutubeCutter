@@ -31,3 +31,8 @@ api/access.log
 #Electron-builder output
 /dist_electron
 public/ffmpeg.exe
+
+# Generated website assets
+website/index.js
+website/index.js.map
+website/styles/minireset.min.css
