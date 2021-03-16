@@ -14,7 +14,13 @@
     "package-mac": "rm -rf ./node_modules && npm build && electron-builder build --mac",
     "package-linux": "rm -rf ./node_modules && npm build && electron-builder build --linux",
     "package-win": "rm -rf ./node_modules && npm build && electron-builder build --win --x64",
-    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten"
+    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
+    "website:start": "npm-run-all website:build:css --parallel website:start:*",
+    "website:start:serve": "serve ./website --listen 3000",
+    "website:start:ts": "tsc --project ./website --watch",
+    "website:build": "run-p website:build:*",
+    "website:build:css": "cp ./node_modules/minireset.css/minireset.min.css ./website/styles/",
+    "website:build:ts": "tsc --project ./website"
   },
   "main": "background.js",
   "dependencies": {
@@ -71,6 +77,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "sass": "^1.19.0",
     "sass-loader": "^8.0.0",
+    "serve": "^11.3.2",
     "spectron": "^11.1.0",
     "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
