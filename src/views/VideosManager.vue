@@ -136,7 +136,6 @@ export default class VideosManager extends Vue {
 
         this.$store.dispatch('fetchedVideosState/resetVideosState');
         this.$router.push('/');
-        
     }
 
     selectDownloadFolder() {

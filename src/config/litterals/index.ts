@@ -38,7 +38,7 @@ export interface VideoDetail {
     bestVideoFormat?: string;
     videoHasAudio?: boolean;
     toDownload: boolean;
-    folderPath?: string;
+    folderPath: string;
     filePath?: string;
     downloadTry?: number;
 }

@@ -218,7 +218,6 @@ ipcMain.on("minimize-window", (event, args: any) => {
 })
 
 ipcMain.on("maximize-window", (event, args: any) => {
-    loggerService.info('called')
     if (win && !win.isMaximized()) win.maximize();
     else if (win) win.unmaximize();
 })

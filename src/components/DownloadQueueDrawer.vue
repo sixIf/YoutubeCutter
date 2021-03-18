@@ -108,20 +108,20 @@
                             >
                                 <template v-slot:actionBtns="{ item }">
                                     <v-row>
-                                        <v-col cols="6">
+                                        <!-- <v-col cols="6">
                                             <v-tooltip bottom>
                                                 <template v-slot:activator="{ on, attrs }">
-                                                    <v-btn icon v-bind="attrs" v-on="on" @click="$store.commit('fetchedVideosState/setSingleFetchedVideo', item)">
+                                                    <v-btn icon v-bind="attrs" v-on="on" @click="retryDownload(item)">
                                                         <v-icon>mdi-alert-circle-outline</v-icon>
                                                     </v-btn>
                                                 </template>
                                                 <span>{{ $t('queue.viewErrorTooltip') }}</span>
                                             </v-tooltip>
-                                        </v-col>
+                                        </v-col> -->
                                         <v-col cols="6">
                                             <v-tooltip bottom>
                                                 <template v-slot:activator="{ on, attrs }">
-                                                    <v-btn icon v-bind="attrs" v-on="on" @click="$store.commit('fetchedVideosState/removeFetchedVideo', item)">
+                                                    <v-btn icon v-bind="attrs" v-on="on" @click="retryDownload([item])">
                                                         <v-icon>mdi-sync</v-icon>
                                                     </v-btn>
                                                 </template>
@@ -141,11 +141,12 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { IAlert, VideoDetail } from "@/config/litterals";
+import { DownloadRequest, IAlert, VideoDetail } from "@/config/litterals";
 import QueueListItem from "@/components/QueueListItem.vue"
 import { Getter } from "vuex-class";
 import { ItemsToQueue } from "@/store/downloadQueueState/types";
 import { APP_BAR_HEIGHT } from "@/config/litterals/ui";
+import { generateUniqueId } from "@/helpers/stringHelper";
 const { myIpcRenderer } = window;
 
 @Component({
@@ -190,6 +191,22 @@ export default class DownloadQueueDrawer extends Vue {
             })
     }
 
+    retryDownload(item: VideoDetail[]){
+        const downloadRequest: DownloadRequest = {
+            requestId: generateUniqueId(),
+            itemSelected: item,
+            downloadFolder: item[0].folderPath,
+        };
+
+        const itemsToQueue: ItemsToQueue = { queue: "inQueue", items: item};
+        this.$store.commit('downloadQueueState/setItemsInQueue', itemsToQueue);
+
+        myIpcRenderer.send("download-videos", downloadRequest);  
+
+        this.$store.dispatch('fetchedVideosState/resetVideosState');
+        this.$router.push('/');
+    }
+
     setAlert(type: string, message: string): void {
         const alert: IAlert = {
                 type: type,
@@ -214,8 +231,7 @@ export default class DownloadQueueDrawer extends Vue {
         myIpcRenderer.receive(
             "download-error",
             (data: VideoDetail) => {
-                window.log.info("Download error");
-                window.log.info(JSON.stringify(data));
+                window.log.info(`Download error ${data.title}`);
 
             const itemToQueue: ItemsToQueue = { queue: "errors", items: [data] };
             this.$store.dispatch("downloadQueueState/changeItemList", itemToQueue);

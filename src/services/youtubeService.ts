@@ -44,6 +44,7 @@ export class YoutubeService implements IYoutubeService {
             title: videoInfo.videoDetails.title,
             thumbnail: thumbnail,
             toDownload: true,
+            folderPath: "",
             
             sliceList: [
                 {
@@ -66,6 +67,7 @@ export class YoutubeService implements IYoutubeService {
                 title: video.title,
                 thumbnail: video.bestThumbnail.url ? video.bestThumbnail.url : "",
                 toDownload: true,
+                folderPath: "",
                 sliceList: [
                     {
                         name: video.title,

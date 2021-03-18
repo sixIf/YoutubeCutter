@@ -12,6 +12,7 @@ export const getDefaultState = (): FetchedVideosState => {
 		id: '',
 		thumbnail: '',
 		title: '',
+		folderPath: '',
 		toDownload: false,
 		sliceList: [],
 		formats: []
