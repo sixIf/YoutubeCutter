@@ -1,7 +1,13 @@
 <template>
-    <video :id="playerID" controls width="100%" height="100%">
-        <source :src="videoStream" type="video/mp4">
-    </video>
+    <div class="player" style="width: 100%; height: 100%">
+        <video :id="playerID" controls width="100%" height="100%">
+            <source :src="videoStream" type="video/mp4">
+        </video>
+        <div class="controls">
+            <v-btn class="sub-five-seconds" aria-label="rewind five second" @click="seek(-5)">-5s</v-btn>
+            <v-btn class="add-five-seconds" aria-label="fast forward five second" @click="seek(5)">+5s</v-btn>
+        </div>
+    </div>
 </template>
     
 
@@ -51,13 +57,17 @@ export default class YoutubePlayer extends Vue {
         if (this.currentPlaybackTimeout) clearTimeout(this.currentPlaybackTimeout);
     }
 
+    seek(numberToAdd: number) {
+        this.player.currentTime += numberToAdd;
+    }
+
     mounted() {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        this.player = document.getElementById(this.playerID)! as HTMLMediaElement;   
+        this.player = document.getElementById(this.playerID) as HTMLMediaElement;
         this.playVideo();
     }
 
     playVideo(){
+        this.clearCurrentTimeout();
         this.player.load();
         if (this.videoStream) this.player.play();
     }
@@ -93,4 +103,23 @@ export default class YoutubePlayer extends Vue {
     .yt-iframe {
         border: none;
     }
+    .controls {
+        opacity: 0;
+        width: 400px;
+        position: absolute;
+        bottom: 60px;
+        left: 50%;
+        margin-left: -200px;
+        transition: 1s all;
+        display: flex;
+    }    
+
+    .add-five-seconds{
+        margin-left: 250px;
+    }
+
+    .player:hover .controls, player:focus .controls {
+    opacity: 1;
+    }
+
 </style>
