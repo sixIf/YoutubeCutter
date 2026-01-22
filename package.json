@@ -38,7 +38,7 @@
     "flag-icon-css": "^3.5.0",
     "fluent-ffmpeg": "^2.1.2",
     "i18n": "^0.13.2",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.23",
     "material-design-icons-iconfont": "^5.0.1",
     "reflect-metadata": "^0.1.13",
     "sanitize-filename": "^1.6.3",
